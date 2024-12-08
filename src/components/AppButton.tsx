@@ -3,7 +3,7 @@ import React from 'react';
 import buttonStyles from '../styles/button';
 import {AppButtonProps} from '../types/button';
 
-const AppButton: React.FC<AppButtonProps> = ({variant = 'primary', text, style}) => {
+const AppButton: React.FC<AppButtonProps> = ({variant = 'primary', text, style, onPress}) => {
   const buttonStyle =
     variant === 'primary'
       ? buttonStyles.appButtonPrimary
@@ -14,7 +14,7 @@ const AppButton: React.FC<AppButtonProps> = ({variant = 'primary', text, style})
       : buttonStyles.buttonTextOutline;
 
   return (
-    <TouchableOpacity style={[buttonStyle, style]}>
+    <TouchableOpacity onPress={onPress} style={[buttonStyle, style]}>
       <Text style={textStyle}>{text}</Text>
     </TouchableOpacity>
   );

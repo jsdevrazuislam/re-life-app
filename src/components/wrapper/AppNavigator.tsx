@@ -8,8 +8,9 @@ import ProfileScreen from '../../screens/ProfileScreen';
 import LoginScreen from '../../screens/LoginScreen';
 import AdminPanelScreen from '../../screens/AdminPanelScreen';
 import AdminSettingsScreen from '../../screens/AdminSettingsScreen';
-import routes from '../../routes/routes_name';
 import OpeningScreen from '../../screens/OpeningScreen';
+import { AppRoutes } from '../../constants/route';
+import SignupScreen from '../../screens/SignupScreen';
 
 const userRole = 'user' as UserRoles;
 
@@ -41,8 +42,9 @@ const AppNavigator = () => {
   if (!userRole || userRole === 'user') {
     return (
       <Stack.Navigator screenOptions={stackNavigationOptions}>
-        <Stack.Screen name={routes.openingScreen} component={OpeningScreen} />
-        <Stack.Screen name={routes.login} component={LoginScreen} />
+        <Stack.Screen name={AppRoutes.OPENING_SCREEN} component={OpeningScreen} />
+        <Stack.Screen name={AppRoutes.LOGIN_SCREEN} component={LoginScreen} />
+        <Stack.Screen name={AppRoutes.SIGNUP_SCREEN} component={SignupScreen} />
       </Stack.Navigator>
     );
   }

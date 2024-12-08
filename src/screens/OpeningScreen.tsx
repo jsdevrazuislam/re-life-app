@@ -6,8 +6,13 @@ import globalStyles from '../styles/global';
 import Heading from '../components/Heading';
 import {Typography} from '../styles/typography';
 import AppButton from '../components/AppButton';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { AppStackParamList } from '../constants/route';
 
 const OpeningScreen = () => {
+
+  const navigation = useNavigation<NavigationProp<AppStackParamList>>();
+
   return (
     <SafeAreaWrapper>
       <View style={globalStyles.container}>
@@ -33,8 +38,12 @@ const OpeningScreen = () => {
           </Text>
         </View>
         <View style={openingStyles.bottomSection}>
-          <AppButton variant='primary' style={openingStyles.mb} text='App Button' />
-          <AppButton variant='outline' text='App Button' />
+          <AppButton
+            variant="primary"
+            style={openingStyles.mb}
+            text="Sign In"
+          />
+          <AppButton variant="outline" text="Create Account" onPress={() => navigation.navigate('SignupScreen')} />
         </View>
       </View>
     </SafeAreaWrapper>

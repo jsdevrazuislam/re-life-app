@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 import { Colors } from "../configs/colors";
-import { moderateScale } from "react-native-size-matters";
+import { Fonts } from "../configs/fonts";
 
 const buttonStyles = StyleSheet.create({
     appButtonPrimary: {
@@ -12,7 +12,8 @@ const buttonStyles = StyleSheet.create({
       borderRadius: 10,
     },
     buttonTextPrimary:{
-        color:Colors.light
+        color:Colors.light,
+        fontFamily: Fonts.QUICKSAND_SEMIBOLD
     },
     appButtonOutline: {
         width:'100%',
@@ -26,6 +27,7 @@ const buttonStyles = StyleSheet.create({
       },
       buttonTextOutline:{
         color: Colors.dark,
+        fontFamily: Fonts.QUICKSAND_SEMIBOLD
       }
   });
   

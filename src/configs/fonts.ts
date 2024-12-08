@@ -1,6 +1,12 @@
-import {ScaledSheet} from 'react-native-size-matters';
+export const Fonts = {
+    QUICKSAND_BOLD: 'Quicksand-Bold',
+    QUICKSAND_LIGHT: 'Quicksand-Light',
+    QUICKSAND_MEDIUM: 'Quicksand-Medium',
+    QUICKSAND_REGULAR: 'Quicksand-Regular',
+    QUICKSAND_SEMIBOLD: 'Quicksand-SemiBold',
+}
 
-export const Typography = ScaledSheet.create({
+export const AppFonts = {
   heading1Regular: {
     fontFamily: 'Quicksand-Regular',
     fontSize: '48@ms',
@@ -286,6 +292,13 @@ export const Typography = ScaledSheet.create({
     letterSpacing: '0@ms',
     fontWeight: '700',
   },
-});
-
-export type TypographyKeys = keyof typeof Typography;
+  labelLarge: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#000',
+  },
+  errorText: {
+    fontSize: 12,
+    color: 'red',
+  },
+}

@@ -1,0 +1,126 @@
+import React, { useState } from 'react';
+import {
+  TextInput,
+  View,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
+import { ScaledSheet } from 'react-native-size-matters';
+import Icon from 'react-native-vector-icons/Ionicons';
+
+interface InputProps {
+  label?: string;
+  placeholder?: string;
+  value: string;
+  onChangeText: (text: string) => void;
+  onBlur?: () => void;
+  keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad';
+  secureTextEntry?: boolean;
+  validation?: (value: string) => string | null;
+  style?: object;
+}
+
+const Input: React.FC<InputProps> = ({
+  label,
+  placeholder,
+  value,
+  onChangeText,
+  onBlur,
+  keyboardType = 'default',
+  secureTextEntry = false,
+  validation,
+  style,
+}) => {
+  const [error, setError] = useState<string | null>(null);
+  const [touched, setTouched] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  const handleBlur = () => {
+    setTouched(true);
+    if (validation) {
+      const validationError = validation(value);
+      setError(validationError);
+    }
+    if (onBlur) onBlur();
+  };
+
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
+  };
+
+  return (
+    <View style={[styles.container, style]}>
+      {label && <Text style={styles.label}>{label}</Text>}
+      <View style={styles.inputWrapper}>
+        <TextInput
+          style={[styles.input, error ? styles.inputError : null]}
+          placeholder={placeholder}
+          value={value}
+          onChangeText={(text) => {
+            onChangeText(text);
+            if (touched && validation) {
+              setError(validation(text));
+            }
+          }}
+          onBlur={handleBlur}
+          keyboardType={keyboardType}
+          secureTextEntry={secureTextEntry && !isPasswordVisible}
+        />
+        {secureTextEntry && (
+          <TouchableOpacity
+            onPress={togglePasswordVisibility}
+            style={styles.iconWrapper}
+          >
+            <Icon
+              name={isPasswordVisible ? 'eye' : 'eye-off'}
+              size={20}
+              color="#999"
+            />
+          </TouchableOpacity>
+        )}
+      </View>
+      {error && <Text style={styles.errorText}>{error}</Text>}
+    </View>
+  );
+};
+
+const styles = ScaledSheet.create({
+  container: {
+    marginBottom: 16,
+  },
+  label: {
+    marginBottom: 8,
+    fontFamily: 'Quicksand-Regular',
+    fontSize: '14@ms',
+    lineHeight: '18@ms',
+    letterSpacing: '0@ms',
+    fontWeight: '400',
+  },
+  inputWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    paddingRight: 12,
+  },
+  input: {
+    flex: 1,
+    padding: 12,
+    fontFamily: 'Quicksand-Regular',
+    fontSize: '14@ms',
+  },
+  inputError: {
+    borderColor: 'red',
+  },
+  iconWrapper: {
+    marginLeft: -30,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 12,
+    marginTop: 4,
+  },
+});
+
+export default Input;

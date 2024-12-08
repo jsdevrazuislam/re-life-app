@@ -7,6 +7,7 @@ export const Colors = {
     info: '#17A2B8',
     light: '#F8F9FA',
     dark: '#343A40',
+    text: '#000',
     neutral: {
       100: '#FFFFFF', 
       200: '#F5F5F5',

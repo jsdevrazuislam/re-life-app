@@ -1,6 +1,6 @@
 export interface HeadingProps{
-    level: 1 | 2 | 3;
-    weight?: 'Regular' | 'Medium' | 'Bold'; 
+    level: 1 | 2 | 3 | 4;
+    weight?: 'SemiBold' | 'Regular' | 'Medium' | 'Bold'; 
     style?: TextStyle; 
     children: React.ReactNode; 
 }

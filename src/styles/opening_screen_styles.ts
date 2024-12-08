@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import { moderateScale } from "react-native-size-matters";
+import { Colors } from "../configs/colors";
 
 const openingStyles = StyleSheet.create({
     skipButton: {
@@ -10,7 +11,7 @@ const openingStyles = StyleSheet.create({
       marginTop: 10
     },
     mb:{
-      marginBottom: 20
+      marginBottom: 14
     },
     image:{
       width: '100%',
@@ -22,7 +23,10 @@ const openingStyles = StyleSheet.create({
       textAlign:'center'
     },
     appDescription:{
-      textAlign:"center"
+      textAlign:"center",
+      color: Colors.dark,
+      opacity: 0.7,
+      marginTop: 5
     },
     bottomSection: {
       marginTop: moderateScale(25, 1)
