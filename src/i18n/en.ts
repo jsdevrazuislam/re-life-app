@@ -3,6 +3,8 @@ export default {
     hello: 'Hello',
     appDescription: 'Your finances in one place and always under control',
     signIn: 'Sign In',
+    signUp: 'Sign Up',
+    rememberPassword: 'Remember password?',
     exploreApp: 'Explore the app',
     createAccount: 'Create account',
     mosquesName: 'Mosques Name',

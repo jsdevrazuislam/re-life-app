@@ -1,7 +1,7 @@
 import {Text} from 'react-native';
 import React, {FC} from 'react';
-import {Typography, TypographyKeys} from '../styles/typography';
-import { ParagraphProps } from '../types/paragraph';
+import {Typography, TypographyKeys} from '../../styles/typography';
+import { ParagraphProps } from '../../types/paragraph';
 
 const Paragraph: React.FC<ParagraphProps> = ({
   level,

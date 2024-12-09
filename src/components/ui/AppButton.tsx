@@ -1,7 +1,7 @@
 import {Text, TouchableOpacity} from 'react-native';
 import React from 'react';
-import buttonStyles from '../styles/button.style';
-import {AppButtonProps} from '../types/button';
+import buttonStyles from '../../styles/button.style';
+import {AppButtonProps} from '../../types/button';
 
 const AppButton: React.FC<AppButtonProps> = ({variant = 'primary', text, style, onPress}) => {
   const buttonStyle =

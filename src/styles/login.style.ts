@@ -28,6 +28,11 @@ const loginStyles = ScaledSheet.create({
     },
     bottomSecondTextStyle:{
         textAlign:'center'
+    },
+    flex:{
+        flexDirection:'row',
+        alignItems:'center',
+        justifyContent:'center'
     }
   });
   
