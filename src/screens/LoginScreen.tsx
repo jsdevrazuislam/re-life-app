@@ -5,13 +5,13 @@ import {AppStackParamList} from '../constants/route';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {validateEmail, validatePassword} from '../validations/signup';
 import globalStyles from '../styles/global.style';
-import AppLogo from '../components/AppLogo';
+import AppLogo from '../components/ui/AppLogo';
 import {useTranslation} from '../hooks/useTranslation';
-import Heading from '../components/Heading';
+import Heading from '../components/ui/Heading';
 import loginStyles from '../styles/login.style';
-import Input from '../components/AppInput';
-import AppButton from '../components/AppButton';
-import Paragraph from '../components/Paragraph';
+import Input from '../components/ui/AppInput';
+import AppButton from '../components/ui/AppButton';
+import Paragraph from '../components/ui/Paragraph';
 
 const LoginScreen = () => {
   const {t} = useTranslation();
@@ -58,7 +58,7 @@ const LoginScreen = () => {
             <TouchableOpacity
               onPress={() => navigation.navigate('ForgotPasswordScreen')}
               style={loginStyles.forgotPassword}>
-              <Paragraph level='Small'>{t('forgotPassword')}</Paragraph>
+              <Paragraph level="Small">{t('forgotPassword')}</Paragraph>
             </TouchableOpacity>
             <AppButton
               text={t('signIn')}
@@ -68,10 +68,26 @@ const LoginScreen = () => {
             <View style={loginStyles.bottom}>
               <View style={loginStyles.lineContainer}>
                 <View style={loginStyles.line} />
-                <Paragraph level='Small'>{t('orLoginWith')}</Paragraph>
+                <Paragraph level="Small">{t('orLoginWith')}</Paragraph>
                 <View style={loginStyles.line} />
               </View>
-              <Paragraph style={loginStyles.bottomSecondTextStyle} level='Small'>{t('alreadyHaveAccount')}</Paragraph>
+              <View style={loginStyles.flex}>
+                <Paragraph
+                  style={loginStyles.bottomSecondTextStyle}
+                  level="Small">
+                  {t('alreadyHaveAccount')}
+                </Paragraph>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('SignupScreen')}>
+                  <Paragraph
+                    style={loginStyles.bottomSecondTextStyle}
+                    level="Small"
+                    weight="Medium">
+                    {' '}
+                    {t('signUp')}
+                  </Paragraph>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </View>

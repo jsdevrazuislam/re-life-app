@@ -11,6 +11,7 @@ import AdminSettingsScreen from '../../screens/AdminSettingsScreen';
 import OpeningScreen from '../../screens/OpeningScreen';
 import { AppRoutes } from '../../constants/route';
 import SignupScreen from '../../screens/SignupScreen';
+import ForgotPasswordScreen from '../../screens/ForgotPasswordScreen';
 
 const userRole = 'user' as UserRoles;
 
@@ -45,6 +46,7 @@ const AppNavigator = () => {
         <Stack.Screen name={AppRoutes.OPENING_SCREEN} component={OpeningScreen} />
         <Stack.Screen name={AppRoutes.LOGIN_SCREEN} component={LoginScreen} />
         <Stack.Screen name={AppRoutes.SIGNUP_SCREEN} component={SignupScreen} />
+        <Stack.Screen name={AppRoutes.FORGOT_PASSWORD} component={ForgotPasswordScreen} />
       </Stack.Navigator>
     );
   }

@@ -1,7 +1,7 @@
 import React, {FC} from 'react';
 import {Text} from 'react-native';
-import  {Typography, TypographyKeys} from '../styles/typography';
-import {HeadingProps} from '../types/heading';
+import  {Typography, TypographyKeys} from '../../styles/typography';
+import {HeadingProps} from '../../types/heading';
 
 const Heading: React.FC<HeadingProps> = ({
   level,

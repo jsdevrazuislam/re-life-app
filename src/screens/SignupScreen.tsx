@@ -9,9 +9,9 @@ import React, {useState} from 'react';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import globalStyles from '../styles/global.style';
 import signupStyles from '../styles/signup.style';
-import Heading from '../components/Heading';
-import Input from '../components/AppInput';
-import AppButton from '../components/AppButton';
+import Heading from '../components/ui/Heading';
+import Input from '../components/ui/AppInput';
+import AppButton from '../components/ui/AppButton';
 import {
   validateCheckbox,
   validateEmail,
@@ -19,11 +19,11 @@ import {
   validatePassword,
   validateUsername,
 } from '../validations/signup';
-import Checkbox from '../components/Checkout';
+import Checkbox from '../components/ui/Checkout';
 import {AppStackParamList} from '../constants/route';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {useTranslation} from '../hooks/useTranslation';
-import AppLogo from '../components/AppLogo';
+import AppLogo from '../components/ui/AppLogo';
 
 const SignupScreen = () => {
   const {t} = useTranslation();
