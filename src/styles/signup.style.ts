@@ -25,7 +25,7 @@ const signupStyles = ScaledSheet.create({
     flexDirection:'row'
   },
   bottomTextFirst:{
-    fontFamily: 'Quicksand-Medium',
+    fontFamily: 'Quicksand-Regular',
     fontSize: '14@ms',
     lineHeight: '20@ms',
     letterSpacing: '0@ms',
