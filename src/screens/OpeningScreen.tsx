@@ -1,23 +1,26 @@
 import React from 'react';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
-import openingStyles from '../styles/opening_screen_styles';
-import globalStyles from '../styles/global';
+import openingStyles from '../styles/opening_screen.styles';
+import globalStyles from '../styles/global.style';
 import Heading from '../components/Heading';
 import {Typography} from '../styles/typography';
 import AppButton from '../components/AppButton';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { AppStackParamList } from '../constants/route';
+import { useTranslation } from '../hooks/useTranslation';
 
 const OpeningScreen = () => {
 
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
+  const { t } = useTranslation();
+
 
   return (
     <SafeAreaWrapper>
       <View style={globalStyles.container}>
         <TouchableOpacity style={openingStyles.skipButton}>
-          <Text>Skip</Text>
+          <Text>{t('skip')}</Text>
         </TouchableOpacity>
         <View style={openingStyles.container}>
           <Image
@@ -26,24 +29,25 @@ const OpeningScreen = () => {
           />
         </View>
         <View style={openingStyles.appTitle}>
-          <Heading level={2} weight="Bold">
-            Explore the app
+          <Heading level={3} weight="Bold">
+            {t('exploreApp')}
           </Heading>
           <Text
             style={[
               Typography.paragraphMediumRegular,
               openingStyles.appDescription,
             ]}>
-            Now your finances are in one place and always under control
+            {t('appDescription')}
           </Text>
         </View>
         <View style={openingStyles.bottomSection}>
           <AppButton
             variant="primary"
             style={openingStyles.mb}
-            text="Sign In"
+            text={t('signIn')}
+            onPress={() => navigation.navigate('LoginScreen')}
           />
-          <AppButton variant="outline" text="Create Account" onPress={() => navigation.navigate('SignupScreen')} />
+          <AppButton variant="outline" text={t('createAccount')} onPress={() => navigation.navigate('SignupScreen')} />
         </View>
       </View>
     </SafeAreaWrapper>

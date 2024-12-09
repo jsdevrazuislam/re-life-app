@@ -1,8 +1,14 @@
-import {View, Text, Image, Alert, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  Alert,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import React, {useState} from 'react';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
-import globalStyles from '../styles/global';
-import signupStyles from '../styles/signup';
+import globalStyles from '../styles/global.style';
+import signupStyles from '../styles/signup.style';
 import Heading from '../components/Heading';
 import Input from '../components/AppInput';
 import AppButton from '../components/AppButton';
@@ -14,10 +20,13 @@ import {
   validateUsername,
 } from '../validations/signup';
 import Checkbox from '../components/Checkout';
-import { AppStackParamList } from '../constants/route';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
+import {AppStackParamList} from '../constants/route';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {useTranslation} from '../hooks/useTranslation';
+import AppLogo from '../components/AppLogo';
 
 const SignupScreen = () => {
+  const {t} = useTranslation();
   const [name, setName] = useState<string>('');
   const [username, setUsername] = useState<string>('');
   const [email, setEmail] = useState<string>('');
@@ -27,7 +36,7 @@ const SignupScreen = () => {
 
   const handleSubmit = () => {
     const nameError = validateName(email);
-    const usernameError = validateUsername(email);
+    const usernameError = validateUsername(username);
     const emailError = validateEmail(email);
     const passwordError = validatePassword(password);
     const checkError = validateCheckbox(isChecked);
@@ -47,69 +56,67 @@ const SignupScreen = () => {
 
   return (
     <SafeAreaWrapper>
-      <View style={globalStyles.container}>
-        <View style={signupStyles.container}>
-          <Image
-            source={require('../assets/app_logo.png')}
-            style={signupStyles.logo}
-          />
-        </View>
-        <Heading level={3} weight="Bold">
-          Create account
-        </Heading>
+      <ScrollView>
+        <View style={globalStyles.container}>
+          <AppLogo />
+          <Heading level={4} weight="Bold">
+            {t('createAccount')}
+          </Heading>
 
-        <View style={signupStyles.form}>
-          <Input
-            label="Majid Name"
-            placeholder="Your majid name"
-            value={name}
-            onChangeText={setName}
-            validation={validateName}
-          />
-          <Input
-            label="Username"
-            placeholder="Your name"
-            value={username}
-            onChangeText={setUsername}
-            validation={validateEmail}
-          />
-          <Input
-            label="Email"
-            placeholder="Enter your email"
-            value={email}
-            onChangeText={setEmail}
-            validation={validateEmail}
-            keyboardType="email-address"
-          />
-          <Input
-            label="Password"
-            placeholder="Enter your password"
-            value={password}
-            onChangeText={setPassword}
-            validation={validatePassword}
-            secureTextEntry
-          />
-          <Checkbox
-            label="I agree to the terms and conditions"
-            value={isChecked}
-            onValueChange={setIsChecked}
-          />
-          <AppButton
-            style={{marginTop: 20}}
-            text="Sign Up"
-            onPress={handleSubmit}
-            variant="primary"
-          />
-          <View style={signupStyles.bottomCenter}>
-            <Text style={signupStyles.bottomTextFirst}>
-              Already have an account?{' '}
-            </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
-              <Text style={signupStyles.bottomTextSecond}>Log in</Text>
-            </TouchableOpacity>
+          <View style={signupStyles.form}>
+            <Input
+              label={t('mosquesName')}
+              placeholder={t('mosquesNamePlaceholder')}
+              value={name}
+              onChangeText={setName}
+              validation={validateName}
+            />
+            <Input
+              label={t('username')}
+              placeholder={t('placeholderUsername')}
+              value={username}
+              onChangeText={setUsername}
+              validation={validateEmail}
+            />
+            <Input
+              label={t('email')}
+              placeholder={t('placeholderEmail')}
+              value={email}
+              onChangeText={setEmail}
+              validation={validateEmail}
+              keyboardType="email-address"
+            />
+            <Input
+              label={t('password')}
+              placeholder={t('placeholderPassword')}
+              value={password}
+              onChangeText={setPassword}
+              validation={validatePassword}
+              secureTextEntry
+            />
+            <Checkbox
+              label={t('acceptTerms')}
+              value={isChecked}
+              onValueChange={setIsChecked}
+            />
+            <AppButton
+              style={{marginTop: 20}}
+              text={t('createAccount')}
+              onPress={handleSubmit}
+              variant="primary"
+            />
+            <View style={signupStyles.bottomCenter}>
+              <Text style={signupStyles.bottomTextFirst}>
+                {t('alreadyHaveAccount')}{' '}
+              </Text>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('LoginScreen')}>
+                <Text style={signupStyles.bottomTextSecond}>{t('signIn')}</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaWrapper>
   );
 };
