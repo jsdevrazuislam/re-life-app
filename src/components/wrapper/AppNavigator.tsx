@@ -25,12 +25,7 @@ const TabNavigator = () => (
   </Tab.Navigator>
 );
 
-const AdminStack = createStackNavigator({
-  screens: {
-    Home: HomeScreen,
-    Profile: ProfileScreen,
-  },
-});
+const AdminStack = createStackNavigator();
 const AdminStackNavigator = () => (
   <AdminStack.Navigator initialRouteName="AdminPanel">
     <AdminStack.Screen name="AdminPanel" component={AdminPanelScreen} />
@@ -47,6 +42,7 @@ const AppNavigator = () => {
         <Stack.Screen name={AppRoutes.LOGIN_SCREEN} component={LoginScreen} />
         <Stack.Screen name={AppRoutes.SIGNUP_SCREEN} component={SignupScreen} />
         <Stack.Screen name={AppRoutes.FORGOT_PASSWORD} component={ForgotPasswordScreen} />
+        <Stack.Screen name={AppRoutes.HOME_SCREEN} component={HomeScreen} />
       </Stack.Navigator>
     );
   }

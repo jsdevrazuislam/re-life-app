@@ -10,8 +10,10 @@ const Paragraph: React.FC<ParagraphProps> = ({
   children,
 }) => {
   const key = `paragraph${level}${
-    weight === 'Regular' ? '' : weight
+    weight === 'Regular' ? 'Regular' : weight
   }` as TypographyKeys;
+
+  
   const paragraphStyle = Typography[key] || {};
   return <Text style={[paragraphStyle, style]}>{children}</Text>;
 };

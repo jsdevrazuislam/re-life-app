@@ -19,7 +19,7 @@ const OpeningScreen = () => {
   return (
     <SafeAreaWrapper>
       <View style={globalStyles.container}>
-        <TouchableOpacity style={openingStyles.skipButton}>
+        <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')} style={openingStyles.skipButton}>
           <Text>{t('skip')}</Text>
         </TouchableOpacity>
         <View style={openingStyles.container}>

@@ -10,7 +10,7 @@ const Heading: React.FC<HeadingProps> = ({
   children,
 }) => {
   const key = `heading${level}${
-    weight === 'Regular' ? '' : weight
+    weight === 'Regular' ? 'Regular' : weight
   }` as TypographyKeys;
   const headingStyle = Typography[key] || {};
   return <Text style={[headingStyle, style]}>{children}</Text>;
