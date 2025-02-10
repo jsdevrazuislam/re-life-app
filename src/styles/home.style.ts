@@ -7,6 +7,12 @@ const homeStyles = ScaledSheet.create({
         flexDirection:'row',
         alignItems:'center',
         justifyContent:'space-between'
+      },
+      button:{
+        marginTop: '10@ms'
+      },
+      viewArea:{
+        marginTop: '30@ms',
       }
   });
   

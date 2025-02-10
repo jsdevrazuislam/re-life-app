@@ -1,0 +1,3 @@
+interface FokirCardProps{
+    data:any
+}

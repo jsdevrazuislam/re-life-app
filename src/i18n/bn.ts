@@ -32,5 +32,9 @@ export default {
   mustBe8Characters: 'অন্তত ৮ অক্ষরের হতে হবে',
   repeatPassword: 'পাসওয়ার্ড পুনরাবৃত্তি করুন',
   skip: 'এড়িয়ে যান',
-  orLoginWith: 'অথবা লগ ইন করুন'
+  orLoginWith: 'অথবা লগ ইন করুন',
+  searchMasjid: 'অথবা লগ ইন করুন',
+  homeButton: 'অথবা লগ ইন করুন',
+  noResultsFound: "অথবা লগ ইন করুন",
+  masjidDetails: "অথবা লগ ইন করুন",
 };

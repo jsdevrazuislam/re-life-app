@@ -1,28 +1,25 @@
-import React, {useState} from 'react';
-import {Text, View} from 'react-native';
-import {Dropdown} from 'react-native-element-dropdown';
+import React, { FC, useState } from 'react';
+import { Text, View } from 'react-native';
+import { Dropdown } from 'react-native-element-dropdown';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {dropdownStyles} from '../styles/components/dropdown.style';
-const data = [
-  {label: 'Item 1', value: '1'},
-  {label: 'Item 2', value: '2'},
-  {label: 'Item 3', value: '3'},
-  {label: 'Item 4', value: '4'},
-  {label: 'Item 5', value: '5'},
-  {label: 'Item 6', value: '6'},
-  {label: 'Item 7', value: '7'},
-  {label: 'Item 8', value: '8'},
-];
+import { dropdownStyles } from '../styles/components/dropdown.style';
+import Paragraph from './ui/Paragraph';
 
-const DropdownComponent = () => {
+interface DropdownProps {
+  data: { label: string; value: string }[];
+  label: string;
+  onChange: (value: string) => void;
+}
+
+const DropdownComponent: FC<DropdownProps> = ({ data, label, onChange }) => {
   const [value, setValue] = useState<string>('');
   const [isFocus, setIsFocus] = useState(false);
 
   return (
     <View style={dropdownStyles.container}>
-      <Text style={dropdownStyles.label}>Hell</Text>
+      <Paragraph level='Small' weight='Medium' style={dropdownStyles.label}>{label}</Paragraph>
       <Dropdown
-        style={[dropdownStyles.dropdown, isFocus && {borderColor: 'blue'}]}
+        style={[dropdownStyles.dropdown, isFocus && { borderColor: 'blue' }]}
         placeholderStyle={dropdownStyles.placeholderStyle}
         selectedTextStyle={dropdownStyles.selectedTextStyle}
         inputSearchStyle={dropdownStyles.inputSearchStyle}
@@ -39,6 +36,7 @@ const DropdownComponent = () => {
         onBlur={() => setIsFocus(false)}
         onChange={item => {
           setValue(item.value);
+          onChange(item.value); 
           setIsFocus(false);
         }}
         renderLeftIcon={() => (

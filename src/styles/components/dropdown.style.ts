@@ -1,4 +1,5 @@
 import {ScaledSheet} from 'react-native-size-matters';
+import { Colors } from '../../configs/colors';
 
 export const dropdownStyles = ScaledSheet.create({
   container: {
@@ -17,13 +18,8 @@ export const dropdownStyles = ScaledSheet.create({
     marginRight: 5,
   },
   label: {
-    position: 'absolute',
-    backgroundColor: 'white',
-    left: 22,
-    top: 8,
-    zIndex: 999,
-    paddingHorizontal: 8,
-    fontSize: 14,
+    marginBottom:5,
+    color:Colors.text
   },
   placeholderStyle: {
     fontSize: 16,
