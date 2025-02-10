@@ -82,6 +82,36 @@ export const singleData = {
     ]
 }
 
+export const fokirData = {
+    "name": "Karim Mia",
+    "age": 55,
+    "address": "Dhamsona, Savar",
+    "number_of_children": 3,
+    "dependent_family_members": 5,
+    "profession": "Day Laborer",
+    "receiving_government_aid": true,
+    "verification_documents": {
+      "national_id": "ID123456789",
+      "birth_certificate": "BC987654321",
+      "proof_of_residence": "Utility_bill_1234.pdf",
+      "government_assistance_card": "GAC456789012",
+      "front_photo": "https://images.pexels.com/photos/8489308/pexels-photo-8489308.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "back_photo": "https://images.pexels.com/photos/30459688/pexels-photo-30459688/free-photo-of-scenic-aerial-view-of-island-near-dubrovnik.jpeg?auto=compress&cs=tinysrgb&w=800&lazy=load"
+    },
+    "government_assistance": {
+      "aid_type": "Food Ration",
+      "frequency": "Monthly",
+      "last_received_date": "01 October 2023",
+      "aid_details": {
+        "rice": "5kg",
+        "lentils": "2kg",
+        "money": "1000 BDT"
+      }
+    },
+    "additional_notes": "Struggles to afford food.",
+    "photo": "https://images.pexels.com/photos/8489308/pexels-photo-8489308.jpeg?auto=compress&cs=tinysrgb&w=800",
+}
+
 export const informations = [
   {
     "masjid_name": "Al Noor Masjid",
