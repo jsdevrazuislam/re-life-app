@@ -32,6 +32,10 @@ export default {
     mustBe8Characters: 'Must be at least 8 characters',
     repeatPassword: 'Repeat password',
     skip: 'Skip',
-    orLoginWith: 'Or Login with'
+    orLoginWith: 'Or Login with',
+    searchMasjid: 'Search Masjid',
+    homeButton: 'Get Result',
+    noResultsFound: "No results found",
+    masjidDetails: "Masjid Details",
   };
   
