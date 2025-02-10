@@ -10,6 +10,7 @@ interface CardItem {
     title: string;
     subTitle?: string;
     data: DataItem[];
+    onPress?:() => void
     imageKey?: string; 
   }
 

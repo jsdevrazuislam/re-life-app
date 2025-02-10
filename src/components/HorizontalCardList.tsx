@@ -10,6 +10,7 @@ const HorizontalCardList: React.FC<HorizontalCardListProps> = ({
   subTitle,
   data,
   imageKey,
+  onPress
 }) => {
   const [visible, setVisible] = useState(false);
   const [images, setImages] = useState<{ uri: string }[]>([]);
@@ -31,7 +32,7 @@ const HorizontalCardList: React.FC<HorizontalCardListProps> = ({
         showsHorizontalScrollIndicator={false}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({item}) => (
-          <View style={horizontalCardListStyles.card}>
+          <TouchableOpacity onPress={onPress} style={horizontalCardListStyles.card}>
             {imageKey && item[imageKey] && (
               <TouchableOpacity onPress={() => openImage(item.photo)}>
                 <Image
@@ -56,7 +57,7 @@ const HorizontalCardList: React.FC<HorizontalCardListProps> = ({
                   ),
               )}
             </View>
-          </View>
+          </TouchableOpacity>
         )}
       />
       <ImageViewing

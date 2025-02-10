@@ -13,11 +13,15 @@ import HorizontalCardList from '../components/HorizontalCardList';
 import Carousel from 'react-native-reanimated-carousel';
 import Paragraph from '../components/ui/Paragraph';
 import Heading from '../components/ui/Heading';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { AppStackParamList } from '../constants/route';
 
 const HomeViewDetailsInfoScreen = () => {
   const { t } = useTranslation();
   const [activeIndex, setActiveIndex] = useState(0);
   const carouselRef = useRef<any>(null);
+   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
+  
 
   const handleSnapToItem = (index: number) => {
     setActiveIndex(index);
@@ -131,6 +135,7 @@ const HomeViewDetailsInfoScreen = () => {
               <HorizontalCardList
                 title="Poor People Information"
                 imageKey="photo"
+                onPress={() => navigation.navigate('PoorPeopleView')}
                 data={
                   singleData.poor_people_information?.map(person => ({
                     name: String(person.name),

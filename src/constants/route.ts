@@ -6,6 +6,7 @@ export const AppRoutes = {
     FORGOT_PASSWORD: "ForgotPasswordScreen",
     SIGNUP_SCREEN: "SignupScreen",
     HOME_VIEW_DETAILS_INFO: "HomeViewDetailsInfo",
+    POOR_PEOPLE_VIEW: "PoorPeopleView",
 }
 
 export type AppStackParamList = {
@@ -16,4 +17,5 @@ export type AppStackParamList = {
     ForgotPasswordScreen: undefined; 
     SignupScreen: undefined; 
     HomeViewDetailsInfo: undefined; 
+    PoorPeopleView: undefined; 
   };
