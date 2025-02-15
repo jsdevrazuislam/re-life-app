@@ -85,6 +85,8 @@ export const singleData = {
 export const fokirData = {
     "name": "Karim Mia",
     "age": 55,
+    "marriageStatus": "Married",
+    "gender":"male",
     "address": "Dhamsona, Savar",
     "number_of_children": 3,
     "dependent_family_members": 5,
@@ -323,4 +325,63 @@ export const informations = [
       }
     ]
   }
+]
+
+export const professions = [
+  {
+    label: 'Teacher',
+    value: 'Teacher'
+  },
+  {
+    label: 'Doctor',
+    value: 'Doctor'
+  },
+  {
+    label: 'Engineer',
+    value: 'Engineer'
+  }
+]
+
+export const districts = [
+  { label: "Dhaka", value: "dhaka" },
+  { label: "Chittagong", value: "chittagong" },
+  { label: "Khulna", value: "khulna" },
+  { label: "Rajshahi", value: "rajshahi" },
+  { label: "Barisal", value: "barisal" },
+  { label: "Sylhet", value: "sylhet" },
+  { label: "Rangpur", value: "rangpur" },
+  { label: "Mymensingh", value: "mymensingh" },
+];
+
+export const upazilas = [
+  { label: "Dhanmondi", value: "dhanmondi" },
+    { label: "Gulshan", value: "gulshan" },
+    { label: "Mirpur", value: "mirpur" },
+    { label: "Uttara", value: "uttara" },
+    { label: "Patenga", value: "patenga" },
+    { label: "Kotwali", value: "kotwali" },
+    { label: "Halishahar", value: "halishahar" },
+    { label: "Pahartali", value: "pahartali" },
+    { label: "Sonadanga", value: "sonadanga" },
+    { label: "Khalishpur", value: "khalishpur" },
+    { label: "Daulatpur", value: "daulatpur" },
+    { label: "Rupsha", value: "rupsha" },
+]
+
+export const unions = [
+  { label: "Kalabagan Union", value: "kalabagan" },
+    { label: "Lalmatia Union", value: "lalmatia" },
+    { label: "Banani Union", value: "banani" },
+    { label: "Niketan Union", value: "niketan" },
+    { label: "Shah Ali Union", value: "shahali" },
+    { label: "Pallabi Union", value: "pallabi" },
+]
+
+export const villages = [
+  { label: "Kalabagan Village 1", value: "kalabagan_v1" },
+    { label: "Kalabagan Village 2", value: "kalabagan_v2" },
+    { label: "Banani Village 1", value: "banani_v1" },
+    { label: "Banani Village 2", value: "banani_v2" },
+    { label: "Mirpur Village 1", value: "mirpur_v1" },
+    { label: "Mirpur Village 2", value: "mirpur_v2" },
 ]

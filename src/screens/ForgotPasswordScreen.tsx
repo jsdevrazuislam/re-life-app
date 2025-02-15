@@ -23,7 +23,8 @@ const ForgotPasswordScreen = () => {
     const emailError = validateEmail(email);
 
     if (!emailError) {
-      Alert.alert('Form submitted!');
+      Alert.alert('Code Sent', 'A code has been sent to your email.');
+      navigation.navigate('OtpScreen');
     } else {
       Alert.alert('Please fix the errors!');
     }
