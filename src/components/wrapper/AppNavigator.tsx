@@ -14,8 +14,11 @@ import SignupScreen from '../../screens/SignupScreen';
 import ForgotPasswordScreen from '../../screens/ForgotPasswordScreen';
 import HomeViewDetailsInfoScreen from '../../screens/HomeViewDetailsInfoScreen';
 import PoorPeopleViewScreen from '../../screens/PoorPeopleViewScreen';
+import OtpScreen from '../../screens/OtpScreen';
+import ImamHomeScreen from '../../screens/ImamHomeScreen';
+import AddCommitteeScreen from '../../screens/AddCommitteeScreen';
 
-const userRole = 'user' as UserRoles;
+const userRole =  'immam' as UserRoles;
 
 const Tab = createBottomTabNavigator();
 const TabNavigator = () => (
@@ -47,6 +50,17 @@ const AppNavigator = () => {
         <Stack.Screen name={AppRoutes.HOME_SCREEN} component={HomeScreen} />
         <Stack.Screen name={AppRoutes.HOME_VIEW_DETAILS_INFO} component={HomeViewDetailsInfoScreen} />
         <Stack.Screen name={AppRoutes.POOR_PEOPLE_VIEW} component={PoorPeopleViewScreen} />
+        <Stack.Screen name={AppRoutes.OTP_SCREEN} component={OtpScreen} />
+      </Stack.Navigator>
+    );
+  }
+
+  if(userRole === 'immam'){
+    return (
+      <Stack.Navigator screenOptions={stackNavigationOptions}>
+        <Stack.Screen name={AppRoutes.IMAM_HOME_SCREEN} component={ImamHomeScreen} />
+        <Stack.Screen name={AppRoutes.ADD_COMMITTEE_SCREEN} component={AddCommitteeScreen} />
+        <Stack.Screen name={AppRoutes.PROFILE_SCREEN} component={ProfileScreen} />
       </Stack.Navigator>
     );
   }

@@ -19,6 +19,7 @@ const BackButton = ({
         borderColor: Colors.neutral[300],
         padding: 10,
         borderRadius: 10,
+        width: 48
       }, styles]}>
       <Icon name="chevron-back" size={24} />
     </TouchableOpacity>

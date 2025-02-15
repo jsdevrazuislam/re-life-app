@@ -7,6 +7,9 @@ export const AppRoutes = {
     SIGNUP_SCREEN: "SignupScreen",
     HOME_VIEW_DETAILS_INFO: "HomeViewDetailsInfo",
     POOR_PEOPLE_VIEW: "PoorPeopleView",
+    OTP_SCREEN: "OtpScreen",
+    IMAM_HOME_SCREEN:'ImamHomeScreen',
+    ADD_COMMITTEE_SCREEN:'AddCommitteeScreen',
 }
 
 export type AppStackParamList = {
@@ -18,4 +21,6 @@ export type AppStackParamList = {
     SignupScreen: undefined; 
     HomeViewDetailsInfo: undefined; 
     PoorPeopleView: undefined; 
+    AddCommitteeScreen: undefined; 
+    OtpScreen: undefined; 
   };
