@@ -1,8 +1,7 @@
-import React from 'react';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {createStackNavigator} from '@react-navigation/stack';
-import {UserRoles} from '../../types/roles';
-import {stackNavigationOptions} from '../../configs/navigation';
+import React, { useEffect } from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
+import { stackNavigationOptions } from '../../configs/navigation';
 import HomeScreen from '../../screens/HomeScreen';
 import ProfileScreen from '../../screens/ProfileScreen';
 import LoginScreen from '../../screens/LoginScreen';
@@ -17,16 +16,15 @@ import PoorPeopleViewScreen from '../../screens/PoorPeopleViewScreen';
 import OtpScreen from '../../screens/OtpScreen';
 import ImamHomeScreen from '../../screens/ImamHomeScreen';
 import AddCommitteeScreen from '../../screens/AddCommitteeScreen';
+import { useAuthStore } from '../../store/store';
+import LoadingScreen from '../../screens/LoadingScreen';
 
-const userRole =  'immam' as UserRoles;
 
 const Tab = createBottomTabNavigator();
 const TabNavigator = () => (
   <Tab.Navigator>
     <Tab.Screen name="Home" component={HomeScreen} />
-    {userRole === 'admin' && (
-      <Tab.Screen name="Admin" component={AdminStackNavigator} />
-    )}
+    <Tab.Screen name="Admin" component={AdminStackNavigator} />
   </Tab.Navigator>
 );
 
@@ -40,7 +38,20 @@ const AdminStackNavigator = () => (
 
 const Stack = createStackNavigator();
 const AppNavigator = () => {
-  if (!userRole || userRole === 'user') {
+
+  const { role, loadUserFromStorage, isLoading } = useAuthStore()
+
+  useEffect(() => {
+    loadUserFromStorage();
+  }, [loadUserFromStorage]);
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+
+
+  if (!role) {
     return (
       <Stack.Navigator screenOptions={stackNavigationOptions}>
         <Stack.Screen name={AppRoutes.OPENING_SCREEN} component={OpeningScreen} />
@@ -55,7 +66,7 @@ const AppNavigator = () => {
     );
   }
 
-  if(userRole === 'immam'){
+  if (role === 'imam') {
     return (
       <Stack.Navigator screenOptions={stackNavigationOptions}>
         <Stack.Screen name={AppRoutes.IMAM_HOME_SCREEN} component={ImamHomeScreen} />
@@ -66,7 +77,7 @@ const AppNavigator = () => {
   }
 
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Main" component={TabNavigator} />
     </Stack.Navigator>
   );
