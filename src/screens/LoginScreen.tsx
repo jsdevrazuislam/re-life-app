@@ -1,32 +1,43 @@
-import {View, Alert, ScrollView, TouchableOpacity} from 'react-native';
-import React, {useState} from 'react';
+import { View, Alert, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
-import {AppStackParamList} from '../constants/route';
-import {NavigationProp, useNavigation} from '@react-navigation/native';
-import {validateEmail, validatePassword} from '../validations/signup';
+import { AppStackParamList } from '../constants/route';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { validateEmail, validatePassword } from '../validations/signup';
 import globalStyles from '../styles/global.style';
 import AppLogo from '../components/ui/AppLogo';
-import {useTranslation} from '../hooks/useTranslation';
+import { useTranslation } from '../hooks/useTranslation';
 import Heading from '../components/ui/Heading';
 import loginStyles from '../styles/login.style';
 import Input from '../components/ui/AppInput';
 import AppButton from '../components/ui/AppButton';
 import Paragraph from '../components/ui/Paragraph';
+import { useApi } from '../hooks/useApi';
+import ApiStrings from '../lib/apis_string';
+import { showToast } from '../utils/toast';
+import { Colors } from '../configs/colors';
+import { useAuthStore } from '../store/store';
 
 const LoginScreen = () => {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
+  const { request, loading, error } = useApi();
+  const { setUser , setRole } = useAuthStore()
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const emailError = validateEmail(email);
     const passwordError = validatePassword(password);
 
     if (!emailError && !passwordError) {
-      Alert.alert('Form submitted!');
+      const { data, message } = await request('post', ApiStrings.LOGIN, { password, emailOrPhone: email?.toLowerCase() });
+      setUser(data?.user, data?.accessToken, data?.refreshToken)
+      setRole(data?.user?.role)
+      showToast('success', message)
+      navigation.navigate('HomeScreen')
     } else {
-      Alert.alert('Please fix the errors!');
+      showToast('error', 'Please fix the errors!');
     }
   };
 
@@ -55,6 +66,7 @@ const LoginScreen = () => {
               validation={validatePassword}
               secureTextEntry
             />
+            {error && <Paragraph style={loginStyles.errorMessage} level='Small' weight='SemiBold'>{error}</Paragraph>}
             <TouchableOpacity
               onPress={() => navigation.navigate('ForgotPasswordScreen')}
               style={loginStyles.forgotPassword}>
@@ -64,6 +76,7 @@ const LoginScreen = () => {
               text={t('signIn')}
               onPress={handleSubmit}
               variant="primary"
+              loading={loading}
             />
             <View style={loginStyles.bottom}>
               <View style={loginStyles.lineContainer}>

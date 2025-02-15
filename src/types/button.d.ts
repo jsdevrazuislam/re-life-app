@@ -6,6 +6,7 @@ export interface AppButtonProps{
     style?:ViewStyle,
     disabled?:boolean,
     onPress?:(event:GestureResponderEvent) => void
+    loading?:boolean
   };
   
 

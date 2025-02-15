@@ -1,9 +1,10 @@
-import { Text, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, Text, TouchableOpacity } from 'react-native';
 import React from 'react';
 import buttonStyles from '../../styles/components/button.style';
 import { AppButtonProps } from '../../types/button';
+import { Colors } from '../../configs/colors';
 
-const AppButton: React.FC<AppButtonProps> = ({ variant = 'primary', text, style, onPress, disabled }) => {
+const AppButton: React.FC<AppButtonProps> = ({ loading,  variant = 'primary', text, style, onPress, disabled }) => {
   const buttonStyle =
     variant === 'primary'
       ? disabled
@@ -24,7 +25,7 @@ const AppButton: React.FC<AppButtonProps> = ({ variant = 'primary', text, style,
 
   return (
     <TouchableOpacity disabled={disabled} onPress={onPress} style={[buttonStyle, style]}>
-      <Text style={textStyle}>{text}</Text>
+      {loading ?  <ActivityIndicator size='small' color={Colors.white} /> : <Text style={textStyle}>{text}</Text>}
     </TouchableOpacity>
   );
 };

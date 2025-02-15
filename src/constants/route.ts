@@ -18,6 +18,7 @@ export type AppStackParamList = {
     HomeScreen: undefined; 
     ProfileScreen: undefined; 
     ForgotPasswordScreen: undefined; 
+    ImamHomeScreen: undefined; 
     SignupScreen: undefined; 
     HomeViewDetailsInfo: undefined; 
     PoorPeopleView: undefined; 

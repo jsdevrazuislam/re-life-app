@@ -13,6 +13,10 @@ import PeopleTab from '../components/screens/PoorPeopleTab';
 import CommitteeTab from '../components/screens/CommitteTab';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { AppStackParamList } from '../constants/route';
+import { useApi } from '../hooks/useApi';
+import { useAuthStore } from '../store/store';
+import ApiStrings from '../lib/apis_string';
+import { showToast } from '../utils/toast';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -34,6 +38,8 @@ const DashboardScreen = () => {
   const [isMenuVisible, setMenuVisible] = useState(false);
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
   const toggleMenu = () => setMenuVisible(!isMenuVisible);
+  const { request } = useApi();
+  const { logout } = useAuthStore()
 
   // Dynamic greeting
   const getGreeting = () => {
@@ -44,7 +50,12 @@ const DashboardScreen = () => {
   };
 
   const handleAddPerson = () => {/* Add logic */ };
-  const handleAddCommittee = () => {/* Add logic */ };
+  const handleLogout = async () =>{
+    toggleMenu()
+    logout()
+    showToast('success', 'Logout Successfully')
+    await request('get', ApiStrings.LOGOUT);
+  }
   const handleEdit = (id: number) => {/* Add logic */ };
   const handleDelete = (id: number) => {/* Add logic */ };
 
@@ -80,9 +91,11 @@ const DashboardScreen = () => {
                 <Text style={imamStyles.menuText}>Settings</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={imamStyles.menuItem} onPress={() => console.log("Logout clicked")}>
+              <TouchableOpacity style={imamStyles.menuItem} onPress={handleLogout}>
                 <Feather name="log-out" size={20} color="red" />
-                <Text style={[imamStyles.menuText, { color: "red" }]}>Logout</Text>
+                <Text style={[imamStyles.menuText, { color: "red" }]}>
+                  Logout
+                </Text>
               </TouchableOpacity>
             </View>
           </Modal>
