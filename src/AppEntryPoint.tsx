@@ -21,6 +21,7 @@ const AppEntryPoint = () => {
     })()
   }, [accessToken])
 
+
   return (
     <NavigationContainer>
       <AppNavigator />

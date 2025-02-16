@@ -14,11 +14,13 @@ export const AppRoutes = {
     KYC_VERIFY_SCREEN:'KycStartedScreen',
     ADD_POOR_PEOPLE_SCREEN:'AddPoorPeopleScreen',
     KYC_SUCCESS_SCREEN:'KycSuccessScreen',
+    IMAM_SETTING_SCREEN:'ImamSettingsScreen',
 }
 
 export type AppStackParamList = {
     OpeningScreen: undefined; 
     LoginScreen: undefined; 
+    ImamSettingsScreen: undefined; 
     HomeScreen: undefined; 
     ProfileScreen: undefined; 
     ForgotPasswordScreen: undefined; 

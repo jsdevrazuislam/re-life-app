@@ -111,4 +111,46 @@ export const imamStyles = ScaledSheet.create({
       marginLeft: 10,
       fontSize: 16,
     },
+    kycContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: 20,
+    },
+    kycTitle: {
+      fontWeight: 'bold',
+      marginTop: 10,
+      textAlign: 'center',
+    },
+    kycDescription: {
+      color: Colors.lightGray,
+      textAlign: 'center',
+      marginTop: 8,
+      paddingHorizontal: 10,
+    },
+    supportButton: {
+      marginTop: 20,
+      backgroundColor: Colors.primary,
+      paddingVertical: 12,
+      paddingHorizontal: 25,
+      borderRadius: 5,
+    },
+    supportButtonText: {
+      color: '#fff',
+      fontWeight: 'bold',
+    },
+    emptyContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+  },
+  emptyTitle: {
+      fontWeight: 'bold',
+  },
+  emptyDescription: {
+      color: '#666',
+      textAlign: 'center',
+      marginTop: 5,
+      paddingHorizontal: 20,
+  },
   });

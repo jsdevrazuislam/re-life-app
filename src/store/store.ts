@@ -33,6 +33,7 @@ export const useAuthStore = create<AuthState>(set => ({
     await AsyncStorage.removeItem('accessToken');
     await AsyncStorage.removeItem('refreshToken');
     await AsyncStorage.removeItem('role');
+    await AsyncStorage.removeItem('userTempId');
 
     set({
       user: null,
@@ -54,7 +55,9 @@ export const useAuthStore = create<AuthState>(set => ({
 
       if (role && accessToken && refreshToken) {
         set({
-          role: role,
+          role,
+          accessToken,
+          refreshToken,
           isLoading: false,
         });
       } else {
