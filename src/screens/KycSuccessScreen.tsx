@@ -1,5 +1,5 @@
 import { View } from 'react-native'
-import React, { useEffect } from 'react'
+import React from 'react'
 import SafeAreaWrapper from '../components/SafeAreaWrapper'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { ScaledSheet } from 'react-native-size-matters'
@@ -11,15 +11,8 @@ import { AppStackParamList } from '../constants/route'
 
 const KycSuccessScreen = () => {
 
-    const navigation = useNavigation<NavigationProp<AppStackParamList>>();
+  const navigation = useNavigation<NavigationProp<AppStackParamList>>();
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      navigation.navigate('HomeScreen')
-    }, 3000);
-
-    return () => clearTimeout(timer);
-  }, []);
 
 
   return (
@@ -29,10 +22,10 @@ const KycSuccessScreen = () => {
           <Icon name="check-circle" size={50} color="#4CAF50" style={styles.icon} />
           <Heading level={6} weight='Bold' style={styles.title}>KYC Submitted Successfully!</Heading>
           <Paragraph level='Small' weight='Medium' style={styles.description}>
-            Thank you for completing your KYC. We've received your information and will review it shortly. 
+            Thank you for completing your KYC. We've received your information and will review it shortly.
             You'll be notified once the verification process is complete.
           </Paragraph>
-          <AppButton text='Return to Dashboard' />
+          <AppButton text='Return to Dashboard' onPress={() => navigation.navigate('ImamHomeScreen')} />
         </View>
       </View>
     </SafeAreaWrapper>

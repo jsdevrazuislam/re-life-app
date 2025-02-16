@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, Image, Modal } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
@@ -20,26 +20,18 @@ import { showToast } from '../utils/toast';
 
 const Tab = createMaterialTopTabNavigator();
 
-const mockPeopleData = [
-  { id: 1, name: 'John Doe', age: 35, needs: 'Food, Medicine' },
-  { id: 2, name: 'Jane Smith', age: 28, needs: 'Clothing, Shelter' },
-];
 
-const mockCommitteeData = [
-  { id: 1, name: 'Community Center', members: 15, location: 'Downtown' },
-  { id: 2, name: 'Health Clinic', members: 8, location: 'Suburbs' },
-];
 
 
 
 const DashboardScreen = () => {
-  const [people, setPeople] = useState(mockPeopleData);
-  const [committees, setCommittees] = useState(mockCommitteeData);
+  const [people, setPeople] = useState<PoorPeopleResponse[]>([]);
+  const [committees, setCommittees] = useState<CommitteeResponse[]>([]);
   const [isMenuVisible, setMenuVisible] = useState(false);
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
   const toggleMenu = () => setMenuVisible(!isMenuVisible);
   const { request } = useApi();
-  const { logout } = useAuthStore()
+  const { logout, user } = useAuthStore()
 
   // Dynamic greeting
   const getGreeting = () => {
@@ -54,12 +46,51 @@ const DashboardScreen = () => {
    };
   const handleLogout = async () =>{
     toggleMenu()
+    await request('get', ApiStrings.LOGOUT);
     logout()
     showToast('success', 'Logout Successfully')
-    await request('get', ApiStrings.LOGOUT);
   }
-  const handleEdit = (id: number) => {/* Add logic */ };
-  const handleDelete = (id: number) => {/* Add logic */ };
+  const handleEdit = (id: string) => {/* Add logic */ };
+  const handleDelete = (id: string) => {/* Add logic */ }
+
+  useEffect(() =>{
+    (async() =>{
+      const { data } = await request('get', ApiStrings.GET_COMMITTEE(user?.masjid || ''));
+      const { data: poorPeopleData } = await request('get', ApiStrings.GET_POOR_PEOPLE(user?.masjid || ''));
+      setCommittees(data)
+      setPeople(poorPeopleData)
+    })()
+  } ,[user])
+  
+
+  if (user?.kycStatus === 'pending' || user?.kycStatus === 'rejected') {
+    return (
+      <SafeAreaWrapper bg={'#DDEBFE'}>
+        <View style={imamStyles.kycContainer}>
+          <Icon
+            name={user?.kycStatus === 'pending' ? 'hourglass-empty' : 'error-outline'}
+            size={60}
+            color={user?.kycStatus === 'pending' ? Colors.secondary : Colors.danger}
+          />
+          <Heading level={5} weight='Bold' style={imamStyles.kycTitle}>
+            {user?.kycStatus === 'pending' ? 'KYC Verification Pending' : 'KYC Verification Rejected'}
+          </Heading>
+          <Paragraph level='Small' weight='SemiBold' style={imamStyles.kycDescription}>
+            {user?.kycStatus === 'pending'
+              ? 'Your KYC verification is under review. Please wait for approval.'
+              : 'Your KYC verification was rejected. Please contact support for further assistance.'}
+          </Paragraph>
+
+          {user?.kycStatus === 'rejected' && (
+            <TouchableOpacity style={imamStyles.supportButton}>
+              <Text style={imamStyles.supportButtonText}>Contact Support</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      </SafeAreaWrapper>
+    );
+  }
+
 
   return (
     <SafeAreaWrapper bg={Colors.light}>
@@ -67,7 +98,7 @@ const DashboardScreen = () => {
         <View style={imamStyles.header}>
           <View>
             <Paragraph level='Medium' weight='Bold' style={imamStyles.greeting}>{getGreeting()},</Paragraph>
-            <Paragraph level='Medium' weight='Bold' style={imamStyles.greeting}>Admin</Paragraph>
+            <Paragraph level='Medium' weight='Bold' style={imamStyles.greeting}>{user?.fullName}</Paragraph>
           </View>
           <TouchableOpacity onPress={toggleMenu}>
             <Image source={{ uri: "https://images.pexels.com/photos/30140435/pexels-photo-30140435/free-photo-of-moody-forest-in-heavy-fog.jpeg?auto=compress&cs=tinysrgb&w=800&lazy=load" }} style={imamStyles.infoPhoto} />
@@ -81,14 +112,17 @@ const DashboardScreen = () => {
             <TouchableOpacity style={imamStyles.overlay} onPress={toggleMenu} />
             <View style={imamStyles.menu}>
               <TouchableOpacity style={imamStyles.menuItem} onPress={() => {
-                navigation.navigate('ProfileScreen')
                 toggleMenu()
+                navigation.navigate('ProfileScreen')
               }}>
                 <Feather name="user" size={20} color="#333" />
                 <Text style={imamStyles.menuText}>Profile</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={imamStyles.menuItem} onPress={() => console.log("Settings clicked")}>
+              <TouchableOpacity style={imamStyles.menuItem} onPress={() => {
+                toggleMenu()
+                navigation.navigate('ImamSettingsScreen')
+              }}>
                 <Feather name="settings" size={20} color="#333" />
                 <Text style={imamStyles.menuText}>Settings</Text>
               </TouchableOpacity>
@@ -107,12 +141,12 @@ const DashboardScreen = () => {
           <View style={imamStyles.statCard}>
             <Icon name="people" size={32} color="#3F51B5" />
             <Paragraph level='Small' weight='Medium' style={imamStyles.statLabel}>Total People</Paragraph>
-            <Heading level={5} weight='Bold' style={imamStyles.statValue}>1,234</Heading>
+            <Heading level={5} weight='Bold' style={imamStyles.statValue}>{people?.length}</Heading>
           </View>
           <View style={imamStyles.statCard}>
             <Icon name="groups" size={32} color="#4CAF50" />
-            <Text style={imamStyles.statLabel}>Committees</Text>
-            <Text style={imamStyles.statValue}>45</Text>
+            <Paragraph level='Small' weight='Medium' style={imamStyles.statLabel}>Committees</Paragraph>
+            <Heading level={5} weight='Bold'  style={imamStyles.statValue}>{committees?.length}</Heading>
           </View>
         </View>
 
