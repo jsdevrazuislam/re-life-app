@@ -1,4 +1,4 @@
-import { View, Text, PermissionsAndroid, Platform, Alert, Linking, Image, TouchableOpacity, FlatList, ScrollView } from 'react-native';
+import { View, Platform, Alert, Linking, Image, TouchableOpacity, ScrollView } from 'react-native';
 import React, { useState } from 'react';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import globalStyles from '../styles/global.style';

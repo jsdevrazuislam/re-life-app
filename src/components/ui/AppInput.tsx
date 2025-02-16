@@ -106,13 +106,13 @@ const styles = ScaledSheet.create({
     fontWeight: '400',
   },
   inputWrapper: {
-    // flexDirection: 'row',
-    // alignItems: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 8,
-    overflow:'hidden'
-    // paddingRight: 12,
+    overflow:'hidden',
+    paddingRight: 12,
   },
   input: {
     flex: 1,

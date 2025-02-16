@@ -24,6 +24,11 @@ const validateCheckbox = (value: boolean) => {
     if (!value) return 'You must accept the terms and conditions';
     return null;
   };
+const validatePinCode = (value: string) => {
+  if (!value) return 'Pincode is required';
+  if (value.length < 3) return 'Pincode must be at least 3 characters';
+  return null;
+  };
 
 
 export {
@@ -31,5 +36,6 @@ export {
     validatePassword,
     validateName,
     validateUsername,
-    validateCheckbox
+    validateCheckbox,
+    validatePinCode
 }

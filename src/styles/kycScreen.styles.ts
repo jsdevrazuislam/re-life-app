@@ -11,6 +11,25 @@ const styles = ScaledSheet.create({
     firstStep:{
       marginTop: '30@ms'
     },
+    row:{
+      flexDirection:'row',
+      marginTop: '40@ms',
+      gap:'20@ms'
+    },
+    image:{
+      width: '100%',
+       height: '100%',
+      objectFit: 'cover'
+    },
+    deleteButton:{
+      width: '30@ms',
+      height:'30@ms',
+      backgroundColor: Colors.danger,
+      borderRadius: '50@ms',
+      justifyContent:'center',
+      alignItems:'center',
+      position:'absolute'
+    },
     stepperContainer: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -75,6 +94,7 @@ const styles = ScaledSheet.create({
     },
     docTypeText: {
       color: Colors.text,
+      textTransform:'capitalize'
     },
     selectedDocTypeText: {
       color: Colors.white,
@@ -103,30 +123,12 @@ const styles = ScaledSheet.create({
       borderStyle: 'dashed',
       justifyContent: 'center',
       alignItems: 'center',
+      position:'relative'
     },
     uploadAreaText: {
       marginTop: '10@vs',
       color: '#3F51B5',
       fontSize: '14@ms',
-    },
-    uploadCard: {
-      backgroundColor: '#F8F9FA',
-      borderRadius: '10@s',
-    },
-    uploadCardTitle: {
-      fontSize: '14@ms',
-      fontWeight: 'bold',
-      color: '#333',
-      marginBottom: '15@vs',
-    },
-    uploadButton: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '10@s',
-      borderWidth: 1,
-      borderColor: '#DDD',
-      borderRadius: '8@s',
     },
     uploadButtonText: {
       marginLeft: '10@s',

@@ -9,15 +9,17 @@ import ApiStrings from './lib/apis_string';
 
 const AppEntryPoint = () => {
 
-  const { request } = useApi()
-  const { setUserInfo } = useAuthStore()
+  const { request, } = useApi()
+  const { setUserInfo, accessToken } = useAuthStore()
 
   useEffect(() => {
     (async () => {
-      const { data } = await request('get', ApiStrings.ME);
-      setUserInfo(data)
+      if(accessToken){
+        const { data } = await request('get', ApiStrings.ME);
+        setUserInfo(data)
+      }
     })()
-  }, [])
+  }, [accessToken])
 
   return (
     <NavigationContainer>
