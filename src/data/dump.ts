@@ -385,3 +385,10 @@ export const villages = [
     { label: "Mirpur Village 1", value: "mirpur_v1" },
     { label: "Mirpur Village 2", value: "mirpur_v2" },
 ]
+
+export const frequencyOptions = [{ label: 'Month', value: 'month' }, { label: 'Year', value: 'year' }, { label: 'Week', value: 'week' }];
+export const assistanceTypes = [{ label: 'Food', value: 'food' }, { label: 'Clothing', value: 'clothing' }, { label: 'Medical', value: 'medical' }, { label: 'Financial', value: 'financial' }];
+export const yesNoOptions = [{ label: 'yes', value: 'yes' }, { label: 'no', value: 'no' }];
+export const genders = [{ label: 'male', value: 'male' }, { label: 'female', value: 'female' }, { label: 'other', value: 'other' }];
+export const marriages = [{ label: 'single', value: 'single' }, { label: 'married', value: 'married' }, { label: 'divorced', value: 'divorced' }, { label: 'widowed', value: 'widowed' }]
+export const needs = [{ label: '1', value: '1' }]

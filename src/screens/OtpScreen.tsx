@@ -3,7 +3,6 @@ import {
     View,
     TextInput,
     TouchableOpacity,
-    Alert,
     ScrollView,
 } from 'react-native';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
@@ -15,6 +14,13 @@ import Heading from '../components/ui/Heading';
 import Paragraph from '../components/ui/Paragraph';
 import { useTranslation } from '../hooks/useTranslation';
 import AppButton from '../components/ui/AppButton';
+import { showToast } from '../utils/toast';
+import { useApi } from '../hooks/useApi';
+import ErrorMessage from '../components/ErrorMessage';
+import { useAuthStore } from '../store/store';
+import ApiStrings from '../lib/apis_string';
+import { AppStackParamList } from '../constants/route';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 
 const OtpScreen = () => {
     const [otp, setOtp] = useState('');
@@ -22,6 +28,10 @@ const OtpScreen = () => {
     const [isResendDisabled, setIsResendDisabled] = useState(false);
     const [isVerifyDisabled, setIsVerifyDisabled] = useState(true);
     const { t } = useTranslation();
+    const { request, loading, error } = useApi();
+    const { userTempId, setUserId } = useAuthStore()
+    const navigation = useNavigation<NavigationProp<AppStackParamList>>();
+
 
     useEffect(() => {
         if (timer > 0) {
@@ -37,11 +47,18 @@ const OtpScreen = () => {
     const handleResendCode = () => {
         setTimer(20);
         setIsResendDisabled(true);
-        Alert.alert('Code Resent', 'A new code has been sent to your email.');
+        showToast('success', 'A new code has been sent to your email.');
     };
 
-    const handleVerify = () => {
-        Alert.alert('Verified', 'Your OTP has been verified successfully.');
+    const handleVerify = async () => {
+        const payload = {
+            userId: userTempId,
+            otpCode: otp
+        }
+        const { message } = await request('post', ApiStrings.OTP_VERIFY, payload);
+        setUserId('')
+        showToast('success', message)
+        navigation.navigate('KycStartedScreen')
     };
 
     const handleOtpChange = (text: string) => {
@@ -79,13 +96,22 @@ const OtpScreen = () => {
                                 />
                             ))}
                     </View>
-                    <AppButton onPress={handleVerify} disabled={isVerifyDisabled} variant='primary' text={t('verify')} />
+                    {error && <ErrorMessage error={error} />}
+                    <AppButton
+                        loading={loading}
+                        onPress={handleVerify}
+                        disabled={isVerifyDisabled}
+                        variant="primary"
+                        text={t('verify')}
+                    />
                     <TouchableOpacity
                         style={otpStyles.resendButton}
                         onPress={handleResendCode}
-                        disabled={isResendDisabled}
-                    >
-                        <Paragraph level='Small' weight='SemiBold' style={otpStyles.resendText}>
+                        disabled={isResendDisabled || loading}>
+                        <Paragraph
+                            level="Small"
+                            weight="SemiBold"
+                            style={otpStyles.resendText}>
                             Resend {timer > 0 ? `00:${timer < 10 ? `0${timer}` : timer}` : ''}
                         </Paragraph>
                     </TouchableOpacity>
