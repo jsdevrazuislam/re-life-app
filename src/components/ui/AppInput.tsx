@@ -4,9 +4,13 @@ import {
   View,
   Text,
   TouchableOpacity,
+  StyleProp,
+  TextStyle,
+  ViewStyle,
 } from 'react-native';
 import { ScaledSheet } from 'react-native-size-matters';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface InputProps {
   label?: string;
@@ -18,6 +22,8 @@ interface InputProps {
   secureTextEntry?: boolean;
   validation?: (value: string) => string | null;
   style?: object;
+  inputStyles?: StyleProp<TextStyle>,
+  inputWrapper?: StyleProp<ViewStyle>
 }
 
 const Input: React.FC<InputProps> = ({
@@ -29,11 +35,14 @@ const Input: React.FC<InputProps> = ({
   keyboardType = 'default',
   secureTextEntry = false,
   validation,
+  inputStyles,
   style,
+  inputWrapper
 }) => {
   const [error, setError] = useState<string | null>(null);
   const [touched, setTouched] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const { t } = useTranslation()
 
   const handleBlur = () => {
     setTouched(true);
@@ -51,10 +60,10 @@ const Input: React.FC<InputProps> = ({
   return (
     <View style={[styles.container, style]}>
       {label && <Text style={styles.label}>{label}</Text>}
-      <View style={styles.inputWrapper}>
+      <View style={[styles.inputWrapper, inputWrapper]}>
         <TextInput
-          style={[styles.input, error ? styles.inputError : null]}
-          placeholder={placeholder}
+          style={[styles.input, error ? styles.inputError : null, inputStyles]}
+          placeholder={placeholder ? placeholder : t("Enter Your Value") }
           value={value}
           onChangeText={(text) => {
             onChangeText(text);
@@ -97,12 +106,13 @@ const styles = ScaledSheet.create({
     fontWeight: '400',
   },
   inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    // flexDirection: 'row',
+    // alignItems: 'center',
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 8,
-    paddingRight: 12,
+    overflow:'hidden'
+    // paddingRight: 12,
   },
   input: {
     flex: 1,

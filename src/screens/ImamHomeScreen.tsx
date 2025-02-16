@@ -49,7 +49,9 @@ const DashboardScreen = () => {
     return 'Good Evening';
   };
 
-  const handleAddPerson = () => {/* Add logic */ };
+  const handleAddPerson = () => {
+    navigation.navigate('AddPoorPeopleScreen')
+   };
   const handleLogout = async () =>{
     toggleMenu()
     logout()

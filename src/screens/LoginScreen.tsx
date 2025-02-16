@@ -15,7 +15,6 @@ import Paragraph from '../components/ui/Paragraph';
 import { useApi } from '../hooks/useApi';
 import ApiStrings from '../lib/apis_string';
 import { showToast } from '../utils/toast';
-import { Colors } from '../configs/colors';
 import { useAuthStore } from '../store/store';
 
 const LoginScreen = () => {
@@ -25,20 +24,16 @@ const LoginScreen = () => {
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
   const { request, loading, error } = useApi();
   const { setUser , setRole } = useAuthStore()
+  const emailError = validateEmail(email);
+  const passwordError = validatePassword(password);
 
   const handleSubmit = async () => {
-    const emailError = validateEmail(email);
-    const passwordError = validatePassword(password);
-
-    if (!emailError && !passwordError) {
       const { data, message } = await request('post', ApiStrings.LOGIN, { password, emailOrPhone: email?.toLowerCase() });
       setUser(data?.user, data?.accessToken, data?.refreshToken)
       setRole(data?.user?.role)
       showToast('success', message)
       navigation.navigate('HomeScreen')
-    } else {
-      showToast('error', 'Please fix the errors!');
-    }
+    
   };
 
   return (
@@ -77,6 +72,7 @@ const LoginScreen = () => {
               onPress={handleSubmit}
               variant="primary"
               loading={loading}
+              disabled={emailError && true || passwordError && true || !email || !password}
             />
             <View style={loginStyles.bottom}>
               <View style={loginStyles.lineContainer}>

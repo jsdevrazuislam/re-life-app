@@ -10,6 +10,10 @@ export const AppRoutes = {
     OTP_SCREEN: "OtpScreen",
     IMAM_HOME_SCREEN:'ImamHomeScreen',
     ADD_COMMITTEE_SCREEN:'AddCommitteeScreen',
+    KYC_SCREEN:'KycScreen',
+    KYC_VERIFY_SCREEN:'KycStartedScreen',
+    ADD_POOR_PEOPLE_SCREEN:'AddPoorPeopleScreen',
+    KYC_SUCCESS_SCREEN:'KycSuccessScreen',
 }
 
 export type AppStackParamList = {
@@ -18,10 +22,14 @@ export type AppStackParamList = {
     HomeScreen: undefined; 
     ProfileScreen: undefined; 
     ForgotPasswordScreen: undefined; 
+    KycStartedScreen: undefined; 
+    AddPoorPeopleScreen: undefined; 
     ImamHomeScreen: undefined; 
     SignupScreen: undefined; 
     HomeViewDetailsInfo: undefined; 
     PoorPeopleView: undefined; 
+    KycSuccessScreen: undefined; 
+    KycScreen: undefined; 
     AddCommitteeScreen: undefined; 
     OtpScreen: undefined; 
   };

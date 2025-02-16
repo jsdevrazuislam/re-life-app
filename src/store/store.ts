@@ -6,11 +6,13 @@ interface AuthState {
   accessToken: string | null;
   refreshToken: string | null;
   role: string | null;
+  userTempId: string | null;
   isAuthenticated: boolean;
   setUserInfo: (user: IUser) => void;
   logout: () => void;
   setUser: (user: IUser, accessToken: string, refreshToken: string) => void;
   setRole: (role: string) => void;
+  setUserId: (role: string) => void;
   loadUserFromStorage: () => Promise<void>;
   isLoading: boolean;
 }
@@ -22,6 +24,7 @@ const initialState = {
   isAuthenticated: false,
   role: null,
   isLoading: true,
+  userTempId: null
 };
 
 export const useAuthStore = create<AuthState>(set => ({
@@ -35,6 +38,7 @@ export const useAuthStore = create<AuthState>(set => ({
       user: null,
       accessToken: null,
       refreshToken: null,
+      userTempId: null,
       role: null,
       isAuthenticated: false,
     });
@@ -43,7 +47,10 @@ export const useAuthStore = create<AuthState>(set => ({
     try {
       const role = await AsyncStorage.getItem('role');
       const accessToken = await AsyncStorage.getItem('accessToken');
+      const userTempId = await AsyncStorage.getItem('userTempId');
       const refreshToken = await AsyncStorage.getItem('refreshToken');
+
+      set({ userTempId })
 
       if (role && accessToken && refreshToken) {
         set({
@@ -59,6 +66,7 @@ export const useAuthStore = create<AuthState>(set => ({
     }
   },
   setRole:(role) => set({ role }),
+  setUserId:(userTempId) => set({ userTempId }),
   setUserInfo: user => set({ user }),
   setUser: async (user, accessToken, refreshToken) => {
     await AsyncStorage.setItem('accessToken', accessToken);

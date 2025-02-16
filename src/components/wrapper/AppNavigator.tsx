@@ -18,6 +18,10 @@ import ImamHomeScreen from '../../screens/ImamHomeScreen';
 import AddCommitteeScreen from '../../screens/AddCommitteeScreen';
 import { useAuthStore } from '../../store/store';
 import LoadingScreen from '../../screens/LoadingScreen';
+import KYCVerifyScreen from '../../screens/KycStartedScreen';
+import KycScreen from '../../screens/KycScreen';
+import KycSuccessScreen from '../../screens/KycSuccessScreen';
+import AddPeopleScreen from '../../screens/AddPoorPeopleScreen';
 
 
 const Tab = createBottomTabNavigator();
@@ -62,6 +66,9 @@ const AppNavigator = () => {
         <Stack.Screen name={AppRoutes.HOME_VIEW_DETAILS_INFO} component={HomeViewDetailsInfoScreen} />
         <Stack.Screen name={AppRoutes.POOR_PEOPLE_VIEW} component={PoorPeopleViewScreen} />
         <Stack.Screen name={AppRoutes.OTP_SCREEN} component={OtpScreen} />
+        <Stack.Screen name={AppRoutes.KYC_VERIFY_SCREEN} component={KYCVerifyScreen} />
+        <Stack.Screen name={AppRoutes.KYC_SUCCESS_SCREEN} component={KycSuccessScreen} />
+        <Stack.Screen name={AppRoutes.KYC_SCREEN} component={KycScreen} />
       </Stack.Navigator>
     );
   }
@@ -72,6 +79,7 @@ const AppNavigator = () => {
         <Stack.Screen name={AppRoutes.IMAM_HOME_SCREEN} component={ImamHomeScreen} />
         <Stack.Screen name={AppRoutes.ADD_COMMITTEE_SCREEN} component={AddCommitteeScreen} />
         <Stack.Screen name={AppRoutes.PROFILE_SCREEN} component={ProfileScreen} />
+        <Stack.Screen name={AppRoutes.ADD_POOR_PEOPLE_SCREEN} component={AddPeopleScreen} />
       </Stack.Navigator>
     );
   }
