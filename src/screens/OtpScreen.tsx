@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     View,
     TextInput,
@@ -23,14 +23,16 @@ import { AppStackParamList } from '../constants/route';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 
 const OtpScreen = () => {
-    const [otp, setOtp] = useState('');
+    const [otp, setOtp] = useState(['', '', '', '']);
     const [timer, setTimer] = useState(60);
     const [isResendDisabled, setIsResendDisabled] = useState(false);
     const [isVerifyDisabled, setIsVerifyDisabled] = useState(true);
     const { t } = useTranslation();
     const { request, loading, error } = useApi();
-    const { userTempId, setUserId } = useAuthStore()
+    const { userTempId } = useAuthStore()
     const navigation = useNavigation<NavigationProp<AppStackParamList>>();
+    const inputRefs = useRef<Array<TextInput | null>>([]);
+
 
 
     useEffect(() => {
@@ -53,17 +55,30 @@ const OtpScreen = () => {
     const handleVerify = async () => {
         const payload = {
             userId: userTempId,
-            otpCode: otp
+            otpCode: otp.join('')
         }
         const { message } = await request('post', ApiStrings.OTP_VERIFY, payload);
-        setUserId('')
         showToast('success', message)
         navigation.navigate('KycStartedScreen')
     };
 
-    const handleOtpChange = (text: string) => {
-        setOtp(text);
-        setIsVerifyDisabled(text.length !== 4);
+    const handleOtpChange = (text: string, index: number) => {
+        if (!/^\d?$/.test(text)) return; // Allow only numbers
+
+        const newOtp = [...otp];
+        newOtp[index] = text;
+        setOtp(newOtp);
+        setIsVerifyDisabled(newOtp.some(val => val === ''));
+
+        if (text && index < inputRefs.current.length - 1) {
+            inputRefs.current[index + 1]?.focus(); // Move to the next input
+        }
+    };
+
+    const handleBackspace = (text: string, index: number) => {
+        if (!text && index > 0) {
+            inputRefs.current[index - 1]?.focus(); // Move back on delete
+        }
     };
 
     return (
@@ -79,22 +94,23 @@ const OtpScreen = () => {
                     </Heading>
                     <Paragraph level="Medium">{t('codeSentTo')}</Paragraph>
                     <View style={otpStyles.otpContainer}>
-                        {Array(4)
-                            .fill('')
-                            .map((_, index) => (
-                                <TextInput
-                                    key={index}
-                                    style={otpStyles.otpInput}
-                                    maxLength={1}
-                                    keyboardType="numeric"
-                                    onChangeText={text => {
-                                        const newOtp = otp.split('');
-                                        newOtp[index] = text;
-                                        handleOtpChange(newOtp.join(''));
-                                    }}
-                                    value={otp[index] || ''}
-                                />
-                            ))}
+                    {otp.map((digit, index) => (
+                            <TextInput
+                                key={index}
+                                ref={ref => (inputRefs.current[index] = ref)}
+                                style={otpStyles.otpInput}
+                                maxLength={1}
+                                keyboardType="numeric"
+                                value={digit}
+                                onChangeText={text => handleOtpChange(text, index)}
+                                onKeyPress={({ nativeEvent }) => {
+                                    if (nativeEvent.key === 'Backspace') {
+                                        handleBackspace(digit, index);
+                                    }
+                                }}
+                                autoFocus={index === 0} // Auto-focus first input
+                            />
+                        ))}
                     </View>
                     {error && <ErrorMessage error={error} />}
                     <AppButton

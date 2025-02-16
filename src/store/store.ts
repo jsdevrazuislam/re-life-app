@@ -66,7 +66,10 @@ export const useAuthStore = create<AuthState>(set => ({
     }
   },
   setRole:(role) => set({ role }),
-  setUserId:(userTempId) => set({ userTempId }),
+  setUserId: async (userTempId) => {
+    set({ userTempId })
+    await AsyncStorage.setItem('userTempId', userTempId);
+  },
   setUserInfo: user => set({ user }),
   setUser: async (user, accessToken, refreshToken) => {
     await AsyncStorage.setItem('accessToken', accessToken);

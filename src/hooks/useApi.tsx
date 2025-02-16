@@ -6,12 +6,28 @@ export const useApi = () => {
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<any>(null);
 
-  const request = async (method: 'get' | 'post' | 'put' | 'delete', url: string, data?: any) => {
+  const request = async (
+    method: 'get' | 'post' | 'put' | 'delete', 
+    url: string, 
+    data?: any, 
+    headers?: any
+  ) => {
     setLoading(true);
-    setError(null); 
+    setError(null);
+  
     try {
-      const response = await api({ method, url, data });
-      setData(response.data); 
+      const config = {
+        method,
+        url,
+        data,
+        headers: {
+          ...(data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : {}), 
+          ...headers,
+        },
+      };
+  
+      const response = await api(config);
+      setData(response.data);
       return response.data;
     } catch (error: any) {
       setError(error?.response?.data?.message || error?.message || 'An error occurred');

@@ -33,7 +33,6 @@ const LoginScreen = () => {
       setRole(data?.user?.role)
       showToast('success', message)
       navigation.navigate('HomeScreen')
-    
   };
 
   return (

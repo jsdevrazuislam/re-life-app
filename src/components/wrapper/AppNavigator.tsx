@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { stackNavigationOptions } from '../../configs/navigation';
@@ -43,17 +43,11 @@ const AdminStackNavigator = () => (
 const Stack = createStackNavigator();
 const AppNavigator = () => {
 
-  const { role, loadUserFromStorage, isLoading } = useAuthStore()
+  const { role, isLoading } = useAuthStore()
 
-  useEffect(() => {
-    loadUserFromStorage();
-  }, [loadUserFromStorage]);
-
-  if (isLoading) {
-    return <LoadingScreen />;
+  if(isLoading) {
+    return <LoadingScreen />
   }
-
-
 
   if (!role) {
     return (
