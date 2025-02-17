@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleProp, ViewStyle } from 'react-native';
+import { View, Text, StyleProp, ViewStyle, TextStyle } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
 import { ScaledSheet } from 'react-native-size-matters';
 import { dropdownStyles } from '../../styles/components/dropdown.style';
@@ -13,7 +13,8 @@ interface SelectDropdownProps {
   placeholder?: string;
   style?: StyleProp<ViewStyle>,
   search?:boolean,
-  searchPlaceholder?:string
+  searchPlaceholder?:string,
+  inputStyles?: StyleProp<TextStyle>;
 }
 
 const SelectDropdown: React.FC<SelectDropdownProps> = ({
@@ -25,7 +26,8 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
   placeholder = 'Select an option',
   style,
   search,
-  searchPlaceholder
+  searchPlaceholder,
+  inputStyles
 }) => {
   const [error, setError] = useState<string | null>(null);
   const [touched, setTouched] = useState(false);
@@ -54,7 +56,7 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
         value={value}
         onChange={item => handleSelect(item.value)}
         placeholder={placeholder}
-        style={[styles.dropdown, error ? styles.inputError : null]}
+        style={[styles.dropdown, error ? styles.inputError : null, inputStyles]}
         selectedTextStyle={styles.selectedText}
         placeholderStyle={styles.placeholder}
         containerStyle={styles.dropdownContainer}

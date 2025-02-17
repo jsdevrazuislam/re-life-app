@@ -40,7 +40,7 @@ const CommitteeTab: React.FC<CommitteeTabProps> = ({ data, onEdit, onDelete }) =
                                 </View>
                             </View>
                             <View style={imamStyles.actionButtons}>
-                                <TouchableOpacity onPress={() => onEdit(item?._id)}>
+                                <TouchableOpacity onPress={() => onEdit(item)}>
                                     <Icon name="edit" size={20} color="#4CAF50" />
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={() => onDelete(item?._id)}>

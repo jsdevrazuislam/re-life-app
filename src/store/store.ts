@@ -1,5 +1,7 @@
 import {create} from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { api } from '../lib/api';
+import ApiStrings from '../lib/apis_string';
 
 interface AuthState {
   user: IUser | null;
@@ -51,18 +53,12 @@ export const useAuthStore = create<AuthState>(set => ({
       const userTempId = await AsyncStorage.getItem('userTempId');
       const refreshToken = await AsyncStorage.getItem('refreshToken');
 
-      set({ userTempId })
-
-      if (role && accessToken && refreshToken) {
-        set({
-          role,
-          accessToken,
-          refreshToken,
-          isLoading: false,
-        });
-      } else {
-        set({ isLoading: false });
+      if(accessToken){
+        const { data } = await api.get(ApiStrings.ME)
+        set({ userTempId, accessToken, refreshToken, isLoading: false, role, user: data?.data, isAuthenticated: true})
       }
+      set({ isLoading: false });
+
     } catch (error) {
       console.error('Error loading user from storage:', error);
       set({ isLoading: false });

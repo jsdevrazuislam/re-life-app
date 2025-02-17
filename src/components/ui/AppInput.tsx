@@ -22,8 +22,9 @@ interface InputProps {
   secureTextEntry?: boolean;
   validation?: (value: string) => string | null;
   style?: object;
-  inputStyles?: StyleProp<TextStyle>,
-  inputWrapper?: StyleProp<ViewStyle>
+  inputStyles?: StyleProp<TextStyle>;
+  inputWrapper?: StyleProp<ViewStyle>;
+  isNumber?: boolean;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -37,12 +38,13 @@ const Input: React.FC<InputProps> = ({
   validation,
   inputStyles,
   style,
-  inputWrapper
+  inputWrapper,
+  isNumber = false,  // Default is false
 }) => {
   const [error, setError] = useState<string | null>(null);
   const [touched, setTouched] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   const handleBlur = () => {
     setTouched(true);
@@ -51,6 +53,19 @@ const Input: React.FC<InputProps> = ({
       setError(validationError);
     }
     if (onBlur) onBlur();
+  };
+
+  const handleChangeText = (text: string) => {
+    if (isNumber) {
+      const numericText = text.replace(/[^0-9]/g, '');
+      onChangeText(numericText);
+    } else {
+      onChangeText(text);
+    }
+    
+    if (touched && validation) {
+      setError(validation(text));
+    }
   };
 
   const togglePasswordVisibility = () => {
@@ -63,28 +78,16 @@ const Input: React.FC<InputProps> = ({
       <View style={[styles.inputWrapper, inputWrapper]}>
         <TextInput
           style={[styles.input, error ? styles.inputError : null, inputStyles]}
-          placeholder={placeholder ? placeholder : t("Enter Your Value") }
+          placeholder={placeholder ? placeholder : t("Enter Your Value")}
           value={value}
-          onChangeText={(text) => {
-            onChangeText(text);
-            if (touched && validation) {
-              setError(validation(text));
-            }
-          }}
+          onChangeText={handleChangeText}
           onBlur={handleBlur}
-          keyboardType={keyboardType}
+          keyboardType={isNumber ? 'numeric' : keyboardType}  // Set keyboardType to numeric if isNumber is true
           secureTextEntry={secureTextEntry && !isPasswordVisible}
         />
         {secureTextEntry && (
-          <TouchableOpacity
-            onPress={togglePasswordVisibility}
-            style={styles.iconWrapper}
-          >
-            <Icon
-              name={isPasswordVisible ? 'eye' : 'eye-off'}
-              size={20}
-              color="#999"
-            />
+          <TouchableOpacity onPress={togglePasswordVisibility} style={styles.iconWrapper}>
+            <Icon name={isPasswordVisible ? 'eye' : 'eye-off'} size={20} color="#999" />
           </TouchableOpacity>
         )}
       </View>
@@ -111,7 +114,7 @@ const styles = ScaledSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 8,
-    overflow:'hidden',
+    overflow: 'hidden',
     paddingRight: 12,
   },
   input: {

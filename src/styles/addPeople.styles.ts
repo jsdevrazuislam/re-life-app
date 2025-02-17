@@ -3,14 +3,48 @@ import { Colors } from "../configs/colors";
 
 const styles = ScaledSheet.create({
     uploadPhotoContainer: {
-        alignItems: 'center',
-        marginVertical: '20@vs',
+        margin:'auto'
     },
+    profileSection:{
+        justifyContent:'center',
+        alignItems:'center'
+    },
+    avatarContainer:{
+        position: 'relative',
+    },
+    editIcon: {
+        position: 'absolute',
+        bottom: 0,
+        right: -10,
+        backgroundColor: Colors.primary,
+        borderRadius: '15@ms',
+        padding: '8@ms',
+      },
+    avatar: {
+        width: '100@ms',
+        height: '100@ms',
+        borderRadius: '50@ms',
+        backgroundColor: Colors.lightGray
+      },
     income:{
             flexDirection:'row',
             gap:'10@ms',
             alignItems:'center'
     },
+    image:{
+        width: '100%',
+         height: '100%',
+          objectFit: 'cover'
+      },
+      deleteButton:{
+        width: '30@ms',
+        height:'30@ms',
+        backgroundColor: Colors.danger,
+        borderRadius: '50@ms',
+        justifyContent:'center',
+        alignItems:'center',
+        position:'absolute'
+      },
     uploadButton: {
         alignItems: 'center',
         borderWidth: 2,

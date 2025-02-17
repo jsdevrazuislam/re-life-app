@@ -24,6 +24,7 @@ const styles = ScaledSheet.create({
       width: '100@ms',
       height: '100@ms',
       borderRadius: '50@ms',
+      backgroundColor: Colors.lightGray
     },
     editIcon: {
       position: 'absolute',

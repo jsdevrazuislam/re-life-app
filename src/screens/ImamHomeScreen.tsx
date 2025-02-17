@@ -30,7 +30,7 @@ const DashboardScreen = () => {
   const [isMenuVisible, setMenuVisible] = useState(false);
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
   const toggleMenu = () => setMenuVisible(!isMenuVisible);
-  const { request } = useApi();
+  const { request, loading } = useApi();
   const { logout, user } = useAuthStore()
 
   // Dynamic greeting
@@ -42,7 +42,7 @@ const DashboardScreen = () => {
   };
 
   const handleAddPerson = () => {
-    navigation.navigate('AddPoorPeopleScreen')
+    navigation.navigate('AddPoorPeopleScreen', {})
    };
   const handleLogout = async () =>{
     toggleMenu()
@@ -50,48 +50,25 @@ const DashboardScreen = () => {
     logout()
     showToast('success', 'Logout Successfully')
   }
-  const handleEdit = (id: string) => {/* Add logic */ };
+  const handleEdit = (item: PoorPeopleResponse) => {
+    navigation.navigate('AddPoorPeopleScreen', { item }) 
+  };
+  const handleEditCommittee = (item: CommitteeResponse) =>{
+    console.log("hello")
+  }
   const handleDelete = (id: string) => {/* Add logic */ }
 
   useEffect(() =>{
     (async() =>{
+     if(user?.kycStatus === 'verified'){
       const { data } = await request('get', ApiStrings.GET_COMMITTEE(user?.masjid || ''));
       const { data: poorPeopleData } = await request('get', ApiStrings.GET_POOR_PEOPLE(user?.masjid || ''));
       setCommittees(data)
       setPeople(poorPeopleData)
+     }
     })()
   } ,[user])
   
-
-  if (user?.kycStatus === 'pending' || user?.kycStatus === 'rejected') {
-    return (
-      <SafeAreaWrapper bg={'#DDEBFE'}>
-        <View style={imamStyles.kycContainer}>
-          <Icon
-            name={user?.kycStatus === 'pending' ? 'hourglass-empty' : 'error-outline'}
-            size={60}
-            color={user?.kycStatus === 'pending' ? Colors.secondary : Colors.danger}
-          />
-          <Heading level={5} weight='Bold' style={imamStyles.kycTitle}>
-            {user?.kycStatus === 'pending' ? 'KYC Verification Pending' : 'KYC Verification Rejected'}
-          </Heading>
-          <Paragraph level='Small' weight='SemiBold' style={imamStyles.kycDescription}>
-            {user?.kycStatus === 'pending'
-              ? 'Your KYC verification is under review. Please wait for approval.'
-              : 'Your KYC verification was rejected. Please contact support for further assistance.'}
-          </Paragraph>
-
-          {user?.kycStatus === 'rejected' && (
-            <TouchableOpacity style={imamStyles.supportButton}>
-              <Text style={imamStyles.supportButtonText}>Contact Support</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      </SafeAreaWrapper>
-    );
-  }
-
-
   return (
     <SafeAreaWrapper bg={Colors.light}>
       <View style={globalStyles.container}>
@@ -157,10 +134,10 @@ const DashboardScreen = () => {
             tabBarStyle: { backgroundColor: "transparent", elevation: 0 },
           }}>
           <Tab.Screen name="Poor People">
-            {() => <PeopleTab data={people} onAdd={handleAddPerson} onEdit={handleEdit} onDelete={handleDelete} />}
+            {() => <PeopleTab loading={loading} data={people} onAdd={handleAddPerson} onEdit={handleEdit} onDelete={handleDelete} />}
           </Tab.Screen>
           <Tab.Screen name="Committee">
-            {() => <CommitteeTab data={committees} onEdit={handleEdit} onDelete={handleDelete} />}
+            {() => <CommitteeTab loading={loading} data={committees} onEdit={handleEditCommittee} onDelete={handleDelete} />}
           </Tab.Screen>
         </Tab.Navigator>
       </View>

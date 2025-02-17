@@ -16,6 +16,7 @@ interface PhoneNumberInputProps {
   onChangeText: (text: string) => void;
   style?: StyleProp<ViewStyle>;
   inputStyles?: StyleProp<TextStyle>;
+  inputWrapper?: StyleProp<ViewStyle>;
 }
 
 const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
@@ -25,6 +26,7 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
   onChangeText,
   style,
   inputStyles,
+  inputWrapper
 }) => {
   const [error, setError] = useState<string | null>(null);
   const [touched, setTouched] = useState(false);
@@ -49,19 +51,19 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
   return (
     <View style={[styles.container, style]}>
       {label && <Text style={styles.label}>{label}</Text>}
-      <View style={styles.inputWrapper}>
+      <View style={[styles.inputWrapper, inputWrapper]}>
         <TextInput
           style={[styles.input, error ? styles.inputError : null, inputStyles]}
           placeholder={placeholder}
           value={value}
           onChangeText={(text) => {
-            const numericText = text.replace(/[^0-9]/g, ''); // Allow only numbers
+            const numericText = text.replace(/[^0-9]/g, '');
             onChangeText(numericText);
             if (touched) setError(validatePhoneNumber(numericText));
           }}
           onBlur={handleBlur}
           keyboardType="phone-pad"
-          maxLength={11} // Restrict input to 11 digits
+          maxLength={11} 
         />
       </View>
       {error && <Text style={styles.errorText}>{error}</Text>}

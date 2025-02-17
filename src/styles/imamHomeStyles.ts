@@ -12,6 +12,26 @@ export const imamStyles = ScaledSheet.create({
     greeting: {
       color: Colors.text,
     },
+    skeletonPhoto: {
+      width: 60,
+      height: 60,
+      borderRadius: 30,
+      backgroundColor: "#ddd",
+  },
+  skeletonText: {
+      width: 120,
+      height: 15,
+      backgroundColor: "#ddd",
+      marginBottom: 5,
+      borderRadius: 5,
+  },
+  skeletonTextSmall: {
+      width: 80,
+      height: 12,
+      backgroundColor: "#ddd",
+      marginBottom: 5,
+      borderRadius: 5,
+  },
     infoPhoto:{
       width: '40@ms',
       height:'40@ms',
