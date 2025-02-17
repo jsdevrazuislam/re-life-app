@@ -9,7 +9,8 @@ const committeeStyles = ScaledSheet.create({
     flexLayout:{
         flexDirection:'row',
         alignItems:'center',
-        justifyContent:'space-between'
+        justifyContent:'space-between',
+        marginBottom: 20
     },
     imageWrapper: {
         width: '100%',

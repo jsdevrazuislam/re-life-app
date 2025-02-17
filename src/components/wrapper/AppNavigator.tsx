@@ -16,13 +16,11 @@ import PoorPeopleViewScreen from '../../screens/PoorPeopleViewScreen';
 import OtpScreen from '../../screens/OtpScreen';
 import ImamHomeScreen from '../../screens/ImamHomeScreen';
 import AddCommitteeScreen from '../../screens/AddCommitteeScreen';
-import { useAuthStore } from '../../store/store';
 import KYCVerifyScreen from '../../screens/KycStartedScreen';
 import KycScreen from '../../screens/KycScreen';
-import KycSuccessScreen from '../../screens/KycSuccessScreen';
 import AddPeopleScreen from '../../screens/AddPoorPeopleScreen';
-import SplashScreen from '../../screens/SplashScreen';
 import SettingsScreen from '../../screens/ImamSettingsScreen';
+import ImamPendingScreen from '../../screens/ImamPendingScreen';
 
 
 const Tab = createBottomTabNavigator();
@@ -42,13 +40,7 @@ const AdminStackNavigator = () => (
 );
 
 const Stack = createStackNavigator();
-const AppNavigator = () => {
-
-  const { role, isLoading } = useAuthStore()
-
-  if(isLoading) {
-    return <SplashScreen />
-  }
+const AppNavigator = ({ role, user } : { role:string, user:IUser | null }) => {
 
   if (!role) {
     return (
@@ -62,8 +54,16 @@ const AppNavigator = () => {
         <Stack.Screen name={AppRoutes.POOR_PEOPLE_VIEW} component={PoorPeopleViewScreen} />
         <Stack.Screen name={AppRoutes.OTP_SCREEN} component={OtpScreen} />
         <Stack.Screen name={AppRoutes.KYC_VERIFY_SCREEN} component={KYCVerifyScreen} />
-        <Stack.Screen name={AppRoutes.KYC_SUCCESS_SCREEN} component={KycSuccessScreen} />
         <Stack.Screen name={AppRoutes.KYC_SCREEN} component={KycScreen} />
+        <Stack.Screen name={AppRoutes.IMAM_PENDING_SCREEN} component={ImamPendingScreen} />
+      </Stack.Navigator>
+    );
+  }
+
+  if (role === 'imam' && (user?.kycStatus === 'pending' || user?.kycStatus === 'rejected')) {
+    return (
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name={AppRoutes.IMAM_PENDING_SCREEN} component={ImamPendingScreen} />
       </Stack.Navigator>
     );
   }

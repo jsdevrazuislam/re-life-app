@@ -15,6 +15,7 @@ export const AppRoutes = {
     ADD_POOR_PEOPLE_SCREEN:'AddPoorPeopleScreen',
     KYC_SUCCESS_SCREEN:'KycSuccessScreen',
     IMAM_SETTING_SCREEN:'ImamSettingsScreen',
+    IMAM_PENDING_SCREEN:'ImamPendingScreen',
 }
 
 export type AppStackParamList = {
@@ -24,8 +25,11 @@ export type AppStackParamList = {
     HomeScreen: undefined; 
     ProfileScreen: undefined; 
     ForgotPasswordScreen: undefined; 
+    ImamPendingScreen: undefined; 
     KycStartedScreen: undefined; 
-    AddPoorPeopleScreen: undefined; 
+    AddPoorPeopleScreen: {
+        item?:PoorPeopleResponse
+    }; 
     ImamHomeScreen: undefined; 
     SignupScreen: undefined; 
     HomeViewDetailsInfo: undefined; 

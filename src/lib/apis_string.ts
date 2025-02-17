@@ -7,6 +7,7 @@ const ApiStrings = {
     KYC_VERIFY:'/users/kyc-verify',
     GET_COMMITTEE: (ID:string) => `committee/${ID}/committee`,
     GET_POOR_PEOPLE: (ID:string) => `poor-people/${ID}/poor-person`,
+    CREATE_PEOPLE: (ID:string) => `poor-people/${ID}/poor-person`,
 }
 
 export default ApiStrings

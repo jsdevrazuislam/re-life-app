@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   TouchableOpacity,
@@ -7,6 +7,8 @@ import {
   Alert,
   Linking,
   Image,
+  ViewStyle,
+  StyleProp,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Colors } from '../configs/colors';
@@ -32,22 +34,15 @@ import validateForm from '../validations/kyc';
 import ApiStrings from '../lib/apis_string';
 import { AppStackParamList } from '../constants/route';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-
-interface IFile{
-    fileName: string,
-    fileSize: number,
-    height: number,
-    type: string,
-    uri: string,
-    width:number
-}
+import { formatFileData } from '../utils/file-format';
+import PhoneNumberInput from '../components/ui/PhoneNumberInput';
 
 interface FormState {
-  name:string,
-  mobile:string,
-  pincode:string,
-  email:string,
-  documentType:string,
+  name: string,
+  mobile: string,
+  pincode: string,
+  email: string,
+  documentType: string,
   idProofFront: IFile | null,
   idProofBack: IFile | null,
   imamDocument: IFile | null
@@ -56,6 +51,7 @@ interface FormState {
 const KycScreen = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const { t } = useTranslation();
+  const [showError, setShowError] = useState(false)
   const [formData, setFormData] = useState<FormState>({
     name: '',
     mobile: '',
@@ -67,7 +63,7 @@ const KycScreen = () => {
     imamDocument: null,
   });
 
-  const { setUserId, userTempId, setUser } = useAuthStore();
+  const { setUserId, userTempId, setUser, setRole } = useAuthStore();
   const nameError = validateCommitteeName(formData.name);
   const mobileError = validateCommitteeNumber(formData.mobile);
   const emailError = validateEmail(formData.email);
@@ -99,26 +95,15 @@ const KycScreen = () => {
     formDataPayload.append('mobileOrEmail', formData.email);
     formDataPayload.append('pincode', formData.pincode);
     formDataPayload.append('documentType', formData.documentType);
-    formDataPayload.append("idProofFront", {
-      uri: formData?.idProofFront?.uri,
-      name: formData?.idProofFront?.fileName,
-      type: formData?.idProofFront?.type
-  });
-    formDataPayload.append("idProofBack", {
-      uri: formData?.idProofBack?.uri,
-      name: formData?.idProofBack?.fileName,
-      type: formData?.idProofBack?.type
-  });
-    formDataPayload.append("imamDocument", {
-      uri: formData?.imamDocument?.uri,
-      name: formData?.imamDocument?.fileName,
-      type: formData?.imamDocument?.type
-  });
+    formDataPayload.append("idProofFront", formatFileData(formData?.idProofFront));
+    formDataPayload.append("idProofBack", formatFileData(formData?.idProofBack));
+    formDataPayload.append("imamDocument", formatFileData(formData?.imamDocument));
     const { data, message } = await request('post', ApiStrings.KYC_VERIFY, formDataPayload);
     setUser(data?.user, data?.accessToken, data?.refreshToken)
+    setRole(data?.user?.role)
     showToast('success', message)
     setUserId('');
-    navigation.navigate('KycSuccessScreen')
+    navigation.navigate('ImamPendingScreen')
   };
 
   function handleStep() {
@@ -167,10 +152,26 @@ const KycScreen = () => {
     setFormData({ ...formData, [field]: '' });
   };
 
+  useEffect(() => {
+    if (error) setShowError(true)
+  }, [error])
+
   return (
     <SafeAreaWrapper bg={Colors.light}>
       <ScrollView>
-        <View style={globalStyles.container}>
+        {showError ? <View style={[globalStyles.container, { marginTop: '45%' }]}>
+          <View style={[{ justifyContent: 'center', alignItems: 'center' }]}>
+            <Icon name="error-outline" size={80} color={Colors.danger} />
+            <Paragraph level='Large' weight='Bold' style={[{ color: Colors.danger, marginTop: 20 }]}>
+              KYC Submission Failed
+            </Paragraph>
+            <Paragraph level='Small' weight='Medium' style={[{ textAlign: 'center', marginHorizontal: 20, marginTop: 10 }]}>
+              {error || "Something went wrong while submitting your KYC. Please try again."}
+            </Paragraph>
+
+            <AppButton onPress={() => setShowError(false)} style={{ marginTop: 20 }} text='Try Again' />
+          </View>
+        </View> : <View style={globalStyles.container}>
           <View style={styles.header}>
             <Heading level={5} weight="Bold">
               Upload KYC
@@ -197,14 +198,12 @@ const KycScreen = () => {
                 inputStyles={styles.appInput}
                 validation={validateCommitteeName}
               />
-              <Input
+              <PhoneNumberInput
                 label="Mobile"
                 value={formData.mobile}
-                keyboardType="phone-pad"
                 onChangeText={text => setFormData({ ...formData, mobile: text })}
                 placeholder={t('Your Phone Number')}
                 inputStyles={styles.appInput}
-                validation={validateCommitteeNumber}
               />
               <Input
                 label="Email"
@@ -317,7 +316,7 @@ const KycScreen = () => {
               />
             </View>
           )}
-        </View>
+        </View>}
       </ScrollView>
     </SafeAreaWrapper>
   );
@@ -328,14 +327,16 @@ export const UploadArea = ({
   handlePress,
   imageUri,
   handleRemove,
+  style
 }: {
   title: string;
+  style?: StyleProp<ViewStyle>
   imageUri: any;
   handlePress: () => void;
   handleRemove: () => void;
 }) =>
   imageUri?.uri ? (
-    <View style={styles.uploadArea}>
+    <View style={[styles.uploadArea, style]}>
       <Image source={{ uri: imageUri?.uri }} style={styles.image} />
       <TouchableOpacity style={styles.deleteButton} onPress={handleRemove}>
         <Icon name="restore-from-trash" size={24} color={Colors.white} />

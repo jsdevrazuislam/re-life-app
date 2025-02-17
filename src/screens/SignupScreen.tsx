@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Image, Platform, Alert, Linking } from 'react-native';
 import React, { useState } from 'react';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import globalStyles from '../styles/global.style';
@@ -28,6 +28,11 @@ import SelectDropdown from '../components/ui/Select';
 import PhoneNumberInput from '../components/ui/PhoneNumberInput';
 import Paragraph from '../components/ui/Paragraph';
 import profileStyles from '../styles/profile.styles';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { requestAndroidPermission } from '../utils/permission';
+import * as ImagePicker from 'react-native-image-picker';
+import { formatFileData } from '../utils/file-format';
+import { Colors } from '../configs/colors';
 
 
 const SignupScreen = () => {
@@ -45,14 +50,17 @@ const SignupScreen = () => {
   const emailError = validateEmail(email);
   const passwordError = validatePassword(password);
   const { request, loading, error } = useApi();
-  const { setUserId } = useAuthStore()
-  const [committeeDetails, setCommitteeDetails] = useState<CommitteeDetails[]>([]);
-  const [formData, setFormData] = useState({
+  const { setUserId } = useAuthStore();
+  const [committeeDetails, setCommitteeDetails] = useState<CommitteeDetails[]>(
+    [],
+  );
+  const [formData, setFormData] = useState<StateForm>({
+    profileUrl: null,
     location: {
       district: '',
       upazila: '',
       union: '',
-      village: ''
+      village: '',
     },
   });
 
@@ -67,14 +75,60 @@ const SignupScreen = () => {
     setCommitteeDetails(updatedCommittee);
   };
 
-  const handleLocationChange = (field: keyof ILocation["location"], value: string) => {
+  const handleLocationChange = (
+    field: keyof ILocation['location'],
+    value: string,
+  ) => {
     setFormData(prevState => ({
       ...prevState,
       location: {
         ...prevState.location,
-        [field]: value
-      }
+        [field]: value,
+      },
     }));
+  };
+
+
+  const handleImagePicker = async (
+    field: 'profileUrl',
+  ) => {
+    if (Platform.OS === 'android') {
+      const hasPermission = await requestAndroidPermission();
+      if (!hasPermission) {
+        Alert.alert(
+          'Permission Denied',
+          'Please enable photo access in Settings to continue.',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            {
+              text: 'Open Settings',
+              onPress: () => Linking.openSettings(),
+            },
+          ],
+        );
+        return;
+      }
+    }
+
+    ImagePicker.launchImageLibrary(
+      { mediaType: 'photo', quality: 0.8 },
+      response => {
+        if (response.didCancel) return;
+        if (response.errorMessage) {
+          showToast('error', response.errorMessage);
+          return;
+        }
+        if (response.assets && response.assets.length > 0) {
+          setFormData({ ...formData, [field]: response.assets[0] as IFile });
+        }
+      },
+    );
+  };
+
+  const removeImage = (
+    field: 'profileUrl',
+  ) => {
+    setFormData({ ...formData, [field]: null });
   };
 
   const isFormInvalid =
@@ -88,24 +142,42 @@ const SignupScreen = () => {
     !name ||
     !username;
 
-
   const handleSubmit = async () => {
-    const locationErrors = Object.entries(formData.location).reduce((errors, [key, value]) => {
-      if (!value.trim()) {
-        errors.push(`${key.charAt(0).toUpperCase() + key.slice(1)} is required.`);
-      }
-      return errors;
-    }, [] as string[]);
+    const locationErrors = Object.entries(formData.location).reduce(
+      (errors, [key, value]) => {
+        if (!value.trim()) {
+          errors.push(
+            `${key.charAt(0).toUpperCase() + key.slice(1)} is required.`,
+          );
+        }
+        return errors;
+      },
+      [] as string[],
+    );
 
     const committeeErrors: string[] = [];
     if (committeeDetails.length !== parseInt(numberOfCommittee)) {
-      committeeErrors.push(`You must enter details for exactly ${numberOfCommittee} committee members.`);
+      committeeErrors.push(
+        `You must enter details for exactly ${numberOfCommittee} committee members.`,
+      );
     } else {
       committeeDetails.forEach((member, index) => {
-        if (!member.name.trim()) committeeErrors.push(`Committee member ${index + 1}: Name is required.`);
-        if (!member.address.trim()) committeeErrors.push(`Committee member ${index + 1}: Address is required.`);
-        if (!member.profession.trim()) committeeErrors.push(`Committee member ${index + 1}: Profession is required.`);
-        if (!member.mobile.trim()) committeeErrors.push(`Committee member ${index + 1}: Mobile number is required.`);
+        if (!member.name.trim())
+          committeeErrors.push(
+            `Committee member ${index + 1}: Name is required.`,
+          );
+        if (!member.address.trim())
+          committeeErrors.push(
+            `Committee member ${index + 1}: Address is required.`,
+          );
+        if (!member.profession.trim())
+          committeeErrors.push(
+            `Committee member ${index + 1}: Profession is required.`,
+          );
+        if (!member.mobile.trim())
+          committeeErrors.push(
+            `Committee member ${index + 1}: Mobile number is required.`,
+          );
       });
     }
 
@@ -116,19 +188,28 @@ const SignupScreen = () => {
       return;
     }
 
-    const payload = {
-      emailOrPhone: email,
-      masjidName: name,
-      password,
-      fullName: username,
-      committeeDetails,
-      location: formData.location,
-      phoneNumber: mobile
-    }
-    const { data, message } = await request('post', ApiStrings.SIGNUP, payload);
-    setUserId(data)
-    showToast('success', message)
-    navigation.navigate('OtpScreen')
+    const formDataPayload = new FormData();
+
+    formDataPayload.append('emailOrPhone', email);
+    formDataPayload.append('masjidName', name);
+    formDataPayload.append('password', password);
+    formDataPayload.append('fullName', username);
+    formDataPayload.append(
+      'committeeDetails',
+      JSON.stringify(committeeDetails),
+    );
+    formDataPayload.append('location', JSON.stringify(formData.location));
+    formDataPayload.append('phoneNumber', mobile);
+    formDataPayload.append('profileUrl', formatFileData(formData.profileUrl));
+
+    const { data, message } = await request(
+      'post',
+      ApiStrings.SIGNUP,
+      formDataPayload,
+    );
+    setUserId(data);
+    showToast('success', message);
+    navigation.navigate('OtpScreen');
   };
 
   return (
@@ -141,6 +222,19 @@ const SignupScreen = () => {
           </Heading>
 
           <View style={signupStyles.form}>
+            <View style={styles.profileSection}>
+              <View style={styles.avatarContainer}>
+                {formData.profileUrl?.uri ? <Image
+                  source={{ uri: formData.profileUrl?.uri }}
+                  style={styles.avatar}
+                /> : <View style={styles.avatar} />}
+                {formData.profileUrl?.uri ? <TouchableOpacity onPress={() => removeImage('profileUrl')} style={signupStyles.deleteButton}>
+                  <Icon name="restore-from-trash" size={20} color="#FFF" />
+                </TouchableOpacity> : <TouchableOpacity onPress={() => handleImagePicker('profileUrl')} style={styles.editIcon}>
+                  <Icon name="edit" size={20} color="#FFF" />
+                </TouchableOpacity>}
+              </View>
+            </View>
             <Input
               label={t('mosquesName')}
               placeholder={t('mosquesNamePlaceholder')}
@@ -148,8 +242,13 @@ const SignupScreen = () => {
               onChangeText={setName}
               validation={validateName}
             />
-            <Paragraph level='Small' weight='Medium'>Masjid Location</Paragraph>
-            <ScrollView style={{ marginTop: 10 }} horizontal showsHorizontalScrollIndicator={false}>
+            <Paragraph level="Small" weight="Medium">
+              Masjid Location
+            </Paragraph>
+            <ScrollView
+              style={{ marginTop: 10 }}
+              horizontal
+              showsHorizontalScrollIndicator={false}>
               <SelectDropdown
                 data={districts}
                 value={formData.location.district}
@@ -157,7 +256,7 @@ const SignupScreen = () => {
                 placeholder="Select a district"
                 style={profileStyles.paddingRight}
                 search={true}
-                searchPlaceholder='Search district'
+                searchPlaceholder="Search district"
               />
               <SelectDropdown
                 data={upazilas}
@@ -166,7 +265,7 @@ const SignupScreen = () => {
                 placeholder="Select an upazila"
                 style={profileStyles.paddingRight}
                 search={true}
-                searchPlaceholder='Search upazila'
+                searchPlaceholder="Search upazila"
               />
               <SelectDropdown
                 data={unions}
@@ -175,7 +274,7 @@ const SignupScreen = () => {
                 placeholder="Select a union"
                 style={profileStyles.paddingRight}
                 search={true}
-                searchPlaceholder='Search union'
+                searchPlaceholder="Search union"
               />
               <SelectDropdown
                 data={villages}
@@ -183,7 +282,7 @@ const SignupScreen = () => {
                 onChange={value => handleLocationChange('village', value)}
                 placeholder="Select a village"
                 search={true}
-                searchPlaceholder='Search village'
+                searchPlaceholder="Search village"
               />
             </ScrollView>
             <Input
@@ -221,7 +320,7 @@ const SignupScreen = () => {
               keyboardType="numeric"
               onChangeText={text => {
                 const count = parseInt(text) || 0;
-                setNumberOfCommittee(text)
+                setNumberOfCommittee(text);
                 handleCommittee(count);
               }}
             />
@@ -238,6 +337,8 @@ const SignupScreen = () => {
                     updated[index].name = text;
                     setCommitteeDetails(updated);
                   }}
+                  inputStyles={{ backgroundColor: Colors.white}}
+                  inputWrapper={{ backgroundColor: Colors.white }}
                 />
                 <Input
                   label="Address"
@@ -248,6 +349,8 @@ const SignupScreen = () => {
                     updated[index].address = text;
                     setCommitteeDetails(updated);
                   }}
+                  inputStyles={{ backgroundColor: Colors.white}}
+                  inputWrapper={{ backgroundColor: Colors.white }}
                 />
                 <SelectDropdown
                   label="Profession"
@@ -259,11 +362,14 @@ const SignupScreen = () => {
                   }}
                   data={professions}
                   style={styles.halfInput}
+                  inputStyles={{ backgroundColor: Colors.white}}
                 />
                 <PhoneNumberInput
                   label="Phone Number"
                   placeholder="Enter your phone number"
                   value={committee.mobile}
+                  inputStyles={{ backgroundColor: Colors.white}}
+                  inputWrapper={{ backgroundColor: Colors.white }}
                   onChangeText={text => {
                     const updated = [...committeeDetails];
                     updated[index].mobile = text;

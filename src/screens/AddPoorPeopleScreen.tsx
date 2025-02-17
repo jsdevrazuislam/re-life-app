@@ -1,12 +1,10 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import React, { useEffect, useState } from 'react';
+import { View, Text, ScrollView, Platform, Alert, Linking } from 'react-native';
 import SelectDropdown from '../components/ui/Select';
 import Input from '../components/ui/AppInput';
 import { UploadArea } from './KycScreen';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import globalStyles from '../styles/global.style';
-import { Colors } from '../configs/colors';
 import styles from '../styles/addPeople.styles';
 import Heading from '../components/ui/Heading';
 import Paragraph from '../components/ui/Paragraph';
@@ -24,30 +22,39 @@ import Textarea from '../components/ui/Textarea';
 import committeeStyles from '../styles/committee.styles';
 import BackButton from '../components/BackButton';
 import { useTranslation } from '../hooks/useTranslation';
+import { NavigationProp, useNavigation, useRoute } from '@react-navigation/native';
+import { AppStackParamList } from '../constants/route';
+import PhoneNumberInput from '../components/ui/PhoneNumberInput';
+import { requestAndroidPermission } from '../utils/permission';
+import * as ImagePicker from 'react-native-image-picker';
+import { showToast } from '../utils/toast';
+import { useApi } from '../hooks/useApi';
+import ApiStrings from '../lib/apis_string';
+import { useAuthStore } from '../store/store';
+import { formatFileData } from '../utils/file-format';
 
-interface ChildDetail {
-    name: string;
-    age: string;
-    profession: string;
-    income: string;
-    frequency: string;
-}
+
 
 const AddPeopleScreen = () => {
     const { t } = useTranslation()
-    const [formData, setFormData] = useState({
+    const { user } = useAuthStore()
+    const route = useRoute<AddPoorPeopleScreenRouteProp>();
+    const personData = route.params?.item;
+    const [formData, setFormData] = useState<AddPoorPeopleScreenFormState>({
         name: '',
         age: '',
-        gender: 'male',
-        marriageStatus: 'single',
-        isWifeDead: 'no',
+        gender: '',
+        marriageStatus: '',
+        isWifeDead: '',
+        isHusbandDead: '',
         wifeProfession: '',
-        hasChildren: 'no',
-        numberOfChildren: '0',
+        husbandProfession: '',
+        hasChildren: '',
+        numberOfChildren: '',
         herProfession: '',
         contactNumber: '',
         address: '',
-        receivingAssistance: 'no',
+        receivingAssistance: '',
         assistanceType: '',
         frequency: '',
         assistanceLocation: '',
@@ -61,9 +68,18 @@ const AddPeopleScreen = () => {
         treatments: '',
         financialNeeds: '',
         notes: '',
+        photoUrl: null,
+        idProofFront: null,
+        idProofBack: null,
+        idProofFrontWife: null,
+        idProofBackWife: null,
+        idProofFrontHusband: null,
+        idProofBackHusband: null,
     });
 
     const [childrenDetails, setChildrenDetails] = useState<ChildDetail[]>([]);
+    const { request, loading } = useApi()
+    const navigation = useNavigation<NavigationProp<AppStackParamList>>();
 
     const handleAddChildren = (count: number) => {
         const numChildren = Math.max(0, count);
@@ -72,10 +88,122 @@ const AddPeopleScreen = () => {
             age: childrenDetails[index]?.age || '',
             profession: childrenDetails[index]?.profession || '',
             income: childrenDetails[index]?.income || '',
+            mobile: childrenDetails[index]?.mobile || '',
             frequency: childrenDetails[index]?.frequency || 'Month',
         }));
         setChildrenDetails(updatedChildren);
     };
+
+    const handleSubmit = async () => {
+
+        if (!formData.name || !formData.age || !formData.gender || !formData.contactNumber || !formData.address || !formData.rice || !formData.lentils || !formData.oil || !formData.clothingFamily || !formData.clothingSelf || !formData.otherFood || !formData.medicineCost || !formData.financialNeeds) {
+            showToast('error', 'Please fill all required fields.');
+            return;
+        }
+
+        const numberOfChildren = Number(formData.numberOfChildren);
+        if (isNaN(numberOfChildren) || numberOfChildren < 0) {
+            showToast('error', 'Number of children must be a valid number.');
+            return;
+        }
+
+        if (numberOfChildren !== childrenDetails.length) {
+            showToast('error', `Please provide details for exactly ${numberOfChildren} children.`);
+            return;
+        }
+
+        for (let i = 0; i < childrenDetails.length; i++) {
+            const child = childrenDetails[i];
+            if (!child.name || !child.age || !child.profession || !child.income || !child.mobile || !child.frequency) {
+                showToast('error', `Please fill all details for child ${i + 1}.`);
+                return;
+            }
+        }
+
+        const formDataPayload = new FormData();
+        formDataPayload.append('name', formData.name)
+        formDataPayload.append('age', formData.age)
+        formDataPayload.append('gender', formData.gender)
+        formDataPayload.append('marriageStatus', formData.marriageStatus)
+        formDataPayload.append('profileUrl', formatFileData(formData.photoUrl))
+        formDataPayload.append('isWifeDead', formData.isWifeDead)
+        formDataPayload.append('wifeProfession', formData.wifeProfession)
+        formDataPayload.append('husbandProfession', formData.husbandProfession)
+        formDataPayload.append('numberOfChildren', formData.numberOfChildren)
+        formDataPayload.append('childrenDetails', JSON.stringify(childrenDetails))
+        formDataPayload.append('contactNumber', formData.contactNumber)
+        formDataPayload.append('address', formData.address)
+        formDataPayload.append('assistanceType', formData.assistanceType)
+        formDataPayload.append('frequency', formData.frequency)
+        formDataPayload.append('receivingAssistance', formData.receivingAssistance)
+        formDataPayload.append('assistanceLocation', formData.assistanceLocation)
+        formDataPayload.append('notes', formData.notes)
+        formDataPayload.append('essentialsNeedsMonthly', JSON.stringify({
+            rice: formData.rice,
+            lentils: formData.lentils,
+            oil: formData.oil,
+            otherFoodItems: formData.otherFood,
+            clothingForSelf: formData.clothingSelf,
+            clothingForFamily: formData.clothingFamily,
+            monthlyMedicineCost: formData.medicineCost,
+            ongoingTreatmentsDetails: formData.treatments,
+            financialNeeds: formData.financialNeeds
+        }))
+        formDataPayload.append('idProofFront', formatFileData(formData.idProofFront))
+        formDataPayload.append('idProofBack', formatFileData(formData.idProofBack))
+        formDataPayload.append('idProofFrontWife', formatFileData(formData.idProofFrontWife))
+        formDataPayload.append('idProofBackWife', formatFileData(formData.idProofBackWife))
+
+        const { message } = await request('post', ApiStrings.CREATE_PEOPLE(user?.masjid || ""), formDataPayload);
+        showToast('success', message)
+        navigation.navigate('ImamHomeScreen')
+    }
+
+    const handleImagePicker = async (
+        field: 'idProofFront' | 'idProofBack' | 'idProofFrontWife' | 'idProofBackWife' | 'photoUrl' | 'idProofFrontHusband' | 'idProofBackHusband',
+    ) => {
+        if (Platform.OS === 'android') {
+            const hasPermission = await requestAndroidPermission();
+            if (!hasPermission) {
+                Alert.alert(
+                    'Permission Denied',
+                    'Please enable photo access in Settings to continue.',
+                    [
+                        { text: 'Cancel', style: 'cancel' },
+                        {
+                            text: 'Open Settings',
+                            onPress: () => Linking.openSettings(),
+                        },
+                    ],
+                );
+                return;
+            }
+        }
+
+        ImagePicker.launchImageLibrary(
+            { mediaType: 'photo', quality: 0.8 },
+            response => {
+                if (response.didCancel) return;
+                if (response.errorMessage) {
+                    showToast('error', response.errorMessage);
+                    return;
+                }
+                if (response.assets && response.assets.length > 0) {
+                    setFormData({ ...formData, [field]: response.assets[0] });
+                }
+            },
+        );
+    };
+
+    const removeImage = (
+        field: 'idProofFront' | 'idProofBack' | 'idProofFrontWife' | 'idProofBackWife' | 'photoUrl' | 'idProofFrontHusband' | 'idProofBackHusband',
+    ) => {
+        setFormData({ ...formData, [field]: '' });
+    };
+
+    useEffect(() => {
+        console.log("personData", personData)
+    }, [personData])
 
     return (
         <SafeAreaWrapper>
@@ -89,17 +217,18 @@ const AddPeopleScreen = () => {
                         <View />
                     </View>
                     {/* Photo Upload */}
-                    <View style={styles.uploadPhotoContainer}>
-                        <TouchableOpacity style={styles.uploadButton}>
-                            <Icon name="camera-alt" size={40} color={Colors.primary} />
-                            <Text style={styles.uploadText}>Upload Photo</Text>
-                        </TouchableOpacity>
-                    </View>
+                    <UploadArea
+                        title="Her Photo"
+                        imageUri={formData.photoUrl}
+                        handlePress={() => handleImagePicker('photoUrl')}
+                        handleRemove={() => removeImage('photoUrl')}
+                    />
 
                     {/* Basic Information */}
                     <Input
                         label="Name"
                         value={formData.name}
+                        style={{ marginTop: 20 }}
                         onChangeText={text => setFormData({ ...formData, name: text })}
                     />
                     <Input
@@ -107,6 +236,7 @@ const AddPeopleScreen = () => {
                         value={formData.age}
                         onChangeText={text => setFormData({ ...formData, age: text })}
                         keyboardType="numeric"
+                        isNumber={true}
                     />
 
                     <SelectDropdown
@@ -132,9 +262,14 @@ const AddPeopleScreen = () => {
                             <SelectDropdown
                                 label={`Is ${formData.gender === 'male' ? 'Wife' : 'Husband'
                                     } Dead?`}
-                                value={formData.isWifeDead}
+                                value={formData.gender === 'male' ? formData.isWifeDead : formData.isHusbandDead}
                                 onChange={value =>
-                                    setFormData({ ...formData, isWifeDead: value })
+                                    setFormData({
+                                        ...formData,
+                                        ...(formData.gender === 'male'
+                                            ? { isWifeDead: value }
+                                            : { isHusbandDead: value })
+                                    })
                                 }
                                 data={yesNoOptions}
                             />
@@ -143,9 +278,14 @@ const AddPeopleScreen = () => {
                                 <SelectDropdown
                                     label={`${formData.gender === 'male' ? 'Wife' : 'Husband'
                                         } Profession`}
-                                    value={formData.wifeProfession}
+                                    value={formData.gender === 'male' ? formData.wifeProfession : formData.husbandProfession}
                                     onChange={value =>
-                                        setFormData({ ...formData, wifeProfession: value })
+                                        setFormData({
+                                            ...formData,
+                                            ...(formData.gender === 'male'
+                                                ? { wifeProfession: value }
+                                                : { husbandProfession: value })
+                                        })
                                     }
                                     data={professions}
                                 />
@@ -191,10 +331,21 @@ const AddPeopleScreen = () => {
                                     <Input
                                         label="Age"
                                         value={child.age}
+                                        isNumber={true}
                                         keyboardType="numeric"
                                         onChangeText={text => {
                                             const updated = [...childrenDetails];
                                             updated[index].age = text;
+                                            setChildrenDetails(updated);
+                                        }}
+                                    />
+                                    <PhoneNumberInput
+                                        label="Phone Number"
+                                        placeholder="Enter your phone number"
+                                        value={child.mobile}
+                                        onChangeText={text => {
+                                            const updated = [...childrenDetails];
+                                            updated[index].mobile = text;
                                             setChildrenDetails(updated);
                                         }}
                                     />
@@ -213,6 +364,7 @@ const AddPeopleScreen = () => {
                                         <Input
                                             label="Income"
                                             value={child.income}
+                                            isNumber={true}
                                             keyboardType="numeric"
                                             onChangeText={text => {
                                                 const updated = [...childrenDetails];
@@ -224,7 +376,7 @@ const AddPeopleScreen = () => {
                                         <SelectDropdown
                                             label="Month"
                                             placeholder="Month"
-                                            value={formData.frequency}
+                                            value={child.frequency}
                                             onChange={value => {
                                                 const updated = [...childrenDetails];
                                                 updated[index].frequency = value;
@@ -280,7 +432,7 @@ const AddPeopleScreen = () => {
                         value={formData.address}
                         onChangeText={text => setFormData({ ...formData, address: text })}
                     />
-                    <Input
+                    <PhoneNumberInput
                         label="Contact Number"
                         value={formData.contactNumber}
                         onChangeText={text => setFormData({ ...formData, contactNumber: text })}
@@ -354,15 +506,17 @@ const AddPeopleScreen = () => {
                     <Input
                         label="Monthly Medicine Cost (BDT)"
                         value={formData.medicineCost}
+                        isNumber={true}
                         onChangeText={text =>
                             setFormData({ ...formData, medicineCost: text })
                         }
                     />
                     <Input
                         label="Financial Needs"
-                        value={formData.medicineCost}
+                        value={formData.financialNeeds}
+                        isNumber={true}
                         onChangeText={text =>
-                            setFormData({ ...formData, medicineCost: text })
+                            setFormData({ ...formData, financialNeeds: text })
                         }
                     />
                     <Textarea
@@ -384,37 +538,68 @@ const AddPeopleScreen = () => {
 
                     {/* ID Proof Sections */}
                     <Paragraph level="Medium" weight="Bold" style={styles.sectionTitle}>
-                        Capture ID Proof
+                        Capture Her ID Proof
                     </Paragraph>
                     <View style={styles.row}>
                         <UploadArea
                             title="Front Side"
-                            handlePress={() => console.log('hello')}
+                            imageUri={formData.idProofFront}
+                            handlePress={() => handleImagePicker('idProofFront')}
+                            handleRemove={() => removeImage('idProofFront')}
                         />
                         <UploadArea
                             title="Back Side"
-                            handlePress={() => console.log('hello')}
+                            imageUri={formData.idProofBack}
+                            handlePress={() => handleImagePicker('idProofBack')}
+                            handleRemove={() => removeImage('idProofBack')}
                         />
                     </View>
 
-                    <Paragraph
-                        level="Medium"
-                        weight="Bold"
-                        style={[styles.sectionTitle, { marginTop: 15 }]}>
-                        Capture Wife ID Proof
-                    </Paragraph>
-                    <View style={styles.row}>
-                        <UploadArea
-                            title="Front Side"
-                            handlePress={() => console.log('hello')}
-                        />
-                        <UploadArea
-                            title="Back Side"
-                            handlePress={() => console.log('hello')}
-                        />
-                    </View>
+                    {formData.gender === 'female' ? (
+                        <>
+                            <Paragraph level="Medium" weight="Bold" style={[styles.sectionTitle, { marginTop: 15 }]}>
+                                Capture Husband ID Proof
+                            </Paragraph>
+                            <View style={styles.row}>
+                                <UploadArea
+                                    title="Front Side"
+                                    imageUri={formData.idProofFrontHusband}
+                                    handlePress={() => handleImagePicker('idProofFrontHusband')}
+                                    handleRemove={() => removeImage('idProofFrontHusband')}
+                                />
+                                <UploadArea
+                                    title="Back Side"
+                                    imageUri={formData.idProofBackHusband}
+                                    handlePress={() => handleImagePicker('idProofBackHusband')}
+                                    handleRemove={() => removeImage('idProofBackHusband')}
+                                />
+                            </View>
+                        </>
+                    ) : <>
+                        <Paragraph
+                            level="Medium"
+                            weight="Bold"
+                            style={[styles.sectionTitle, { marginTop: 15 }]}>
+                            Capture Wife ID Proof
+                        </Paragraph>
+                        <View style={styles.row}>
+                            <UploadArea
+                                title="Front Side"
+                                imageUri={formData.idProofFrontWife}
+                                handlePress={() => handleImagePicker('idProofFrontWife')}
+                                handleRemove={() => removeImage('idProofFrontWife')}
+                            />
+                            <UploadArea
+                                title="Back Side"
+                                imageUri={formData.idProofBackWife}
+                                handlePress={() => handleImagePicker('idProofBackWife')}
+                                handleRemove={() => removeImage('idProofBackWife')}
+                            />
+                        </View>
+                    </>}
 
-                    <AppButton text="Submit" style={{ marginTop: 30 }} />
+
+                    <AppButton loading={loading} disabled={loading} onPress={handleSubmit} text="Submit" style={{ marginTop: 30 }} />
                 </View>
             </ScrollView>
         </SafeAreaWrapper>

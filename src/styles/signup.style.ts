@@ -37,6 +37,17 @@ const signupStyles = ScaledSheet.create({
     lineHeight: '20@ms',
     letterSpacing: '0@ms',
     fontWeight: '500',
+  },
+  deleteButton:{
+    backgroundColor: Colors.danger,
+    width: '30@ms',
+    height: '30@ms',
+    justifyContent:'center',
+    alignItems:'center',
+    borderRadius: '50@ms',
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
   }
 });
 
