@@ -9,12 +9,14 @@ interface AuthState {
   refreshToken: string | null;
   role: string | null;
   userTempId: string | null;
+  status: string | null;
   isAuthenticated: boolean;
   setUserInfo: (user: IUser) => void;
   logout: () => void;
   setUser: (user: IUser, accessToken: string, refreshToken: string) => void;
   setRole: (role: string) => void;
   setUserId: (role: string) => void;
+  setStatus: (status: string) => void;
   loadUserFromStorage: () => Promise<void>;
   isLoading: boolean;
 }
@@ -26,6 +28,7 @@ const initialState = {
   isAuthenticated: false,
   role: null,
   isLoading: true,
+  status: '',
   userTempId: null
 };
 
@@ -35,6 +38,7 @@ export const useAuthStore = create<AuthState>(set => ({
     await AsyncStorage.removeItem('accessToken');
     await AsyncStorage.removeItem('refreshToken');
     await AsyncStorage.removeItem('role');
+    await AsyncStorage.removeItem('status');
     await AsyncStorage.removeItem('userTempId');
 
     set({
@@ -52,6 +56,9 @@ export const useAuthStore = create<AuthState>(set => ({
       const accessToken = await AsyncStorage.getItem('accessToken');
       const userTempId = await AsyncStorage.getItem('userTempId');
       const refreshToken = await AsyncStorage.getItem('refreshToken');
+      const status = await AsyncStorage.getItem('status');
+
+      set({ status, userTempId })
 
       if(accessToken){
         const { data } = await api.get(ApiStrings.ME)
@@ -63,6 +70,10 @@ export const useAuthStore = create<AuthState>(set => ({
       console.error('Error loading user from storage:', error);
       set({ isLoading: false });
     }
+  },
+  setStatus: async (status) => {
+    set({ status })
+    await AsyncStorage.setItem('status', status);
   },
   setRole:(role) => set({ role }),
   setUserId: async (userTempId) => {

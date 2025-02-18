@@ -4,11 +4,11 @@ import AppNavigator from './components/wrapper/AppNavigator';
 import Toast from "react-native-toast-message";
 
 
-const AppEntryPoint = ({ role, user } : { role:string, user:IUser | null }) => {
+const AppEntryPoint = ({ role, user, status, userTempId } : { role:string, user:IUser | null, status:string, userTempId:string }) => {
 
   return (
     <NavigationContainer>
-      <AppNavigator role={role} user={user} />
+      <AppNavigator role={role} user={user} status={status} userTempId={userTempId} />
       <Toast />
     </NavigationContainer>
   );

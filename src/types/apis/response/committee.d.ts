@@ -3,6 +3,7 @@ interface CommitteeResponse {
     address: string;
     profession: string;
     mobile: string;
+    profilePicture: string;
     _id: string;
 }
 

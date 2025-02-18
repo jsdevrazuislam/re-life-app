@@ -1,6 +1,6 @@
 const validateCommitteeName = (value: string) => {
     if (!value) return 'Name is required';
-    if (value.length < 5) return 'Name must be at least 5 characters';
+    if (value.length < 3) return 'Name must be at least 5 characters';
     return null;
 };
 const validateCommitteeAddress = (value: string) => {
@@ -10,6 +10,10 @@ const validateCommitteeAddress = (value: string) => {
 };
 const validateCommitteeProfession = (value: string) => {
     if (!value) return 'Profession is required';
+    return null;
+};
+const validateCommitteeProfile = (value: string) => {
+    if (!value) return 'Profile picture is required';
     return null;
 };
 
@@ -24,5 +28,6 @@ export {
     validateCommitteeName,
     validateCommitteeAddress,
     validateCommitteeProfession,
-    validateCommitteeNumber
+    validateCommitteeNumber,
+    validateCommitteeProfile
 }

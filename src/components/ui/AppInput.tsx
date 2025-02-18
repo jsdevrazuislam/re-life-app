@@ -11,6 +11,7 @@ import {
 import { ScaledSheet } from 'react-native-size-matters';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useTranslation } from '../../hooks/useTranslation';
+import { Colors } from '../../configs/colors';
 
 interface InputProps {
   label?: string;
@@ -25,6 +26,7 @@ interface InputProps {
   inputStyles?: StyleProp<TextStyle>;
   inputWrapper?: StyleProp<ViewStyle>;
   isNumber?: boolean;
+  disabled?: boolean;  
 }
 
 const Input: React.FC<InputProps> = ({
@@ -39,7 +41,8 @@ const Input: React.FC<InputProps> = ({
   inputStyles,
   style,
   inputWrapper,
-  isNumber = false,  // Default is false
+  isNumber = false,
+  disabled = false,  
 }) => {
   const [error, setError] = useState<string | null>(null);
   const [touched, setTouched] = useState(false);
@@ -47,15 +50,16 @@ const Input: React.FC<InputProps> = ({
   const { t } = useTranslation();
 
   const handleBlur = () => {
+    if (disabled) return; 
     setTouched(true);
     if (validation) {
-      const validationError = validation(value);
-      setError(validationError);
+      setError(validation(value));
     }
     if (onBlur) onBlur();
   };
 
   const handleChangeText = (text: string) => {
+    if (disabled) return;
     if (isNumber) {
       const numericText = text.replace(/[^0-9]/g, '');
       onChangeText(numericText);
@@ -68,25 +72,27 @@ const Input: React.FC<InputProps> = ({
     }
   };
 
-  const togglePasswordVisibility = () => {
-    setIsPasswordVisible(!isPasswordVisible);
-  };
-
   return (
     <View style={[styles.container, style]}>
       {label && <Text style={styles.label}>{label}</Text>}
-      <View style={[styles.inputWrapper, inputWrapper]}>
+      <View style={[styles.inputWrapper, disabled && styles.disabledWrapper, inputWrapper]}>
         <TextInput
-          style={[styles.input, error ? styles.inputError : null, inputStyles]}
+          style={[
+            styles.input,
+            error ? styles.inputError : null,
+            disabled ? styles.disabledInput : null,
+            inputStyles,
+          ]}
           placeholder={placeholder ? placeholder : t("Enter Your Value")}
           value={value}
           onChangeText={handleChangeText}
           onBlur={handleBlur}
-          keyboardType={isNumber ? 'numeric' : keyboardType}  // Set keyboardType to numeric if isNumber is true
+          keyboardType={isNumber ? 'numeric' : keyboardType}
           secureTextEntry={secureTextEntry && !isPasswordVisible}
+          editable={!disabled} 
         />
-        {secureTextEntry && (
-          <TouchableOpacity onPress={togglePasswordVisibility} style={styles.iconWrapper}>
+        {secureTextEntry && !disabled && (
+          <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)} style={styles.iconWrapper}>
             <Icon name={isPasswordVisible ? 'eye' : 'eye-off'} size={20} color="#999" />
           </TouchableOpacity>
         )}
@@ -116,12 +122,14 @@ const styles = ScaledSheet.create({
     borderRadius: 8,
     overflow: 'hidden',
     paddingRight: 12,
+    backgroundColor: Colors.white, 
   },
   input: {
     flex: 1,
     padding: 12,
     fontFamily: 'Quicksand-Regular',
     fontSize: '14@ms',
+    color: Colors.text, // Ensures text is visible
   },
   inputError: {
     borderColor: 'red',
@@ -133,6 +141,14 @@ const styles = ScaledSheet.create({
     color: 'red',
     fontSize: 12,
     marginTop: 4,
+  },
+  disabledInput: {
+    backgroundColor: '#f0f0f0',
+    color: '#a0a0a0', 
+  },
+  disabledWrapper: {
+    backgroundColor: '#f0f0f0', 
+    borderColor: '#d1d1d1',
   },
 });
 

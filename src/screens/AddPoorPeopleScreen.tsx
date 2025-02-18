@@ -154,9 +154,9 @@ const AddPeopleScreen = () => {
         formDataPayload.append('idProofFrontWife', formatFileData(formData.idProofFrontWife))
         formDataPayload.append('idProofBackWife', formatFileData(formData.idProofBackWife))
 
-        const { message } = await request('post', ApiStrings.CREATE_PEOPLE(user?.masjid || ""), formDataPayload);
+        const { message } = await request('post', ApiStrings.CREATE_PEOPLE(user?.masjid?._id || ""), formDataPayload);
         showToast('success', message)
-        navigation.navigate('ImamHomeScreen')
+        navigation.navigate('ImamHomeScreen', { activeTab: 'Poor People'})
     }
 
     const handleImagePicker = async (

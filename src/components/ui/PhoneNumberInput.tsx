@@ -8,6 +8,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import { ScaledSheet } from 'react-native-size-matters';
+import { Colors } from '../../configs/colors';
 
 interface PhoneNumberInputProps {
   label?: string;
@@ -17,6 +18,7 @@ interface PhoneNumberInputProps {
   style?: StyleProp<ViewStyle>;
   inputStyles?: StyleProp<TextStyle>;
   inputWrapper?: StyleProp<ViewStyle>;
+  disabled?: boolean;  
 }
 
 const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
@@ -26,7 +28,8 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
   onChangeText,
   style,
   inputStyles,
-  inputWrapper
+  inputWrapper,
+  disabled = false, 
 }) => {
   const [error, setError] = useState<string | null>(null);
   const [touched, setTouched] = useState(false);
@@ -44,6 +47,7 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
   };
 
   const handleBlur = () => {
+    if (disabled) return; 
     setTouched(true);
     setError(validatePhoneNumber(value));
   };
@@ -51,9 +55,14 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
   return (
     <View style={[styles.container, style]}>
       {label && <Text style={styles.label}>{label}</Text>}
-      <View style={[styles.inputWrapper, inputWrapper]}>
+      <View style={[styles.inputWrapper, disabled && styles.disabledWrapper, inputWrapper]}>
         <TextInput
-          style={[styles.input, error ? styles.inputError : null, inputStyles]}
+          style={[
+            styles.input, 
+            error ? styles.inputError : null, 
+            disabled ? styles.disabledInput : null,
+            inputStyles
+          ]}
           placeholder={placeholder}
           value={value}
           onChangeText={(text) => {
@@ -89,12 +98,15 @@ const styles = ScaledSheet.create({
     borderRadius: 8,
     overflow: 'hidden',
     paddingRight: 12,
+    backgroundColor: Colors.white, 
+    
   },
   input: {
     flex: 1,
     padding: 12,
     fontFamily: 'Quicksand-Regular',
     fontSize: '14@ms',
+    color: Colors.text,
   },
   inputError: {
     borderColor: 'red',
@@ -103,6 +115,14 @@ const styles = ScaledSheet.create({
     color: 'red',
     fontSize: 12,
     marginTop: 4,
+  },
+  disabledInput: {
+    backgroundColor: '#f0f0f0',
+    color: '#a0a0a0', 
+  },
+  disabledWrapper: {
+    backgroundColor: '#f0f0f0', 
+    borderColor: '#d1d1d1',
   },
 });
 

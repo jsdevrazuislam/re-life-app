@@ -1,25 +1,40 @@
-interface IUser {
-    _id: string;
-    fullName: string;
-    email: string;
-    role: string;
-    verified: boolean;
-    kycStatus: string;
-    documentType: string;
-    masjid: string;
-    isBlocked: boolean;
-    createdAt: string;
-    updatedAt: string;
+ interface IUser {
     __v: number;
-    kycDocuments: KycDocuments;
-}
-
-interface KycDocuments {
-    name: string;
-    mobileOrEmail: string;
-    pincode: string;
-    smart_card_front_url: string;
-    smart_card_back_url: string;
-    imam_document_url: string;
     _id: string;
-}
+    createdAt: string;
+    documentType: string;
+    email: string;
+    address: string;
+    fullName: string;
+    isBlocked: boolean;
+    kycDocuments: KycDocuments;
+    kycStatus: string;
+    masjid: Masjid;
+    phoneNumber: string;
+    profileUrl: string;
+    role: string;
+    signupStep: string;
+    updatedAt: string;
+    verified: boolean;
+  }
+   interface KycDocuments {
+    _id: string;
+    imam_document_url: string;
+    mobileOrEmail: string;
+    name: string;
+    pincode: string;
+    smart_card_back_url: string;
+    smart_card_front_url: string;
+  }
+   interface Masjid {
+    _id: string;
+    location: Location;
+    name: string;
+  }
+   interface Location {
+    district: string;
+    union: string;
+    upazila: string;
+    village: string;
+  }
+  

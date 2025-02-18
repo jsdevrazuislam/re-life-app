@@ -11,10 +11,11 @@ interface SelectDropdownProps {
   onChange: (value: string) => void;
   validation?: (value: string) => string | null;
   placeholder?: string;
-  style?: StyleProp<ViewStyle>,
-  search?:boolean,
-  searchPlaceholder?:string,
+  style?: StyleProp<ViewStyle>;
+  search?: boolean;
+  searchPlaceholder?: string;
   inputStyles?: StyleProp<TextStyle>;
+  disabled?: boolean; 
 }
 
 const SelectDropdown: React.FC<SelectDropdownProps> = ({
@@ -27,12 +28,14 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
   style,
   search,
   searchPlaceholder,
-  inputStyles
+  inputStyles,
+  disabled = false, 
 }) => {
   const [error, setError] = useState<string | null>(null);
   const [touched, setTouched] = useState(false);
 
   const handleSelect = (itemValue: string) => {
+    if (disabled) return; 
     onChange(itemValue);
     if (validation) {
       setError(validation(itemValue));
@@ -40,6 +43,7 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
   };
 
   const handleBlur = () => {
+    if (disabled) return;
     setTouched(true);
     if (validation) {
       setError(validation(value || ''));
@@ -56,16 +60,21 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
         value={value}
         onChange={item => handleSelect(item.value)}
         placeholder={placeholder}
-        style={[styles.dropdown, error ? styles.inputError : null, inputStyles]}
-        selectedTextStyle={styles.selectedText}
+        style={[
+          styles.dropdown,
+          error ? styles.inputError : null,
+          disabled ? styles.disabledDropdown : null,
+          inputStyles,
+        ]}
+        selectedTextStyle={[styles.selectedText, disabled ? styles.disabledText : null]}
         placeholderStyle={styles.placeholder}
         containerStyle={styles.dropdownContainer}
         inputSearchStyle={dropdownStyles.inputSearchStyle}
         onBlur={handleBlur}
-        search={search}
+        search={search && !disabled}
         searchPlaceholder={searchPlaceholder}
+        disable={disabled}
       />
-
       {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );
@@ -91,6 +100,7 @@ const styles = ScaledSheet.create({
     borderColor: '#ccc',
     borderRadius: 8,
     padding: 12,
+    backgroundColor: 'white',
   },
   selectedText: {
     color: '#333',
@@ -106,6 +116,14 @@ const styles = ScaledSheet.create({
   dropdownContainer: {
     borderRadius: 8,
   },
+  disabledDropdown: {
+    backgroundColor: '#f0f0f0',
+    borderColor: '#d1d1d1',
+  },
+  disabledText: {
+    color: '#a0a0a0',
+  },
 });
 
 export default SelectDropdown;
+
