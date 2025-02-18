@@ -1,5 +1,5 @@
 import { View, Platform, Alert, Linking, Image, TouchableOpacity, ScrollView } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import globalStyles from '../styles/global.style';
 import { Colors } from '../configs/colors';
@@ -17,26 +17,39 @@ import AppButton from '../components/ui/AppButton';
 import { districts, unions, upazilas, villages } from '../data/dump';
 import Paragraph from '../components/ui/Paragraph';
 import { requestAndroidPermission } from '../utils/permission';
+import { useAuthStore } from '../store/store';
+import { baseURLPhoto } from '../lib/api';
+import { useApi } from '../hooks/useApi';
+import ApiStrings from '../lib/apis_string';
+import PhoneNumberInput from '../components/ui/PhoneNumberInput';
+import { showToast } from '../utils/toast';
+import { formatFileData } from '../utils/file-format';
 
 interface ProfileForm {
   name: string;
+  fullName: string;
   address: string;
   email: string;
+  phoneNumber: string;
   location: {
     district: string,
     upazila: string,
     union: string,
     village: string,
   };
-  image: string | null | undefined;
+  image: IFile | null | undefined;
 }
 
 
 const ProfileScreen = () => {
   const { t } = useTranslation();
+  const { user, setUserInfo} = useAuthStore()
+  const { request, loading } = useApi()
   const [formData, setFormData] = useState<ProfileForm>({
     name: '',
     address: '',
+    fullName: "",
+    phoneNumber: "",
     email: '',
     location: {
       district: '',
@@ -75,15 +88,18 @@ const ProfileScreen = () => {
         } else if (response.errorMessage) {
           console.log("ImagePicker Error: ", response.errorMessage);
         } else if (response.assets && response.assets.length > 0) {
-          setFormData({ ...formData, image: response.assets[0].uri });
+          setFormData({ ...formData, image: response.assets[0] as IFile });
         }
       }
     );
   };
 
 
-  const removeImage = () => {
-    setFormData({ ...formData, image: null })
+  const removeImage = async () => {
+    if(formData.image?.uri) {
+      await request('delete', ApiStrings.DELETE_PROFILE)
+      setFormData({ ...formData, image: null })
+    }
   };
 
   const handleInputChange = (name: string, value: string) => {
@@ -101,24 +117,47 @@ const ProfileScreen = () => {
   };
 
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+
     const apiFormData = new FormData();
-    apiFormData.append('name', formData.name);
+    apiFormData.append('fullName', formData.fullName);
     apiFormData.append('address', formData.address);
-    apiFormData.append('email', formData.email);
-    apiFormData.append('location', formData.location);
+    apiFormData.append('phoneNumber', formData.phoneNumber);
+    apiFormData.append('profilePicture', formatFileData(formData.image))
 
-    if (formData.image) {
-      const imageFile = {
-        uri: formData.image,
-        name: 'profile_picture.jpg',
-        type: 'image/jpeg',
-      };
-      apiFormData.append('image', imageFile);
-    }
 
-    // Make API call here with apiFormData
+    const { data, message } = await request(
+      'put',
+      ApiStrings.UPDATE_PROFILE,
+      apiFormData,
+    );
+    setUserInfo(data)
+    showToast('success', message);
+
   };
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.masjid?.name || '',
+        fullName: user?.fullName,
+        address: user.address || '',
+        email: user.email || '',
+        phoneNumber: user?.phoneNumber,
+        location: {
+          district: user.masjid?.location?.district || '',
+          upazila: user.masjid?.location?.upazila || '',
+          union: user.masjid?.location?.union || '',
+          village: user.masjid?.location?.village || '',
+        },
+        image: {
+          uri: user.profileUrl ?  baseURLPhoto(user.profileUrl) : "",
+          fileName:'',
+          type: ''
+        }
+      });
+    }
+  }, [user]);
 
   return (
     <SafeAreaWrapper bg={Colors.light}>
@@ -134,14 +173,14 @@ const ProfileScreen = () => {
           <View style={profileStyles.form}>
             <View style={profileStyles.relative}>
               <View style={profileStyles.imageWrapper}>
-                {formData.image ? (
-                  <Image source={{ uri: formData.image }} style={profileStyles.image} />
+                {formData.image?.uri ? (
+                  <Image source={{ uri: formData.image?.uri }} style={profileStyles.image} />
                 ) : (
                   <View style={profileStyles.placeholder} />
                 )}
               </View>
-              <TouchableOpacity onPress={formData.image ? removeImage : handleImagePicker} style={[profileStyles.iconWrapper, { backgroundColor: formData.image ? Colors.danger : Colors.primary }]}>
-                {formData.image ? <Icon name="trash" size={20} color="white" /> : <Icon name="camera" size={20} color="white" />}
+              <TouchableOpacity onPress={formData.image?.uri ? removeImage : handleImagePicker} style={[profileStyles.iconWrapper, { backgroundColor: formData.image?.uri ? Colors.danger : Colors.primary }]}>
+                {formData.image?.uri ? <Icon name="trash" size={20} color="white" /> : <Icon name="camera" size={20} color="white" />}
               </TouchableOpacity>
             </View>
             <Input
@@ -150,6 +189,7 @@ const ProfileScreen = () => {
               value={formData.name}
               onChangeText={text => handleInputChange('name', text)}
               validation={validateCommitteeName}
+              disabled
             />
             <Paragraph level='Small' weight='Medium'>Masjid Location</Paragraph>
             <ScrollView style={{ marginTop: 10 }} horizontal showsHorizontalScrollIndicator={false}>
@@ -161,6 +201,7 @@ const ProfileScreen = () => {
                 style={profileStyles.paddingRight}
                 search={true}
                 searchPlaceholder='Search district'
+                disabled
               />
               <SelectDropdown
                 data={upazilas}
@@ -170,6 +211,7 @@ const ProfileScreen = () => {
                 style={profileStyles.paddingRight}
                 search={true}
                 searchPlaceholder='Search upazila'
+                disabled
               />
               <SelectDropdown
                 data={unions}
@@ -179,6 +221,7 @@ const ProfileScreen = () => {
                 style={profileStyles.paddingRight}
                 search={true}
                 searchPlaceholder='Search union'
+                disabled
               />
               <SelectDropdown
                 data={villages}
@@ -187,13 +230,14 @@ const ProfileScreen = () => {
                 placeholder="Select a village"
                 search={true}
                 searchPlaceholder='Search village'
+                disabled
               />
             </ScrollView>
             <Input
               label={t('Your Name')}
               placeholder={t('placeholderEmail')}
-              value={formData.name}
-              onChangeText={text => handleInputChange('name', text)}
+              value={formData.fullName}
+              onChangeText={text => handleInputChange('fullName', text)}
               validation={validateCommitteeName}
             />
             <Input
@@ -211,14 +255,13 @@ const ProfileScreen = () => {
               onChangeText={text => handleInputChange('email', text)}
               validation={validateEmail}
               keyboardType="phone-pad"
+              disabled
             />
-            <Input
+            <PhoneNumberInput
               label={t('Your Contract Number')}
               placeholder={t('placeholderEmail')}
-              value={formData.email}
+              value={formData.phoneNumber}
               onChangeText={text => handleInputChange('email', text)}
-              validation={validateEmail}
-              keyboardType="phone-pad"
             />
           </View>
 
@@ -226,6 +269,8 @@ const ProfileScreen = () => {
             text={t('signIn')}
             onPress={handleSubmit}
             variant="primary"
+            loading={loading}
+            disabled={loading}
           />
 
         </View>

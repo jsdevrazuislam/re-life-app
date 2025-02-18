@@ -29,7 +29,7 @@ const OtpScreen = () => {
     const [isVerifyDisabled, setIsVerifyDisabled] = useState(true);
     const { t } = useTranslation();
     const { request, loading, error } = useApi();
-    const { userTempId } = useAuthStore()
+    const { userTempId, setStatus } = useAuthStore()
     const navigation = useNavigation<NavigationProp<AppStackParamList>>();
     const inputRefs = useRef<Array<TextInput | null>>([]);
 
@@ -57,13 +57,14 @@ const OtpScreen = () => {
             userId: userTempId,
             otpCode: otp.join('')
         }
-        const { message } = await request('post', ApiStrings.OTP_VERIFY, payload);
+        const { message, data } = await request('post', ApiStrings.OTP_VERIFY, payload);
+        setStatus(data)
         showToast('success', message)
         navigation.navigate('KycStartedScreen')
     };
 
     const handleOtpChange = (text: string, index: number) => {
-        if (!/^\d?$/.test(text)) return; // Allow only numbers
+        if (!/^\d?$/.test(text)) return; 
 
         const newOtp = [...otp];
         newOtp[index] = text;
@@ -71,7 +72,7 @@ const OtpScreen = () => {
         setIsVerifyDisabled(newOtp.some(val => val === ''));
 
         if (text && index < inputRefs.current.length - 1) {
-            inputRefs.current[index + 1]?.focus(); // Move to the next input
+            inputRefs.current[index + 1]?.focus(); 
         }
     };
 

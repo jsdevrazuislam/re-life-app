@@ -11,12 +11,13 @@ import Paragraph from '../components/ui/Paragraph';
 import Heading from '../components/ui/Heading';
 import PeopleTab from '../components/screens/PoorPeopleTab';
 import CommitteeTab from '../components/screens/CommitteTab';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { NavigationProp, useNavigation, useRoute } from '@react-navigation/native';
 import { AppStackParamList } from '../constants/route';
 import { useApi } from '../hooks/useApi';
 import { useAuthStore } from '../store/store';
 import ApiStrings from '../lib/apis_string';
 import { showToast } from '../utils/toast';
+import { baseURLPhoto } from '../lib/api';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -29,6 +30,8 @@ const DashboardScreen = () => {
   const [committees, setCommittees] = useState<CommitteeResponse[]>([]);
   const [isMenuVisible, setMenuVisible] = useState(false);
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
+  const route = useRoute<ImamHomeScreenRouteProp>();
+  const [activeTab, setActiveTab] = useState(route.params?.activeTab || 'Poor People');
   const toggleMenu = () => setMenuVisible(!isMenuVisible);
   const { request, loading } = useApi();
   const { logout, user } = useAuthStore()
@@ -54,20 +57,26 @@ const DashboardScreen = () => {
     navigation.navigate('AddPoorPeopleScreen', { item }) 
   };
   const handleEditCommittee = (item: CommitteeResponse) =>{
-    console.log("hello")
+    navigation.navigate('AddCommitteeScreen', { item }) 
   }
   const handleDelete = (id: string) => {/* Add logic */ }
 
   useEffect(() =>{
     (async() =>{
      if(user?.kycStatus === 'verified'){
-      const { data } = await request('get', ApiStrings.GET_COMMITTEE(user?.masjid || ''));
-      const { data: poorPeopleData } = await request('get', ApiStrings.GET_POOR_PEOPLE(user?.masjid || ''));
+      const { data } = await request('get', ApiStrings.GET_COMMITTEE(user?.masjid?._id || ''));
+      const { data: poorPeopleData } = await request('get', ApiStrings.GET_POOR_PEOPLE(user?.masjid?._id || ''));
       setCommittees(data)
       setPeople(poorPeopleData)
      }
     })()
   } ,[user])
+
+  useEffect(() => {
+    if (route.params?.activeTab) {
+      setActiveTab(route.params.activeTab);
+    }
+  }, [route.params?.activeTab]);
   
   return (
     <SafeAreaWrapper bg={Colors.light}>
@@ -78,7 +87,7 @@ const DashboardScreen = () => {
             <Paragraph level='Medium' weight='Bold' style={imamStyles.greeting}>{user?.fullName}</Paragraph>
           </View>
           <TouchableOpacity onPress={toggleMenu}>
-            <Image source={{ uri: "https://images.pexels.com/photos/30140435/pexels-photo-30140435/free-photo-of-moody-forest-in-heavy-fog.jpeg?auto=compress&cs=tinysrgb&w=800&lazy=load" }} style={imamStyles.infoPhoto} />
+            <Image source={{ uri: baseURLPhoto(user?.profileUrl ?? "") }} style={imamStyles.infoPhoto} />
           </TouchableOpacity>
           <Modal
             visible={isMenuVisible}
@@ -128,6 +137,7 @@ const DashboardScreen = () => {
         </View>
 
         <Tab.Navigator
+          initialRouteName={activeTab}
           screenOptions={{
             tabBarLabelStyle: { fontSize: 14, fontWeight: 'bold' },
             tabBarIndicatorStyle: { backgroundColor: Colors.black },

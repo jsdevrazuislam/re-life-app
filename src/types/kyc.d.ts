@@ -1,10 +1,10 @@
 interface IFile{
     fileName: string,
-    fileSize: number,
-    height: number,
+    fileSize?: number,
+    height?: number,
     type: string,
     uri: string,
-    width:number
+    width?:number
 }
 
 interface FormState {

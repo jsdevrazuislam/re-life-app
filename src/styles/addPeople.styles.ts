@@ -15,10 +15,10 @@ const styles = ScaledSheet.create({
     editIcon: {
         position: 'absolute',
         bottom: 0,
-        right: -10,
+        right: 0,
         backgroundColor: Colors.primary,
         borderRadius: '15@ms',
-        padding: '8@ms',
+        padding: '4@ms',
       },
     avatar: {
         width: '100@ms',
@@ -128,7 +128,7 @@ const styles = ScaledSheet.create({
     },
     childHeader: {
         fontWeight: 'bold',
-        marginBottom: '10@vs',
+        marginBottom: '15@vs',
         color: '#333',
     },
 });

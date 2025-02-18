@@ -40,7 +40,27 @@ const AdminStackNavigator = () => (
 );
 
 const Stack = createStackNavigator();
-const AppNavigator = ({ role, user } : { role:string, user:IUser | null }) => {
+const AppNavigator = ({ role, user, status, userTempId } : { role:string, user:IUser | null, status:string, userTempId:string }) => {
+
+  if (status === 'otp_pending') {
+    return (
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name={AppRoutes.OTP_SCREEN} component={OtpScreen} />
+        <Stack.Screen name={AppRoutes.KYC_VERIFY_SCREEN} component={KYCVerifyScreen} />
+        <Stack.Screen name={AppRoutes.KYC_SCREEN} component={KycScreen} />
+      </Stack.Navigator>
+    );
+  }
+
+  if (userTempId && status === 'kyc_pending') {
+    return (
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name={AppRoutes.KYC_VERIFY_SCREEN} component={KYCVerifyScreen} />
+        <Stack.Screen name={AppRoutes.KYC_SCREEN} component={KycScreen} />
+        <Stack.Screen name={AppRoutes.IMAM_PENDING_SCREEN} component={ImamPendingScreen} />
+      </Stack.Navigator>
+    );
+  }
 
   if (!role) {
     return (

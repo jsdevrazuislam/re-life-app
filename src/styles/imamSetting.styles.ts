@@ -18,7 +18,7 @@ const styles = ScaledSheet.create({
     },
     avatarContainer: {
       position: 'relative',
-      marginBottom: '15@vs',
+      marginBottom: '0@vs',
     },
     avatar: {
       width: '100@ms',

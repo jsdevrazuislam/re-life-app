@@ -63,7 +63,7 @@ const KycScreen = () => {
     imamDocument: null,
   });
 
-  const { setUserId, userTempId, setUser, setRole } = useAuthStore();
+  const { setUserId, userTempId, setUser, setRole, setStatus } = useAuthStore();
   const nameError = validateCommitteeName(formData.name);
   const mobileError = validateCommitteeNumber(formData.mobile);
   const emailError = validateEmail(formData.email);
@@ -103,6 +103,7 @@ const KycScreen = () => {
     setRole(data?.user?.role)
     showToast('success', message)
     setUserId('');
+    setStatus('')
     navigation.navigate('ImamPendingScreen')
   };
 

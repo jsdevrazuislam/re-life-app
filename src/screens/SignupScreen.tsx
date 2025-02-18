@@ -33,6 +33,8 @@ import { requestAndroidPermission } from '../utils/permission';
 import * as ImagePicker from 'react-native-image-picker';
 import { formatFileData } from '../utils/file-format';
 import { Colors } from '../configs/colors';
+import { validateCommitteeAddress } from '../validations/add.committee';
+import { UploadArea } from './KycScreen';
 
 
 const SignupScreen = () => {
@@ -50,12 +52,13 @@ const SignupScreen = () => {
   const emailError = validateEmail(email);
   const passwordError = validatePassword(password);
   const { request, loading, error } = useApi();
-  const { setUserId } = useAuthStore();
+  const { setUserId, setStatus } = useAuthStore();
   const [committeeDetails, setCommitteeDetails] = useState<CommitteeDetails[]>(
     [],
   );
   const [formData, setFormData] = useState<StateForm>({
     profileUrl: null,
+    address: '',
     location: {
       district: '',
       upazila: '',
@@ -71,6 +74,7 @@ const SignupScreen = () => {
       address: committeeDetails[index]?.address || '',
       profession: committeeDetails[index]?.profession || '',
       mobile: committeeDetails[index]?.mobile || '',
+      profilePicture: formatFileData(committeeDetails[index]?.profilePicture),
     }));
     setCommitteeDetails(updatedCommittee);
   };
@@ -125,11 +129,53 @@ const SignupScreen = () => {
     );
   };
 
+  const handleCommitteeImagePicker = async (index: number) => {
+    if (Platform.OS === 'android') {
+      const hasPermission = await requestAndroidPermission();
+      if (!hasPermission) {
+        Alert.alert(
+          'Permission Denied',
+          'Please enable photo access in Settings to continue.',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Open Settings', onPress: () => Linking.openSettings() },
+          ],
+        );
+        return;
+      }
+    }
+  
+    ImagePicker.launchImageLibrary(
+      { mediaType: 'photo', quality: 0.8 },
+      response => {
+        if (response.didCancel) return;
+        if (response.errorMessage) {
+          showToast('error', response.errorMessage);
+          return;
+        }
+        if (response.assets && response.assets.length > 0) {
+          const updated = [...committeeDetails];
+          updated[index].profilePicture = formatFileData(response.assets[0]) as FileData;
+          setCommitteeDetails(updated);
+        }
+      },
+    );
+  };
+
+  const removeCommitteeImage = (index: number) => {
+    const updated = [...committeeDetails];
+    updated[index].profilePicture = null;
+    setCommitteeDetails(updated);
+  };  
+  
+
   const removeImage = (
     field: 'profileUrl',
   ) => {
     setFormData({ ...formData, [field]: null });
   };
+
+
 
   const isFormInvalid =
     typeof emailError === 'string' ||
@@ -200,14 +246,26 @@ const SignupScreen = () => {
     );
     formDataPayload.append('location', JSON.stringify(formData.location));
     formDataPayload.append('phoneNumber', mobile);
+    formDataPayload.append('address', formData.address);
     formDataPayload.append('profileUrl', formatFileData(formData.profileUrl));
+    committeeDetails.forEach((member) => {
+      if (member.profilePicture) {
+          formDataPayload.append(`committeePictures`, {
+              uri: member.profilePicture?.uri,
+              name: member.profilePicture?.name,
+              type: member.profilePicture?.type,
+          });
+      }
+  });
 
     const { data, message } = await request(
       'post',
       ApiStrings.SIGNUP,
       formDataPayload,
     );
+    console.log("data", data)
     setUserId(data);
+    setStatus('otp_pending')
     showToast('success', message);
     navigation.navigate('OtpScreen');
   };
@@ -315,6 +373,13 @@ const SignupScreen = () => {
               secureTextEntry
             />
             <Input
+              label={t('Address')}
+              placeholder={t('address')}
+              value={formData.address}
+              onChangeText={(text) => setFormData({ ...formData, address: text})}
+              validation={validateCommitteeAddress}
+            />
+            <Input
               label="Number of Committee"
               value={numberOfCommittee}
               keyboardType="numeric"
@@ -329,6 +394,12 @@ const SignupScreen = () => {
                 <Text style={styles.childHeader}>
                   Committee {index + 1} Details
                 </Text>
+                <UploadArea 
+                  handlePress={() => handleCommitteeImagePicker(index)} 
+                  handleRemove={() => removeCommitteeImage(index)} 
+                  imageUri={committee.profilePicture} 
+                  title='Upload Profile Picture'
+                 />
                 <Input
                   label="Name"
                   value={committee.name}
@@ -337,6 +408,7 @@ const SignupScreen = () => {
                     updated[index].name = text;
                     setCommitteeDetails(updated);
                   }}
+                  style={{ marginTop: 15}}
                   inputStyles={{ backgroundColor: Colors.white}}
                   inputWrapper={{ backgroundColor: Colors.white }}
                 />
