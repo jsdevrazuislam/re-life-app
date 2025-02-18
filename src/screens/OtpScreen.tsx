@@ -29,7 +29,7 @@ const OtpScreen = () => {
     const [isVerifyDisabled, setIsVerifyDisabled] = useState(true);
     const { t } = useTranslation();
     const { request, loading, error } = useApi();
-    const { userTempId, setStatus } = useAuthStore()
+    const { userTempId, setStatus, userTempEmail, setUserId, setTempEmail } = useAuthStore()
     const navigation = useNavigation<NavigationProp<AppStackParamList>>();
     const inputRefs = useRef<Array<TextInput | null>>([]);
 
@@ -46,25 +46,37 @@ const OtpScreen = () => {
         }
     }, [timer]);
 
-    const handleResendCode = () => {
-        setTimer(20);
+    const handleResendCode = async () => {
+        const { data } = await request(
+            'post',
+            ApiStrings.RESEND_OTP,
+            { emailOrPhone: userTempEmail },
+        );
+        setUserId(data?.id);
+        setTempEmail(data?.email)
+        setTimer(60);
         setIsResendDisabled(true);
         showToast('success', 'A new code has been sent to your email.');
     };
 
     const handleVerify = async () => {
-        const payload = {
-            userId: userTempId,
-            otpCode: otp.join('')
+        if (!userTempEmail) {
+            const payload = {
+                userId: userTempId,
+                otpCode: otp.join('')
+            }
+            const { message, data } = await request('post', ApiStrings.OTP_VERIFY, payload);
+            setStatus(data)
+            showToast('success', message)
+            navigation.navigate('KycStartedScreen')
+        } else {
+            navigation.navigate('ResetPasswordScreen', { otp: otp.join('') })
         }
-        const { message, data } = await request('post', ApiStrings.OTP_VERIFY, payload);
-        setStatus(data)
-        showToast('success', message)
-        navigation.navigate('KycStartedScreen')
+
     };
 
     const handleOtpChange = (text: string, index: number) => {
-        if (!/^\d?$/.test(text)) return; 
+        if (!/^\d?$/.test(text)) return;
 
         const newOtp = [...otp];
         newOtp[index] = text;
@@ -72,7 +84,7 @@ const OtpScreen = () => {
         setIsVerifyDisabled(newOtp.some(val => val === ''));
 
         if (text && index < inputRefs.current.length - 1) {
-            inputRefs.current[index + 1]?.focus(); 
+            inputRefs.current[index + 1]?.focus();
         }
     };
 
@@ -93,9 +105,9 @@ const OtpScreen = () => {
                     <Heading level={3} weight="Bold">
                         {t('checkEmail')}
                     </Heading>
-                    <Paragraph level="Medium">{t('codeSentTo')}</Paragraph>
+                    <Paragraph level="Medium">{t('codeSentTo')} {userTempEmail?.toLowerCase()}</Paragraph>
                     <View style={otpStyles.otpContainer}>
-                    {otp.map((digit, index) => (
+                        {otp.map((digit, index) => (
                             <TextInput
                                 key={index}
                                 ref={ref => (inputRefs.current[index] = ref)}

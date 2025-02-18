@@ -16,15 +16,21 @@ export const AppRoutes = {
     KYC_SUCCESS_SCREEN:'KycSuccessScreen',
     IMAM_SETTING_SCREEN:'ImamSettingsScreen',
     IMAM_PENDING_SCREEN:'ImamPendingScreen',
+    CHANGE_PASSWORD:'ChangePasswordScreen',
+    UPDATE_EMAIL:'UpdateEmailScreen',
+    RESET_PASSWORD_SCREEN:'ResetPasswordScreen',
 }
 
 export type AppStackParamList = {
     OpeningScreen: undefined; 
     LoginScreen: undefined; 
     ImamSettingsScreen: undefined; 
+    ResetPasswordScreen: { otp: string}; 
     HomeScreen: undefined; 
     ProfileScreen: undefined; 
     ForgotPasswordScreen: undefined; 
+    ChangePasswordScreen: undefined; 
+    UpdateEmailScreen: undefined; 
     ImamPendingScreen: undefined; 
     KycStartedScreen: undefined; 
     AddPoorPeopleScreen: {

@@ -22,7 +22,7 @@ export default {
   enterEmailAddress: 'আপনার ইমেল ঠিকানা লিখুন',
   sendCode: 'কোড পাঠান',
   checkEmail: 'অনুগ্রহ করে আপনার ইমেল চেক করুন',
-  codeSentTo: 'আমরা একটি কোড পাঠিয়েছি {{email}}-এ',
+  codeSentTo: 'আমরা একটি কোড পাঠিয়েছি',
   verify: 'যাচাই করুন',
   sendCodeAgain: 'কোড আবার পাঠান ০০:২০',
   resetPassword: 'পাসওয়ার্ড পুনঃস্থাপন',

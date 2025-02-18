@@ -16,6 +16,8 @@ interface AuthState {
   setUser: (user: IUser, accessToken: string, refreshToken: string) => void;
   setRole: (role: string) => void;
   setUserId: (role: string) => void;
+  setTempEmail: (email: string) => void;
+  userTempEmail:string | null,
   setStatus: (status: string) => void;
   loadUserFromStorage: () => Promise<void>;
   isLoading: boolean;
@@ -29,7 +31,8 @@ const initialState = {
   role: null,
   isLoading: true,
   status: '',
-  userTempId: null
+  userTempId: null,
+  userTempEmail: ""
 };
 
 export const useAuthStore = create<AuthState>(set => ({
@@ -75,6 +78,7 @@ export const useAuthStore = create<AuthState>(set => ({
     set({ status })
     await AsyncStorage.setItem('status', status);
   },
+  setTempEmail:(email) => set({ userTempEmail: email }),
   setRole:(role) => set({ role }),
   setUserId: async (userTempId) => {
     set({ userTempId })

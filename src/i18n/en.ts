@@ -22,7 +22,7 @@ export default {
     enterEmailAddress: 'Enter your email address',
     sendCode: 'Send code',
     checkEmail: 'Please check your email',
-    codeSentTo: 'We’ve sent a code to {{email}}',
+    codeSentTo: 'We’ve sent a code to',
     verify: 'Verify',
     sendCodeAgain: 'Send code again 00:20',
     resetPassword: 'Reset password',

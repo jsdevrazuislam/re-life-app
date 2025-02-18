@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, Image, Modal } from 'react-native';
+import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
@@ -87,7 +88,7 @@ const DashboardScreen = () => {
             <Paragraph level='Medium' weight='Bold' style={imamStyles.greeting}>{user?.fullName}</Paragraph>
           </View>
           <TouchableOpacity onPress={toggleMenu}>
-            <Image source={{ uri: baseURLPhoto(user?.profileUrl ?? "") }} style={imamStyles.infoPhoto} />
+           {user?.profileUrl  ? <Image source={{ uri: baseURLPhoto(user?.profileUrl ?? "") }} style={imamStyles.infoPhoto} /> : <EvilIcons name='user' />} 
           </TouchableOpacity>
           <Modal
             visible={isMenuVisible}

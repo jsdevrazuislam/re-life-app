@@ -71,7 +71,7 @@ const LoginScreen = () => {
               onPress={handleSubmit}
               variant="primary"
               loading={loading}
-              disabled={emailError && true || passwordError && true || !email || !password}
+              disabled={emailError && true || passwordError && true || !email || !password || loading}
             />
             <View style={loginStyles.bottom}>
               <View style={loginStyles.lineContainer}>

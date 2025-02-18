@@ -9,6 +9,10 @@ import Heading from '../components/ui/Heading';
 import BackButton from '../components/BackButton';
 import { useAuthStore } from '../store/store';
 import { baseURLPhoto } from '../lib/api';
+import { useTranslationStore } from '../hooks/useTranslationStore';
+import { Colors } from '../configs/colors';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { AppStackParamList } from '../constants/route';
 
 type SettingItemProps = {
     icon: string;
@@ -28,7 +32,8 @@ const SettingItem: React.FC<SettingItemProps> = ({ icon, label, onPress, rightCo
 );
 
 const SettingsScreen = () => {
-    const [language, setLanguage] = useState<'en' | 'bn'>('en');
+    const { language, setLanguage} = useTranslationStore();
+    const navigation = useNavigation<NavigationProp<AppStackParamList>>();
     const { user } = useAuthStore()
 
 
@@ -59,22 +64,22 @@ const SettingsScreen = () => {
                         <SettingItem
                             icon="lock"
                             label="Change Password"
-                            onPress={() => console.log('Navigate to UpdatePasswordScreen')}
+                            onPress={() => navigation.navigate('ChangePasswordScreen')}
                         />
                         <SettingItem
                             icon="email"
                             label="Update Email"
-                            onPress={() => console.log('Navigate to UpdateEmailScreen')}
+                            onPress={() => navigation.navigate('UpdateEmailScreen')}
                         />
                         <SettingItem
                             icon="language"
-                            label="Switch Language"
+                            label={`Switch Language ${language}`}
                             rightComponent={
                                 <Switch
                                     value={language === 'bn'}
                                     onValueChange={(val) => setLanguage(val ? 'bn' : 'en')}
                                     trackColor={{ false: '#767577', true: '#81b0ff' }}
-                                    thumbColor={language === 'bn' ? '#3F51B5' : '#f4f3f4'}
+                                    thumbColor={language === 'bn' ? Colors.primary : '#f4f3f4'}
                                 />
                             }
                         />

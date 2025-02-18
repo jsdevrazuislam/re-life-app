@@ -263,7 +263,6 @@ const SignupScreen = () => {
       ApiStrings.SIGNUP,
       formDataPayload,
     );
-    console.log("data", data)
     setUserId(data);
     setStatus('otp_pending')
     showToast('success', message);

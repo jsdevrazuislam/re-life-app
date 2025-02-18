@@ -21,6 +21,9 @@ import KycScreen from '../../screens/KycScreen';
 import AddPeopleScreen from '../../screens/AddPoorPeopleScreen';
 import SettingsScreen from '../../screens/ImamSettingsScreen';
 import ImamPendingScreen from '../../screens/ImamPendingScreen';
+import UpdateEmailScreen from '../../screens/UpdateEmailScreen';
+import ChangePasswordScreen from '../../screens/ChangePasswordScreen';
+import ResetPasswordScreen from '../../screens/ResetPasswordScreen';
 
 
 const Tab = createBottomTabNavigator();
@@ -76,6 +79,7 @@ const AppNavigator = ({ role, user, status, userTempId } : { role:string, user:I
         <Stack.Screen name={AppRoutes.KYC_VERIFY_SCREEN} component={KYCVerifyScreen} />
         <Stack.Screen name={AppRoutes.KYC_SCREEN} component={KycScreen} />
         <Stack.Screen name={AppRoutes.IMAM_PENDING_SCREEN} component={ImamPendingScreen} />
+        <Stack.Screen name={AppRoutes.RESET_PASSWORD_SCREEN} component={ResetPasswordScreen} />
       </Stack.Navigator>
     );
   }
@@ -96,6 +100,8 @@ const AppNavigator = ({ role, user, status, userTempId } : { role:string, user:I
         <Stack.Screen name={AppRoutes.PROFILE_SCREEN} component={ProfileScreen} />
         <Stack.Screen name={AppRoutes.IMAM_SETTING_SCREEN} component={SettingsScreen} />
         <Stack.Screen name={AppRoutes.ADD_POOR_PEOPLE_SCREEN} component={AddPeopleScreen} />
+        <Stack.Screen name={AppRoutes.UPDATE_EMAIL} component={UpdateEmailScreen} />
+        <Stack.Screen name={AppRoutes.CHANGE_PASSWORD} component={ChangePasswordScreen} />
       </Stack.Navigator>
     );
   }
