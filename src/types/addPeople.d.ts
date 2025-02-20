@@ -10,6 +10,7 @@ interface ChildDetail {
 
 type AddPoorPeopleScreenRouteProp = RouteProp<AppStackParamList, "AddPoorPeopleScreen">;
 type ImamHomeScreenRouteProp = RouteProp<AppStackParamList, 'ImamHomeScreen'>;
+type HomeViewDetailsInfoRouteProp = RouteProp<AppStackParamList, 'HomeViewDetailsInfo'>;
 type AddCommitteeScreenRouteProp = RouteProp<AppStackParamList, 'AddCommitteeScreen'>;
 
 

@@ -31,6 +31,7 @@ export const cardStyles = ScaledSheet.create({
   },
   cardTitle: {
     color: Colors.text,
+    textTransform:'capitalize'
   },
   viewButton: {
     backgroundColor: Colors.primary,

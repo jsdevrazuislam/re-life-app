@@ -28,13 +28,13 @@ import SelectDropdown from '../components/ui/Select';
 import PhoneNumberInput from '../components/ui/PhoneNumberInput';
 import Paragraph from '../components/ui/Paragraph';
 import profileStyles from '../styles/profile.styles';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import { requestAndroidPermission } from '../utils/permission';
 import * as ImagePicker from 'react-native-image-picker';
 import { formatFileData } from '../utils/file-format';
 import { Colors } from '../configs/colors';
 import { validateCommitteeAddress } from '../validations/add.committee';
 import { UploadArea } from './KycScreen';
+import kycScreenStyles from '../styles/kycScreen.styles';
 
 
 const SignupScreen = () => {
@@ -58,6 +58,7 @@ const SignupScreen = () => {
   );
   const [formData, setFormData] = useState<StateForm>({
     profileUrl: null,
+    masjidProfile: null,
     address: '',
     location: {
       district: '',
@@ -94,7 +95,7 @@ const SignupScreen = () => {
 
 
   const handleImagePicker = async (
-    field: 'profileUrl',
+    field: 'profileUrl' | 'masjidProfile',
   ) => {
     if (Platform.OS === 'android') {
       const hasPermission = await requestAndroidPermission();
@@ -144,7 +145,7 @@ const SignupScreen = () => {
         return;
       }
     }
-  
+
     ImagePicker.launchImageLibrary(
       { mediaType: 'photo', quality: 0.8 },
       response => {
@@ -166,11 +167,11 @@ const SignupScreen = () => {
     const updated = [...committeeDetails];
     updated[index].profilePicture = null;
     setCommitteeDetails(updated);
-  };  
-  
+  };
+
 
   const removeImage = (
-    field: 'profileUrl',
+    field: 'profileUrl' | 'masjidProfile',
   ) => {
     setFormData({ ...formData, [field]: null });
   };
@@ -244,19 +245,20 @@ const SignupScreen = () => {
       'committeeDetails',
       JSON.stringify(committeeDetails),
     );
+    formDataPayload.append("masjidProfile", formatFileData(formData.masjidProfile))
     formDataPayload.append('location', JSON.stringify(formData.location));
     formDataPayload.append('phoneNumber', mobile);
     formDataPayload.append('address', formData.address);
     formDataPayload.append('profileUrl', formatFileData(formData.profileUrl));
     committeeDetails.forEach((member) => {
       if (member.profilePicture) {
-          formDataPayload.append(`committeePictures`, {
-              uri: member.profilePicture?.uri,
-              name: member.profilePicture?.name,
-              type: member.profilePicture?.type,
-          });
+        formDataPayload.append(`committeePictures`, {
+          uri: member.profilePicture?.uri,
+          name: member.profilePicture?.name,
+          type: member.profilePicture?.type,
+        });
       }
-  });
+    });
 
     const { data, message } = await request(
       'post',
@@ -279,17 +281,32 @@ const SignupScreen = () => {
           </Heading>
 
           <View style={signupStyles.form}>
-            <View style={styles.profileSection}>
-              <View style={styles.avatarContainer}>
-                {formData.profileUrl?.uri ? <Image
-                  source={{ uri: formData.profileUrl?.uri }}
-                  style={styles.avatar}
-                /> : <View style={styles.avatar} />}
-                {formData.profileUrl?.uri ? <TouchableOpacity onPress={() => removeImage('profileUrl')} style={signupStyles.deleteButton}>
-                  <Icon name="restore-from-trash" size={20} color="#FFF" />
-                </TouchableOpacity> : <TouchableOpacity onPress={() => handleImagePicker('profileUrl')} style={styles.editIcon}>
-                  <Icon name="edit" size={20} color="#FFF" />
-                </TouchableOpacity>}
+            <View style={kycScreenStyles.uploadSection}>
+              <Heading level={6} weight="Bold" style={styles.sectionTitle}>
+                Capture Id Proof
+              </Heading>
+              <Paragraph
+                level="Small"
+                weight="Medium"
+              >
+                Lorem Ipsum is simply dummy text of the printing and
+                typesetting industry. Lorem Ipsum has been the industry's
+                standard dummy text ever since the 1500s.
+              </Paragraph>
+
+              <View style={[kycScreenStyles.uploadRow, { marginTop: 20 }]}>
+                <UploadArea
+                  title="Your Profile"
+                  imageUri={formData.profileUrl}
+                  handlePress={() => handleImagePicker('profileUrl')}
+                  handleRemove={() => removeImage('profileUrl')}
+                />
+                <UploadArea
+                  title="Masjid Photo"
+                  imageUri={formData.masjidProfile}
+                  handlePress={() => handleImagePicker('masjidProfile')}
+                  handleRemove={() => removeImage('masjidProfile')}
+                />
               </View>
             </View>
             <Input
@@ -375,7 +392,7 @@ const SignupScreen = () => {
               label={t('Address')}
               placeholder={t('address')}
               value={formData.address}
-              onChangeText={(text) => setFormData({ ...formData, address: text})}
+              onChangeText={(text) => setFormData({ ...formData, address: text })}
               validation={validateCommitteeAddress}
             />
             <Input
@@ -393,12 +410,12 @@ const SignupScreen = () => {
                 <Text style={styles.childHeader}>
                   Committee {index + 1} Details
                 </Text>
-                <UploadArea 
-                  handlePress={() => handleCommitteeImagePicker(index)} 
-                  handleRemove={() => removeCommitteeImage(index)} 
-                  imageUri={committee.profilePicture} 
+                <UploadArea
+                  handlePress={() => handleCommitteeImagePicker(index)}
+                  handleRemove={() => removeCommitteeImage(index)}
+                  imageUri={committee.profilePicture}
                   title='Upload Profile Picture'
-                 />
+                />
                 <Input
                   label="Name"
                   value={committee.name}
@@ -407,8 +424,8 @@ const SignupScreen = () => {
                     updated[index].name = text;
                     setCommitteeDetails(updated);
                   }}
-                  style={{ marginTop: 15}}
-                  inputStyles={{ backgroundColor: Colors.white}}
+                  style={{ marginTop: 15 }}
+                  inputStyles={{ backgroundColor: Colors.white }}
                   inputWrapper={{ backgroundColor: Colors.white }}
                 />
                 <Input
@@ -420,7 +437,7 @@ const SignupScreen = () => {
                     updated[index].address = text;
                     setCommitteeDetails(updated);
                   }}
-                  inputStyles={{ backgroundColor: Colors.white}}
+                  inputStyles={{ backgroundColor: Colors.white }}
                   inputWrapper={{ backgroundColor: Colors.white }}
                 />
                 <SelectDropdown
@@ -433,13 +450,13 @@ const SignupScreen = () => {
                   }}
                   data={professions}
                   style={styles.halfInput}
-                  inputStyles={{ backgroundColor: Colors.white}}
+                  inputStyles={{ backgroundColor: Colors.white }}
                 />
                 <PhoneNumberInput
                   label="Phone Number"
                   placeholder="Enter your phone number"
                   value={committee.mobile}
-                  inputStyles={{ backgroundColor: Colors.white}}
+                  inputStyles={{ backgroundColor: Colors.white }}
                   inputWrapper={{ backgroundColor: Colors.white }}
                   onChangeText={text => {
                     const updated = [...committeeDetails];

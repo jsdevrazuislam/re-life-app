@@ -3,7 +3,7 @@ import { Colors } from '../../configs/colors';
 
 export const dropdownStyles = ScaledSheet.create({
   container: {
-    marginBottom: 10,
+    marginBottom: 5,
     marginTop: 10,
   },
   dropdown: {

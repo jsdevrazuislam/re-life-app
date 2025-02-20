@@ -11,11 +11,12 @@ const ApiStrings = {
     RESEND_OTP:'/users/resend-otp',
     OTP_VERIFY:'/users/otp-verify',
     KYC_VERIFY:'/users/kyc-verify',
-    GET_COMMITTEE: (ID:string) => `committee/${ID}/committee`,
-    GET_POOR_PEOPLE: (ID:string) => `poor-people/${ID}/poor-person`,
+    REQUEST_TO_ADMIN:'/masjids/request-access',
+    GET_MASJID_DETAILS: (id:string) => `/masjids/${id}/details`,
     CREATE_PEOPLE: (ID:string) => `poor-people/${ID}/poor-person`,
     COMMITTEE_PROFILE_DELETE: (masjidId:string, committeeId:string) => `committee/${masjidId}/committee/${committeeId}/image`,
     CREATE_COMMITTEE:'/committee/create',
+    GET_MASJIDS:'/masjids',
     UPDATE_COMMITTEE: '/committee/update'
 }
 

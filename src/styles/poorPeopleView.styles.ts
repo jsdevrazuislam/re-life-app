@@ -7,56 +7,75 @@ const poorPeopleViewStyles = ScaledSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between'
     },
-    flexRow:{
+
+    profileSection: {
+        alignItems: 'center',
+        marginBottom: '20@ms',
+    },
+    profileImage: {
+        width: '100@ms',
+        height: '100@ms',
+        borderRadius: '50@ms',
+        marginBottom: '10@ms',
+    },
+    name: {
+        color: '#333',
+        marginBottom: '10@ms',
+    },
+    detailRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: '5@ms'
+        marginBottom: '10@ms',
     },
-    flex:{
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: '5@ms',
-        padding: '5@ms',
-        borderBottomWidth: 1,
-        borderColor: Colors.border,
-    },
-    documentsImage:{
-        width: '100%', 
-        height: '180@ms',
-        borderRadius: '10@ms',
-        objectFit:'cover'
-    },
-    documentsImageContainer:{
-        width: '48%'
-    },
-    govermentAid:{
-        backgroundColor: Colors.white,
-        paddingHorizontal:5
-    },
-    label: { color: Colors.text},
-    value: {  color: '#666' },
-    headerTitle:{
-        color:Colors.text
-    },
-    mainContent:{
-         marginTop: '20@ms'
-    },
-    documents:{
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap:'10@ms',
-    },
-    masjidImage:{
-        width: '100%', 
-        height: '200@ms',
-        borderRadius: '10@ms',
-        marginBottom: '20@ms'
-    },
-    flexLayout: {
+    docImageRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginTop: '2@ms',
-        gap: '10@ms'
+        marginBottom:'10@ms'
+      },
+      docImageContainer: {
+        width: '48%',
+        aspectRatio: 1,
+        borderRadius: 10,
+        overflow: 'hidden',
+      },
+      docImage: {
+        width: '100%',
+        height: '100%',
+        resizeMode: 'cover',
+        borderRadius:'10@ms'
+      },
+    detailText: {
+        color: '#555',
+        marginLeft: '10@ms',
+        flexShrink: 1,
+    },
+    sectionHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: Colors.light,
+        padding: '15@ms',
+        borderRadius: '10@ms',
+        elevation: 3,
+        marginBottom: '10@ms',
+    },
+    sectionTitleRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    sectionTitle: {
+        color: '#333',
+        marginLeft: '10@ms',
+    },
+    sectionContent: {
+        backgroundColor: '#fff',
+        padding: '15@ms',
+        borderRadius: '10@ms',
+        marginBottom: '10@ms',
+    },
+    childDetail: {
+        marginLeft: '20@ms',
+        marginBottom: '15@ms',
     },
 });
 

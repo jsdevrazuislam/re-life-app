@@ -1,103 +1,107 @@
-import { View, Text, Animated, ActivityIndicator } from 'react-native';
-import React, { useState, useRef } from 'react';
+import { View, Animated, ActivityIndicator, TouchableOpacity, FlatList } from 'react-native';
+import React, { useState } from 'react';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import Paragraph from '../components/ui/Paragraph';
-import { ScrollView } from 'react-native-gesture-handler';
 import globalStyles from '../styles/global.style';
 import homeStyles from '../styles/home.style';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import AppLogo from '../components/ui/AppLogo';
 import AreaSelector from '../components/AreaSelector';
 import { useTranslation } from '../hooks/useTranslation';
-import { informations } from '../data/dump';
+import { districts, unions, upazilas, villages } from '../data/dump';
 import AppButton from '../components/ui/AppButton';
 import FokirCard from '../components/FokirCard';
 import { Colors } from '../configs/colors';
+import ApiStrings from '../lib/apis_string';
+import api from '../lib/api';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { AppStackParamList } from '../constants/route';
 
 const HomeScreen = () => {
   const { t } = useTranslation();
-  const [selectedDistrict, setSelectedDistrict] = useState<string>('');
-  const [selectedUpazila, setSelectedUpazila] = useState<string>('');
-  const [selectedUnion, setSelectedUnion] = useState<string>('');
-  const [selectedVillage, setSelectedVillage] = useState<string>('');
-  const [filteredData, setFilteredData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+  const fadeAnim = useState(new Animated.Value(0))[0];
+  const navigation = useNavigation<NavigationProp<AppStackParamList>>();
+  const [masjids, setMasjids] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [filters, setFilters] = useState({
+    district: '',
+    upazila: '',
+    union: '',
+    village: '',
+  });
 
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const fetchMasjids = async (page = 1, newFilters = filters) => {
+    setIsLoading(true);
+    try {
+      const query = new URLSearchParams({ ...newFilters, page: page.toString(), limit: "10" }).toString();
+      const { data } = await api.get(`${ApiStrings.GET_MASJIDS}?${query}`);
 
-  const getDropdownData = (key: 'district' | 'upazila' | 'union' | 'village') => {
-    return Array.from(new Set(informations.map(item => item.location[key])))
-      .map(value => ({ label: value, value }));
-  };
-
-  const handleValueChange = (value: string, type: string) => {
-    switch (type) {
-      case 'District':
-        setSelectedDistrict(value);
-        break;
-      case 'Upazila':
-        setSelectedUpazila(value);
-        break;
-      case 'Union':
-        setSelectedUnion(value);
-        break;
-      case 'Village':
-        setSelectedVillage(value);
-        break;
-      default:
-        break;
-    }
-  };
-
-  const getSearchResult = () => {
-    setLoading(true);
-    setTimeout(() => {
-      const results = informations.filter(item =>
-        (!selectedDistrict || item.location.district === selectedDistrict) &&
-        (!selectedUpazila || item.location.upazila === selectedUpazila) &&
-        (!selectedUnion || item.location.union === selectedUnion) &&
-        (!selectedVillage || item.location.village === selectedVillage)
-      );
-
-      setFilteredData(results);
-      setLoading(false);
+      setMasjids(page === 1 ? data.data.masjids : [...masjids, ...data.data.masjids]);
+      setCurrentPage(data.data.currentPage);
+      setTotalPages(data.data.totalPages);
 
       Animated.timing(fadeAnim, {
         toValue: 1,
         duration: 500,
         useNativeDriver: true,
       }).start();
-    }, 1000);
+    } catch (error) {
+      console.error('Error fetching masjids:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleValueChange = (value: string, type: string) => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [type.toLowerCase()]: value,
+    }));
+  };
+
+  const getSearchResult = () => {
+    setMasjids([]); 
+    setCurrentPage(1);
+    fetchMasjids(1, filters);
+  };
+
+  const loadMoreMasjids = () => {
+    if (currentPage < totalPages && !isLoading) {
+      fetchMasjids(currentPage + 1, filters);
+    }
   };
 
   return (
     <SafeAreaWrapper bg={Colors.light}>
-      <ScrollView>
         <View style={globalStyles.container}>
           <View style={homeStyles.headerSection}>
             <AppLogo />
             <Paragraph level="Medium">{t('searchMasjid')}</Paragraph>
-            <Icon name="user-circle" size={24} />
+            <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
+              <Icon name="user-circle" size={24} />
+            </TouchableOpacity>
           </View>
 
           <AreaSelector
             label="District"
-            data={getDropdownData('district')}
+            data={districts}
             onChange={(value) => handleValueChange(value, 'District')}
           />
           <AreaSelector
             label="Upazila"
-            data={getDropdownData('upazila')}
+            data={upazilas}
             onChange={(value) => handleValueChange(value, 'Upazila')}
           />
           <AreaSelector
             label="Union"
-            data={getDropdownData('union')}
+            data={unions}
             onChange={(value) => handleValueChange(value, 'Union')}
           />
           <AreaSelector
             label="Village"
-            data={getDropdownData('village')}
+            data={villages}
             onChange={(value) => handleValueChange(value, 'Village')}
           />
 
@@ -107,13 +111,17 @@ const HomeScreen = () => {
             onPress={getSearchResult}
           />
 
-          {loading ? (
+          {isLoading ? (
             <ActivityIndicator size="large" color="#007AFF" style={{ marginTop: 20 }} />
-          ) : filteredData.length > 0 ? (
+          ) : masjids.length > 0 ? (
             <Animated.View style={[homeStyles.viewArea, { opacity: fadeAnim }]}>
-              {filteredData.map((item, index) => (
-                <FokirCard key={index} data={item} />
-              ))}
+              <FlatList
+                data={masjids}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item }) => <FokirCard data={item} />}
+                onEndReached={loadMoreMasjids}
+                onEndReachedThreshold={0.5} 
+              />
             </Animated.View>
           ) : (
             <Paragraph level='Small' style={{ textAlign: 'center', marginTop: 20 }}>
@@ -121,7 +129,6 @@ const HomeScreen = () => {
             </Paragraph>
           )}
         </View>
-      </ScrollView>
     </SafeAreaWrapper>
   );
 };

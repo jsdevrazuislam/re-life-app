@@ -36,6 +36,10 @@ const DashboardScreen = () => {
   const toggleMenu = () => setMenuVisible(!isMenuVisible);
   const { request, loading } = useApi();
   const { logout, user } = useAuthStore()
+  const [total, setTotal] = useState({
+    totalPeople:0,
+    totalCommittees: 0
+  })
 
   // Dynamic greeting
   const getGreeting = () => {
@@ -46,39 +50,33 @@ const DashboardScreen = () => {
   };
 
   const handleAddPerson = () => {
-    navigation.navigate('AddPoorPeopleScreen', {})
-   };
-  const handleLogout = async () =>{
+    navigation.navigate('AddPoorPeopleScreen')
+  };
+  const handleLogout = async () => {
     toggleMenu()
     await request('get', ApiStrings.LOGOUT);
     logout()
     showToast('success', 'Logout Successfully')
   }
-  const handleEdit = (item: PoorPeopleResponse) => {
-    navigation.navigate('AddPoorPeopleScreen', { item }) 
-  };
-  const handleEditCommittee = (item: CommitteeResponse) =>{
-    navigation.navigate('AddCommitteeScreen', { item }) 
-  }
-  const handleDelete = (id: string) => {/* Add logic */ }
 
-  useEffect(() =>{
-    (async() =>{
-     if(user?.kycStatus === 'verified'){
-      const { data } = await request('get', ApiStrings.GET_COMMITTEE(user?.masjid?._id || ''));
-      const { data: poorPeopleData } = await request('get', ApiStrings.GET_POOR_PEOPLE(user?.masjid?._id || ''));
-      setCommittees(data)
-      setPeople(poorPeopleData)
-     }
+  useEffect(() => {
+    (async () => {
+      if (user?.kycStatus === 'verified') {
+        const { data } = await request('get', ApiStrings.GET_MASJID_DETAILS(user?.masjid?._id || ''));
+        setTotal({ ...total, totalPeople: data?.totalPoorPeople, totalCommittees: data?.totalCommittees})
+        setCommittees(data?.committees)
+        setPeople(data?.poorPeople)
+      }
     })()
-  } ,[user])
+  }, [user])
 
   useEffect(() => {
     if (route.params?.activeTab) {
       setActiveTab(route.params.activeTab);
     }
   }, [route.params?.activeTab]);
-  
+
+
   return (
     <SafeAreaWrapper bg={Colors.light}>
       <View style={globalStyles.container}>
@@ -88,7 +86,7 @@ const DashboardScreen = () => {
             <Paragraph level='Medium' weight='Bold' style={imamStyles.greeting}>{user?.fullName}</Paragraph>
           </View>
           <TouchableOpacity onPress={toggleMenu}>
-           {user?.profileUrl  ? <Image source={{ uri: baseURLPhoto(user?.profileUrl ?? "") }} style={imamStyles.infoPhoto} /> : <EvilIcons name='user' />} 
+            {user?.profileUrl ? <Image source={{ uri: baseURLPhoto(user?.profileUrl ?? "") }} style={imamStyles.profileAvatar} /> : <EvilIcons name='user' />}
           </TouchableOpacity>
           <Modal
             visible={isMenuVisible}
@@ -126,14 +124,14 @@ const DashboardScreen = () => {
 
         <View style={imamStyles.statsContainer}>
           <View style={imamStyles.statCard}>
-            <Icon name="people" size={32} color="#3F51B5" />
+            <Icon name="people" size={32} color={Colors.primary} />
             <Paragraph level='Small' weight='Medium' style={imamStyles.statLabel}>Total People</Paragraph>
             <Heading level={5} weight='Bold' style={imamStyles.statValue}>{people?.length}</Heading>
           </View>
           <View style={imamStyles.statCard}>
             <Icon name="groups" size={32} color="#4CAF50" />
             <Paragraph level='Small' weight='Medium' style={imamStyles.statLabel}>Committees</Paragraph>
-            <Heading level={5} weight='Bold'  style={imamStyles.statValue}>{committees?.length}</Heading>
+            <Heading level={5} weight='Bold' style={imamStyles.statValue}>{committees?.length}</Heading>
           </View>
         </View>
 
@@ -145,10 +143,10 @@ const DashboardScreen = () => {
             tabBarStyle: { backgroundColor: "transparent", elevation: 0 },
           }}>
           <Tab.Screen name="Poor People">
-            {() => <PeopleTab loading={loading} data={people} onAdd={handleAddPerson} onEdit={handleEdit} onDelete={handleDelete} />}
+            {() => <PeopleTab loading={loading} data={people} onAdd={handleAddPerson} />}
           </Tab.Screen>
           <Tab.Screen name="Committee">
-            {() => <CommitteeTab loading={loading} data={committees} onEdit={handleEditCommittee} onDelete={handleDelete} />}
+            {() => <CommitteeTab loading={loading} data={committees} />}
           </Tab.Screen>
         </Tab.Navigator>
       </View>

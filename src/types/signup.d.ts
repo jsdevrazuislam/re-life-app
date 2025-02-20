@@ -13,6 +13,7 @@ type FileData = {
   };
 
 interface StateForm{
+    masjidProfile: IFile | null,
     profileUrl: IFile | null,
     address:string,
     location: {

@@ -1,3 +1,3 @@
 interface FokirCardProps{
-    data:any
+    data: Masjids
 }

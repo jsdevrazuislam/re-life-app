@@ -33,19 +33,19 @@ export type AppStackParamList = {
     UpdateEmailScreen: undefined; 
     ImamPendingScreen: undefined; 
     KycStartedScreen: undefined; 
-    AddPoorPeopleScreen: {
-        item?:PoorPeopleResponse
-    }; 
+    AddPoorPeopleScreen: undefined;
     ImamHomeScreen: {
         activeTab?:string
     }; 
     SignupScreen: undefined; 
-    HomeViewDetailsInfo: undefined; 
-    PoorPeopleView: undefined; 
+    HomeViewDetailsInfo: {
+        item:Masjids
+    }; 
+    PoorPeopleView: {
+        item:PoorPeople
+    }; 
     KycSuccessScreen: undefined; 
     KycScreen: undefined; 
-    AddCommitteeScreen: {
-        item?:CommitteeResponse
-    }; 
+    AddCommitteeScreen: undefined; 
     OtpScreen: undefined; 
   };

@@ -1,5 +1,4 @@
 import { Colors } from "../configs/colors";
-import { Fonts } from "../configs/fonts";
 import { ScaledSheet } from "react-native-size-matters";
 
 const homeViewDetailsStyles = ScaledSheet.create({
@@ -7,6 +6,11 @@ const homeViewDetailsStyles = ScaledSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between'
+    },
+    labelIcon:{
+        flexDirection:'row',
+        alignItems:'center',
+        gap:'5@ms'
     },
     imamCard: {
         marginTop: '10@ms',
@@ -44,8 +48,12 @@ const homeViewDetailsStyles = ScaledSheet.create({
         marginTop: '25@ms'
     },
     subTitle:{
-        color: Colors.black,
-        marginTop: '-10@ms',
+        color: Colors.white,
+        backgroundColor: Colors.success,
+        width:'100@ms',
+        padding:'4@ms',
+        textAlign:'center',
+        borderRadius: '10@ms',
     },
     dotsContainer: {
         flexDirection: 'row',

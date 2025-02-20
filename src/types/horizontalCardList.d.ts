@@ -9,9 +9,10 @@ interface CardItem {
   interface HorizontalCardListProps {
     title: string;
     subTitle?: string;
-    data: DataItem[];
-    onPress?:() => void
-    imageKey?: string; 
+    data: any[];
+    onPress?:(data:any) => void
+    imageKey: string; 
+    keyIndex?:number,
   }
 
   interface DataItem {

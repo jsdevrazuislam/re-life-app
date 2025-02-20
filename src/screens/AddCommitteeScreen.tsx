@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   TouchableOpacity,
@@ -8,7 +8,7 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
-import { NavigationProp, useNavigation, useRoute } from '@react-navigation/native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'react-native-image-picker';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import { Colors } from '../configs/colors';
@@ -51,7 +51,6 @@ const AddCommitteeScreen = () => {
     image: null,
   });
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
-  const route = useRoute<AddCommitteeScreenRouteProp>();
   const { request, loading } = useApi()
   const { t } = useTranslation()
   const { user } = useAuthStore()
@@ -108,9 +107,6 @@ const AddCommitteeScreen = () => {
 
 
   const removeImage = async () => {
-    if(route.params?.item){
-      await request('delete', ApiStrings.COMMITTEE_PROFILE_DELETE(user?.masjid?._id ?? '', route.params?.item?._id))
-    }
     setFormData({ ...formData, image: null })
   };
 
@@ -131,37 +127,6 @@ const AddCommitteeScreen = () => {
     showToast('success', message)
     navigation.navigate('ImamHomeScreen', { activeTab: 'Committee' })
   };
-
-  const handleEdit = async () =>{
-    const apiFormData = new FormData();
-    apiFormData.append('committeeId', route.params?.item?._id);
-    apiFormData.append('name', formData.name);
-    apiFormData.append('address', formData.address);
-    apiFormData.append('profession', formData.profession);
-    apiFormData.append('masjidId', user?.masjid?._id);
-    apiFormData.append('mobile', formData.contactNumber);
-    apiFormData.append('profilePicture', formatFileData(formData.image));
-
-    const { message } = await request('put', ApiStrings.UPDATE_COMMITTEE, apiFormData);
-    showToast('success', message)
-    navigation.navigate('ImamHomeScreen', { activeTab: 'Committee' })
-  }
-  
-   useEffect(() => {
-      if (route.params?.item) {
-        setFormData({
-          name: route.params?.item?.name,
-          address: route.params?.item?.address,
-          profession: route.params?.item?.profession,
-          contactNumber: route.params?.item?.mobile,
-          image: {
-            uri: route.params?.item?.profilePicture ? baseURLPhoto(route.params?.item?.profilePicture) : '',
-            fileName: '',
-            type: ''
-          }
-        })
-      }
-    }, [route.params?.item]);
 
   return (
     <SafeAreaWrapper bg={Colors.white}>
@@ -202,7 +167,7 @@ const AddCommitteeScreen = () => {
               validation={validateCommitteeAddress}
             />
             <SelectDropdown
-              label='Profession' 
+              label='Profession'
               placeholder="Select Profession"
               data={professions}
               value={formData.profession}
@@ -219,7 +184,7 @@ const AddCommitteeScreen = () => {
 
           <AppButton
             text={t('signIn')}
-            onPress={route.params?.item?._id ? handleEdit : handleSubmit}
+            onPress={handleSubmit}
             loading={loading}
             disabled={isFormInvalid || loading}
             variant="primary"
