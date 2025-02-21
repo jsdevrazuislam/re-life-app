@@ -52,7 +52,7 @@ const SignupScreen = () => {
   const emailError = validateEmail(email);
   const passwordError = validatePassword(password);
   const { request, loading, error } = useApi();
-  const { setUserId, setStatus } = useAuthStore();
+  const { setUserId, setStatus, setTempEmail} = useAuthStore();
   const [committeeDetails, setCommitteeDetails] = useState<CommitteeDetails[]>(
     [],
   );
@@ -265,7 +265,8 @@ const SignupScreen = () => {
       ApiStrings.SIGNUP,
       formDataPayload,
     );
-    setUserId(data);
+    setUserId(data?.id);
+    setTempEmail(data?.email)
     setStatus('otp_pending')
     showToast('success', message);
     navigation.navigate('OtpScreen');

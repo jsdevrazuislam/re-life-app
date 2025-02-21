@@ -37,4 +37,8 @@
     upazila: string;
     village: string;
   }
-  
+
+  interface MasjidNames{
+    label:string,
+    value:string
+  }

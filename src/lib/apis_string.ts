@@ -12,6 +12,7 @@ const ApiStrings = {
     OTP_VERIFY:'/users/otp-verify',
     KYC_VERIFY:'/users/kyc-verify',
     REQUEST_TO_ADMIN:'/masjids/request-access',
+    GET_MASJIDS_NAME:'/masjids/masjid-name',
     GET_MASJID_DETAILS: (id:string) => `/masjids/${id}/details`,
     CREATE_PEOPLE: (ID:string) => `poor-people/${ID}/poor-person`,
     COMMITTEE_PROFILE_DELETE: (masjidId:string, committeeId:string) => `committee/${masjidId}/committee/${committeeId}/image`,
