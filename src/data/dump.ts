@@ -5,6 +5,7 @@ import locations from './location.json'
 import rice from './rice.json'
 import oli from './oil.json'
 import cloth from './cloth.json'
+import villagesData from './villages.json'
 
 
 
@@ -29,14 +30,7 @@ export const unions = locations.unions.map((item) => {
   }
 })
 
-export const villages = [
-  { label: "Kalabagan Village 1", value: "kalabagan_v1" },
-    { label: "Kalabagan Village 2", value: "kalabagan_v2" },
-    { label: "Banani Village 1", value: "banani_v1" },
-    { label: "Banani Village 2", value: "banani_v2" },
-    { label: "Mirpur Village 1", value: "mirpur_v1" },
-    { label: "Mirpur Village 2", value: "mirpur_v2" },
-]
+export const villages = villagesData;
 
 export const professions = professionsData
 export const frequencyOptions = frequency;

@@ -21,6 +21,8 @@ interface AuthState {
   setStatus: (status: string) => void;
   loadUserFromStorage: () => Promise<void>;
   isLoading: boolean;
+  masjids: MasjidNames[] | null,
+  setMasjids: (data: MasjidNames[]) => void
 }
 
 const initialState = {
@@ -32,7 +34,8 @@ const initialState = {
   isLoading: true,
   status: '',
   userTempId: null,
-  userTempEmail: ""
+  userTempEmail: "",
+  masjids: []
 };
 
 export const useAuthStore = create<AuthState>(set => ({
@@ -53,6 +56,7 @@ export const useAuthStore = create<AuthState>(set => ({
       isAuthenticated: false,
     });
   },
+  setMasjids: (masjids) => set({ masjids }),
   loadUserFromStorage: async () => {
     try {
       const role = await AsyncStorage.getItem('role');
@@ -62,6 +66,9 @@ export const useAuthStore = create<AuthState>(set => ({
       const status = await AsyncStorage.getItem('status');
 
       set({ status, userTempId })
+
+      const { data } = await api.get(ApiStrings.GET_MASJIDS_NAME);
+      set({ masjids: data?.data?.data })
 
       if(accessToken){
         const { data } = await api.get(ApiStrings.ME)

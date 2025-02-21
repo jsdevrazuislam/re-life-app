@@ -8,10 +8,11 @@ import Paragraph from './ui/Paragraph';
 interface DropdownProps {
   data: { label: string; value: string }[];
   label: string;
+  placeholder?:string;
   onChange: (value: string) => void;
 }
 
-const DropdownComponent: FC<DropdownProps> = ({ data, label, onChange }) => {
+const DropdownComponent: FC<DropdownProps> = ({ data, label, onChange, placeholder = 'Select Item' }) => {
   const [value, setValue] = useState<string>('');
   const [isFocus, setIsFocus] = useState(false);
 
@@ -29,7 +30,7 @@ const DropdownComponent: FC<DropdownProps> = ({ data, label, onChange }) => {
         maxHeight={300}
         labelField="label"
         valueField="value"
-        placeholder={!isFocus ? 'Select item' : '...'}
+        placeholder={!isFocus ?  placeholder : placeholder}
         searchPlaceholder="Search..."
         value={value}
         onFocus={() => setIsFocus(true)}
