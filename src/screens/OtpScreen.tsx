@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { View, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import globalStyles from '../styles/global.style';
 import otpStyles from '../styles/otpScreen.styles';
@@ -100,69 +100,78 @@ const OtpScreen = () => {
 
     return (
         <SafeAreaWrapper>
-            <ScrollView>
-                <View style={globalStyles.container}>
-                    <LoadingOverlay visible={loading} />
-                    <View style={otpStyles.headerNavigation}>
-                        <BackButton />
-                        <AppLogo />
-                    </View>
-                    <Heading level={3} weight="Bold">
-                        {t('otpTitle')}
-                    </Heading>
-                    <Paragraph level="Medium">
-                        {t('otpDescription')} {userTempEmail?.toLowerCase()}
-                    </Paragraph>
-                    <View style={otpStyles.otpContainer}>
-                        {otp.map((digit, index) => (
-                            <TextInput
-                                key={index}
-                                ref={ref => (inputRefs.current[index] = ref)}
-                                style={otpStyles.otpInput}
-                                maxLength={1}
-                                keyboardType="numeric"
-                                value={digit}
-                                onChangeText={text => handleOtpChange(text, index)}
-                                onKeyPress={({ nativeEvent }) => {
-                                    if (nativeEvent.key === 'Backspace') {
-                                        handleBackspace(digit, index);
-                                    }
-                                }}
-                                autoFocus={index === 0}
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={{ flex: 1 }}
+            >
+                <ScrollView>
+                    <TouchableWithoutFeedback
+                        onPress={Keyboard.dismiss}
+                    >
+                        <View style={globalStyles.container}>
+                            <LoadingOverlay visible={loading} />
+                            <View style={otpStyles.headerNavigation}>
+                                <BackButton />
+                                <AppLogo />
+                            </View>
+                            <Heading level={3} weight="Bold">
+                                {t('otpTitle')}
+                            </Heading>
+                            <Paragraph level="Medium">
+                                {t('otpDescription')} {userTempEmail?.toLowerCase()}
+                            </Paragraph>
+                            <View style={otpStyles.otpContainer}>
+                                {otp.map((digit, index) => (
+                                    <TextInput
+                                        key={index}
+                                        ref={ref => (inputRefs.current[index] = ref)}
+                                        style={otpStyles.otpInput}
+                                        maxLength={1}
+                                        keyboardType="numeric"
+                                        value={digit}
+                                        onChangeText={text => handleOtpChange(text, index)}
+                                        onKeyPress={({ nativeEvent }) => {
+                                            if (nativeEvent.key === 'Backspace') {
+                                                handleBackspace(digit, index);
+                                            }
+                                        }}
+                                        autoFocus={index === 0}
+                                    />
+                                ))}
+                            </View>
+                            {error && <ErrorMessage error={error} />}
+                            <AppButton
+                                onPress={handleVerify}
+                                disabled={isVerifyDisabled}
+                                variant="primary"
+                                text={t('verifyOtpButton')}
                             />
-                        ))}
-                    </View>
-                    {error && <ErrorMessage error={error} />}
-                    <AppButton
-                        onPress={handleVerify}
-                        disabled={isVerifyDisabled}
-                        variant="primary"
-                        text={t('verifyOtpButton')}
-                    />
-                    <TouchableOpacity
-                        style={otpStyles.resendButton}
-                        onPress={handleResendCode}
-                        disabled={isResendDisabled || loading}>
-                        {timer > 0 ? (
-                            <Paragraph
-                                level="Small"
-                                weight="SemiBold"
-                                style={otpStyles.resendText}>
-                                {t('resendOtpIn')}{' '}
-                                {timer}
-                                {t('resendOtpIn1')}
-                            </Paragraph>
-                        ) : (
-                            <Paragraph
-                                level="Small"
-                                weight="SemiBold"
-                                style={otpStyles.resendText}>
-                                {t('resendOtp')}
-                            </Paragraph>
-                        )}
-                    </TouchableOpacity>
-                </View>
-            </ScrollView>
+                            <TouchableOpacity
+                                style={otpStyles.resendButton}
+                                onPress={handleResendCode}
+                                disabled={isResendDisabled || loading}>
+                                {timer > 0 ? (
+                                    <Paragraph
+                                        level="Small"
+                                        weight="SemiBold"
+                                        style={otpStyles.resendText}>
+                                        {t('resendOtpIn')}{' '}
+                                        {timer}
+                                        {t('resendOtpIn1')}
+                                    </Paragraph>
+                                ) : (
+                                    <Paragraph
+                                        level="Small"
+                                        weight="SemiBold"
+                                        style={otpStyles.resendText}>
+                                        {t('resendOtp')}
+                                    </Paragraph>
+                                )}
+                            </TouchableOpacity>
+                        </View>
+                    </TouchableWithoutFeedback>
+                </ScrollView>
+            </KeyboardAvoidingView>
         </SafeAreaWrapper>
     );
 };
