@@ -43,7 +43,7 @@ const AdminStackNavigator = () => (
 );
 
 const Stack = createStackNavigator();
-const AppNavigator = ({ role, user, status, userTempId } : { role:string, user:IUser | null, status:string, userTempId:string }) => {
+const AppNavigator = ({ role, status, userTempId } : { role:string, user:IUser | null, status:string, userTempId:string }) => {
 
   if (status === 'otp_pending') {
     return (
@@ -84,17 +84,10 @@ const AppNavigator = ({ role, user, status, userTempId } : { role:string, user:I
     );
   }
 
-  if (role === 'imam' && (user?.kycStatus === 'pending' || user?.kycStatus === 'rejected')) {
-    return (
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name={AppRoutes.IMAM_PENDING_SCREEN} component={ImamPendingScreen} />
-      </Stack.Navigator>
-    );
-  }
-
   if (role === 'imam') {
     return (
       <Stack.Navigator screenOptions={stackNavigationOptions}>
+        <Stack.Screen name={AppRoutes.IMAM_PENDING_SCREEN} component={ImamPendingScreen} />
         <Stack.Screen name={AppRoutes.IMAM_HOME_SCREEN} component={ImamHomeScreen} />
         <Stack.Screen name={AppRoutes.ADD_COMMITTEE_SCREEN} component={AddCommitteeScreen} />
         <Stack.Screen name={AppRoutes.PROFILE_SCREEN} component={ProfileScreen} />

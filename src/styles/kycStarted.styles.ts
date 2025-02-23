@@ -20,11 +20,11 @@ export const kycStartedStyles = ScaledSheet.create({
         color: Colors.lightGray,
     },
     stepsContainer: {
-        marginTop: '20@vs',
+        marginTop: '5@vs',
     },
     stepItem: {
         flexDirection: 'row',
-        alignItems: 'center',
+        // alignItems: 'center',
         backgroundColor: Colors.light,
         borderRadius: '10@s',
         padding: '15@s',
@@ -52,7 +52,7 @@ export const kycStartedStyles = ScaledSheet.create({
     },
     securityInfo: {
         flexDirection: 'row',
-        alignItems: 'center',
+        // alignItems: 'center',
         marginBottom: '20@vs',
     },
     securityText: {

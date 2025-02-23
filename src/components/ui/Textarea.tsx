@@ -26,7 +26,7 @@ const Textarea: React.FC<TextareaProps> = ({
 }) => {
   return (
     <View style={[styles.container, style]}>
-      {label && <Paragraph level='Small' weight='Bold' style={styles.label}>{label}</Paragraph>}
+      {label && <Paragraph level='Small' weight='Regular' style={styles.label}>{label}</Paragraph>}
       <TextInput
         value={value}
         onChangeText={onChangeText}

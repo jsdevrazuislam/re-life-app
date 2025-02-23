@@ -10,6 +10,7 @@ const ApiStrings = {
     SIGNUP:'/users/register',
     RESEND_OTP:'/users/resend-otp',
     OTP_VERIFY:'/users/otp-verify',
+    OTP_CHECK:'/users/otp-check',
     KYC_VERIFY:'/users/kyc-verify',
     REQUEST_TO_ADMIN:'/masjids/request-access',
     GET_MASJIDS_NAME:'/masjids/masjid-name',

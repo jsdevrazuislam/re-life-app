@@ -46,6 +46,7 @@ export const useAuthStore = create<AuthState>(set => ({
     await AsyncStorage.removeItem('role');
     await AsyncStorage.removeItem('status');
     await AsyncStorage.removeItem('userTempId');
+    await AsyncStorage.removeItem('userTempEmail');
 
     set({
       user: null,
@@ -64,8 +65,9 @@ export const useAuthStore = create<AuthState>(set => ({
       const userTempId = await AsyncStorage.getItem('userTempId');
       const refreshToken = await AsyncStorage.getItem('refreshToken');
       const status = await AsyncStorage.getItem('status');
+      const userTempEmail = await AsyncStorage.getItem('userTempEmail');
 
-      set({ status, userTempId })
+      set({ status, userTempId , userTempEmail})
 
       const { data } = await api.get(ApiStrings.GET_MASJIDS_NAME);
       set({ masjids: data?.data?.data })
@@ -85,7 +87,11 @@ export const useAuthStore = create<AuthState>(set => ({
     set({ status })
     await AsyncStorage.setItem('status', status);
   },
-  setTempEmail:(email) => set({ userTempEmail: email }),
+  setTempEmail: async (email) => {
+    set({ userTempEmail: email })
+    await AsyncStorage.setItem('userTempEmail', email);
+
+  },
   setRole:(role) => set({ role }),
   setUserId: async (userTempId) => {
     set({ userTempId })

@@ -1,4 +1,4 @@
-import { View, ScrollView, TouchableOpacity } from 'react-native';
+import { View, ScrollView, TouchableOpacity, KeyboardAvoidingView, TouchableWithoutFeedback, Platform } from 'react-native';
 import React, { useState } from 'react';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import { useTranslation } from '../hooks/useTranslation';
@@ -42,46 +42,45 @@ const ForgotPasswordScreen = () => {
 
   return (
     <SafeAreaWrapper>
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        <View style={globalStyles.container}>
-          <View style={forgotPasswordStyles.topSection}>
-            <View style={forgotPasswordStyles.headerNavigation}>
-              <BackButton />
-              <AppLogo />
-            </View>
-            <Heading level={3} weight="Bold">
-              {t('forgotPassword')}
-            </Heading>
-            <Paragraph level="Medium">{t('dontWorry')}</Paragraph>
-            <View style={forgotPasswordStyles.form}>
-              <Input
-                label={t('email')}
-                placeholder={t('placeholderEmail')}
-                value={email}
-                onChangeText={setEmail}
-                validation={validateEmail}
-                keyboardType="email-address"
-              />
-              {error && <ErrorMessage error={error} />}
-              <AppButton
-                text={t('sendCode')}
-                onPress={handleSubmit}
-                loading={loading}
-                disabled={!email || loading}
-                variant="primary"
-              />
+      <KeyboardAvoidingView
+       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+              style={{ flex: 1 }}
+      >
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+          <View style={globalStyles.container}>
+            <View style={forgotPasswordStyles.topSection}>
+              <View style={forgotPasswordStyles.headerNavigation}>
+                <BackButton />
+                <AppLogo />
+              </View>
+              <Heading level={3} weight="Bold">
+                {t('forgotPasswordTitle')}
+              </Heading>
+              <Paragraph level="Medium">{t('forgotPasswordDescription')}</Paragraph>
+              <TouchableWithoutFeedback>
+                <View style={forgotPasswordStyles.form}>
+                  <Input
+                    label={t('emailOrPhoneLabel')}
+                    placeholder={t('emailOrPhonePlaceholder')}
+                    value={email}
+                    onChangeText={setEmail}
+                    validation={validateEmail}
+                    keyboardType="email-address"
+                  />
+                  {error && <ErrorMessage error={error} />}
+                  <AppButton
+                    text={t('resetPasswordButton')}
+                    onPress={handleSubmit}
+                    loading={loading}
+                    disabled={!email || loading}
+                    variant="primary"
+                  />
+                </View>
+              </TouchableWithoutFeedback>
             </View>
           </View>
-          <View style={forgotPasswordStyles.flex}>
-            <Paragraph level="Medium">{t('rememberPassword')}</Paragraph>
-            <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
-              <Paragraph level="Medium" weight="Medium">
-                {t('signIn')}
-              </Paragraph>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaWrapper>
   );
 };

@@ -32,6 +32,7 @@ import PhoneNumberInput from '../components/ui/PhoneNumberInput';
 import { useAuthStore } from '../store/store';
 import { formatFileData } from '../utils/file-format';
 import { baseURLPhoto } from '../lib/api';
+import Header from '../components/Header';
 
 
 interface CommitteeForm {
@@ -132,13 +133,7 @@ const AddCommitteeScreen = () => {
     <SafeAreaWrapper bg={Colors.white}>
       <ScrollView>
         <View style={globalStyles.container}>
-          <View style={committeeStyles.flexLayout}>
-            <BackButton />
-            <Heading level={5} weight="Bold">
-              {t('signIn')}
-            </Heading>
-            <View />
-          </View>
+          <Header title={t('addCommittee')} />
           <View style={committeeStyles.form}>
             <View style={committeeStyles.relative}>
               <View style={committeeStyles.imageWrapper}>
@@ -153,37 +148,37 @@ const AddCommitteeScreen = () => {
               </TouchableOpacity>
             </View>
             <Input
-              label={t('Name')}
-              placeholder={t('placeholderEmail')}
+              label={t('committeeNameLabel')}
+              placeholder={t('committeeNamePlaceholder')}
               value={formData.name}
               onChangeText={text => handleInputChange('name', text)}
               validation={validateCommitteeName}
             />
             <Input
-              label={t('Address')}
-              placeholder={t('placeholderEmail')}
+              label={t('committeeAddressLabel')}
+              placeholder={t('committeeAddressPlaceholder')}
               value={formData.address}
               onChangeText={text => handleInputChange('address', text)}
               validation={validateCommitteeAddress}
             />
             <SelectDropdown
-              label='Profession'
-              placeholder="Select Profession"
+              label={t('committeeProfessionLabel')}
+              placeholder={t('committeeProfessionPlaceholder')}
               data={professions}
               value={formData.profession}
               onChange={item => handleInputChange('profession', item)}
             />
 
             <PhoneNumberInput
-              label={t('Contact Number')}
-              placeholder={t('placeholderEmail')}
+              label={t('committeePhoneLabel')}
+              placeholder={t('committeePhonePlaceholder')}
               value={formData.contactNumber}
               onChangeText={text => handleInputChange('contactNumber', text)}
             />
           </View>
 
           <AppButton
-            text={t('signIn')}
+            text={t('submit')}
             onPress={handleSubmit}
             loading={loading}
             disabled={isFormInvalid || loading}

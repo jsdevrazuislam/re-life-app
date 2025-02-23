@@ -57,14 +57,14 @@ const ResetPasswordScreen = () => {
           <View style={styles.header}>
             <BackButton />
             <Heading level={5} weight="Bold" style={styles.headerTitle}>
-              Reset Password
+              {t('resetPasswordTitle')}
             </Heading>
             <View />
           </View>
           <View style={loginStyles.loginForm}>
             <Input
-              label={t('password')}
-              placeholder={t('placeholderPassword')}
+              label={t('newPasswordLabel')}
+              placeholder={t('newPasswordPlaceholder')}
               value={formData.newPassword}
               onChangeText={text =>
                 setFormData({ ...formData, newPassword: text })
@@ -73,8 +73,8 @@ const ResetPasswordScreen = () => {
               secureTextEntry
             />
             <Input
-              label={t('password')}
-              placeholder={t('placeholderPassword')}
+              label={t('confirmPasswordLabel')}
+              placeholder={t('confirmPasswordPlaceholder')}
               value={formData.confirmPasword}
               onChangeText={text =>
                 setFormData({ ...formData, confirmPasword: text })
@@ -91,7 +91,7 @@ const ResetPasswordScreen = () => {
               </Paragraph>
             )}
             <AppButton
-              text={t('signIn')}
+              text={t('resetPasswordButton')}
               onPress={handleSubmit}
               variant="primary"
               loading={loading}

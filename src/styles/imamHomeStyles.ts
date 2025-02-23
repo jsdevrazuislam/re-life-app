@@ -112,7 +112,6 @@ export const imamStyles = ScaledSheet.create({
     borderRadius: '8@ms',
     padding: '16@ms',
     marginBottom: '16@ms',
-    elevation: 2,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center'

@@ -9,7 +9,8 @@ const styles = ScaledSheet.create({
       backgroundColor: Colors.white
     },
     firstStep:{
-      marginTop: '30@ms'
+      marginTop: '30@ms',
+      flex: 1
     },
     row:{
       flexDirection:'row',
@@ -118,16 +119,18 @@ const styles = ScaledSheet.create({
       flex: 1,
       height: '120@vs',
       borderWidth: 2,
+      padding:'10@ms',
       borderColor: '#3F51B5',
       borderRadius: '10@s',
       borderStyle: 'dashed',
       justifyContent: 'center',
       alignItems: 'center',
-      position:'relative'
+      position:'relative',
     },
     uploadAreaText: {
       marginTop: '10@vs',
       color: '#3F51B5',
+      textAlign:'center',
       fontSize: '14@ms',
     },
     uploadButtonText: {

@@ -1,10 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-    View,
-    TextInput,
-    TouchableOpacity,
-    ScrollView,
-} from 'react-native';
+import { View, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import globalStyles from '../styles/global.style';
 import otpStyles from '../styles/otpScreen.styles';
@@ -21,6 +16,8 @@ import { useAuthStore } from '../store/store';
 import ApiStrings from '../lib/apis_string';
 import { AppStackParamList } from '../constants/route';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { Colors } from '../configs/colors';
+import LoadingOverlay from '../components/LoadingOverlay';
 
 const OtpScreen = () => {
     const [otp, setOtp] = useState(['', '', '', '']);
@@ -29,11 +26,10 @@ const OtpScreen = () => {
     const [isVerifyDisabled, setIsVerifyDisabled] = useState(true);
     const { t } = useTranslation();
     const { request, loading, error } = useApi();
-    const { userTempId, setStatus, userTempEmail, setUserId, setTempEmail } = useAuthStore()
+    const { userTempId, setStatus, userTempEmail, setUserId, setTempEmail } =
+        useAuthStore();
     const navigation = useNavigation<NavigationProp<AppStackParamList>>();
     const inputRefs = useRef<Array<TextInput | null>>([]);
-
-
 
     useEffect(() => {
         if (timer > 0) {
@@ -47,32 +43,40 @@ const OtpScreen = () => {
     }, [timer]);
 
     const handleResendCode = async () => {
-        const { data } = await request(
-            'post',
-            ApiStrings.RESEND_OTP,
-            { emailOrPhone: userTempEmail },
-        );
+        const { data } = await request('post', ApiStrings.RESEND_OTP, {
+            emailOrPhone: userTempEmail,
+        });
         setUserId(data?.id);
-        setTempEmail(data?.email)
+        setTempEmail(data?.email);
         setTimer(60);
         setIsResendDisabled(true);
         showToast('success', 'A new code has been sent to your email.');
     };
 
     const handleVerify = async () => {
-        if (!userTempEmail) {
-            const payload = {
-                userId: userTempId,
-                otpCode: otp.join('')
-            }
-            const { message, data } = await request('post', ApiStrings.OTP_VERIFY, payload);
-            setStatus(data)
-            showToast('success', message)
-            navigation.navigate('KycStartedScreen')
+        const payload = {
+            userId: userTempId,
+            otpCode: otp.join(''),
+        };
+        if (userTempEmail) {
+            const { message, data } = await request(
+                'post',
+                ApiStrings.OTP_VERIFY,
+                payload,
+            );
+            setStatus(data);
+            showToast('success', message);
+            navigation.navigate('KycStartedScreen');
         } else {
-            navigation.navigate('ResetPasswordScreen', { otp: otp.join('') })
+            const { message, data } = await request(
+                'post',
+                ApiStrings.OTP_CHECK,
+                payload,
+            );
+            setStatus(data);
+            showToast('success', message);
+            navigation.navigate('ResetPasswordScreen', { otp: otp.join('') });
         }
-
     };
 
     const handleOtpChange = (text: string, index: number) => {
@@ -98,14 +102,17 @@ const OtpScreen = () => {
         <SafeAreaWrapper>
             <ScrollView>
                 <View style={globalStyles.container}>
+                    <LoadingOverlay visible={loading} />
                     <View style={otpStyles.headerNavigation}>
                         <BackButton />
                         <AppLogo />
                     </View>
                     <Heading level={3} weight="Bold">
-                        {t('checkEmail')}
+                        {t('otpTitle')}
                     </Heading>
-                    <Paragraph level="Medium">{t('codeSentTo')} {userTempEmail?.toLowerCase()}</Paragraph>
+                    <Paragraph level="Medium">
+                        {t('otpDescription')} {userTempEmail?.toLowerCase()}
+                    </Paragraph>
                     <View style={otpStyles.otpContainer}>
                         {otp.map((digit, index) => (
                             <TextInput
@@ -121,28 +128,38 @@ const OtpScreen = () => {
                                         handleBackspace(digit, index);
                                     }
                                 }}
-                                autoFocus={index === 0} // Auto-focus first input
+                                autoFocus={index === 0}
                             />
                         ))}
                     </View>
                     {error && <ErrorMessage error={error} />}
                     <AppButton
-                        loading={loading}
                         onPress={handleVerify}
                         disabled={isVerifyDisabled}
                         variant="primary"
-                        text={t('verify')}
+                        text={t('verifyOtpButton')}
                     />
                     <TouchableOpacity
                         style={otpStyles.resendButton}
                         onPress={handleResendCode}
                         disabled={isResendDisabled || loading}>
-                        <Paragraph
-                            level="Small"
-                            weight="SemiBold"
-                            style={otpStyles.resendText}>
-                            Resend {timer > 0 ? `00:${timer < 10 ? `0${timer}` : timer}` : ''}
-                        </Paragraph>
+                        {timer > 0 ? (
+                            <Paragraph
+                                level="Small"
+                                weight="SemiBold"
+                                style={otpStyles.resendText}>
+                                {t('resendOtpIn')}{' '}
+                                {timer}
+                                {t('resendOtpIn1')}
+                            </Paragraph>
+                        ) : (
+                            <Paragraph
+                                level="Small"
+                                weight="SemiBold"
+                                style={otpStyles.resendText}>
+                                {t('resendOtp')}
+                            </Paragraph>
+                        )}
                     </TouchableOpacity>
                 </View>
             </ScrollView>

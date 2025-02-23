@@ -36,6 +36,7 @@ import { AppStackParamList } from '../constants/route';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { formatFileData } from '../utils/file-format';
 import PhoneNumberInput from '../components/ui/PhoneNumberInput';
+import LoadingOverlay from '../components/LoadingOverlay';
 
 interface FormState {
   name: string,
@@ -89,6 +90,7 @@ const KycScreen = () => {
       showToast('error', 'Please fill all required fields before submitting.');
       return;
     }
+    setRole('imam')
     const formDataPayload = new FormData();
     formDataPayload.append('userId', userTempId);
     formDataPayload.append('name', formData.name);
@@ -100,7 +102,6 @@ const KycScreen = () => {
     formDataPayload.append("imamDocument", formatFileData(formData?.imamDocument));
     const { data, message } = await request('post', ApiStrings.KYC_VERIFY, formDataPayload);
     setUser(data?.user, data?.accessToken, data?.refreshToken)
-    setRole(data?.user?.role)
     showToast('success', message)
     setUserId('');
     setStatus('')
@@ -159,7 +160,12 @@ const KycScreen = () => {
 
   return (
     <SafeAreaWrapper bg={Colors.light}>
-      <ScrollView>
+      <LoadingOverlay visible={loading} />
+      <ScrollView
+      contentContainerStyle={{
+        paddingBottom: 30,
+      }}
+      >
         {showError ? <View style={[globalStyles.container, { marginTop: '45%' }]}>
           <View style={[{ justifyContent: 'center', alignItems: 'center' }]}>
             <Icon name="error-outline" size={80} color={Colors.danger} />
@@ -175,7 +181,7 @@ const KycScreen = () => {
         </View> : <View style={globalStyles.container}>
           <View style={styles.header}>
             <Heading level={5} weight="Bold">
-              Upload KYC
+              {t('kycUploadTitle')}
             </Heading>
           </View>
 
@@ -192,35 +198,35 @@ const KycScreen = () => {
           {currentStep === 1 ? (
             <View style={styles.firstStep}>
               <Input
-                label="Name"
+                label={t('imamNameLabel')}
                 value={formData.name}
                 onChangeText={text => setFormData({ ...formData, name: text })}
-                placeholder={t('Your Name')}
+                placeholder={t('imamNamePlaceholder')}
                 inputStyles={styles.appInput}
                 validation={validateCommitteeName}
               />
               <PhoneNumberInput
-                label="Mobile"
+                label={t('imamPhoneLabel')}
                 value={formData.mobile}
                 onChangeText={text => setFormData({ ...formData, mobile: text })}
-                placeholder={t('Your Phone Number')}
+                placeholder={t('imamPhonePlaceholder')}
                 inputStyles={styles.appInput}
               />
               <Input
-                label="Email"
+                label={t('imamEmailLabel')}
                 value={formData.email}
                 keyboardType="email-address"
                 onChangeText={text => setFormData({ ...formData, email: text })}
-                placeholder={t('Your Email')}
+                placeholder={t('imamEmailPlaceholder')}
                 inputStyles={styles.appInput}
                 validation={validateEmail}
               />
               <Input
-                label="Pincode"
+                label={t('pincode')}
                 value={formData.pincode}
                 keyboardType="numeric"
                 onChangeText={text => setFormData({ ...formData, pincode: text })}
-                placeholder={t('Your Area Zip')}
+                placeholder={t('pincodePlaceholder')}
                 inputStyles={styles.appInput}
                 validation={validatePinCode}
               />
@@ -228,7 +234,7 @@ const KycScreen = () => {
               <AppButton
                 disabled={isFormInvalid}
                 onPress={handleStep}
-                text="Next"
+                text={t('nextStepButton')}
                 style={{ marginTop: '30%' }}
               />
             </View>
@@ -236,7 +242,7 @@ const KycScreen = () => {
             /* Step 2 Content */
             <View style={styles.formContainer}>
               <Heading level={6} weight="Bold" style={styles.sectionTitle}>
-                Choose Document Type
+                {t('documentTypeLabel')}
               </Heading>
               <View style={styles.docTypeContainer}>
                 {documentTypes.map(type => (
@@ -265,33 +271,31 @@ const KycScreen = () => {
 
               <View style={styles.uploadSection}>
                 <Heading level={6} weight="Bold" style={styles.sectionTitle}>
-                  Capture Id Proof
+                  {t('documentTypeLabel')}
                 </Heading>
                 <Paragraph
                   level="Small"
                   weight="Medium"
                   style={styles.uploadDescription}>
-                  Lorem Ipsum is simply dummy text of the printing and
-                  typesetting industry. Lorem Ipsum has been the industry's
-                  standard dummy text ever since the 1500s.
+                  {t('documentTypePlaceholder')}
                 </Paragraph>
 
                 <View style={styles.uploadRow}>
                   <UploadArea
-                    title="ID Front"
+                    title={t('idProofFrontLabel')}
                     imageUri={formData.idProofFront}
                     handlePress={() => handleImagePicker('idProofFront')}
                     handleRemove={() => removeImage('idProofFront')}
                   />
                   <UploadArea
-                    title="ID Back"
+                    title={t('idProofBackLabel')}
                     imageUri={formData.idProofBack}
                     handlePress={() => handleImagePicker('idProofBack')}
                     handleRemove={() => removeImage('idProofBack')}
                   />
                 </View>
                 <UploadArea
-                  title="Imam Document"
+                  title={t('imamDocumentLabel')}
                   imageUri={formData.imamDocument}
                   handlePress={() => handleImagePicker('imamDocument')}
                   handleRemove={() => removeImage('imamDocument')}
@@ -304,14 +308,12 @@ const KycScreen = () => {
               <AppButton
                 disabled={loading}
                 variant="outline"
-                text="Previous Step"
+                text={t('prevStep')}
                 onPress={() => setCurrentStep(1)}
                 style={{ width: '48%' }}
               />
               <AppButton
-                loading={loading}
-                disabled={loading}
-                text="Submit KYC"
+                text={t('submitKyc')}
                 onPress={handleSubmit}
                 style={{ width: '48%' }}
               />
@@ -328,7 +330,7 @@ export const UploadArea = ({
   handlePress,
   imageUri,
   handleRemove,
-  style
+  style,
 }: {
   title: string;
   style?: StyleProp<ViewStyle>

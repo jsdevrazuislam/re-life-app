@@ -29,25 +29,25 @@ const OpeningScreen = () => {
           />
         </View>
         <View style={openingStyles.appTitle}>
-          <Heading level={3} weight="Bold">
-            {t('exploreApp')}
+          <Heading style={{ textAlign:'center'}} level={3} weight="Bold">
+            {t('introTitle')}
           </Heading>
           <Text
             style={[
               Typography.paragraphMediumRegular,
               openingStyles.appDescription,
             ]}>
-            {t('appDescription')}
+            {t('introDescription')}
           </Text>
         </View>
         <View style={openingStyles.bottomSection}>
           <AppButton
             variant="primary"
             style={openingStyles.mb}
-            text={t('signIn')}
+            text={t('getStarted')}
             onPress={() => navigation.navigate('LoginScreen')}
           />
-          <AppButton variant="outline" text={t('createAccount')} onPress={() => navigation.navigate('SignupScreen')} />
+          <AppButton variant="outline" text={t('signUpPrompt')} onPress={() => navigation.navigate('SignupScreen')} />
         </View>
       </View>
     </SafeAreaWrapper>

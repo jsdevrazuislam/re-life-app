@@ -1,41 +1,255 @@
 export default {
-    welcome: 'Welcome',
-    hello: 'Hello',
-    appDescription: 'Your finances in one place and always under control',
-    signIn: 'Sign In',
-    signUp: 'Sign Up',
-    rememberPassword: 'Remember password?',
-    exploreApp: 'Explore the app',
-    createAccount: 'Create account',
-    mosquesName: 'Mosques Name',
-    mosquesNamePlaceholder: 'Your mosques name',
-    placeholderUsername: 'Enter your username',
-    placeholderPassword: 'Enter your password',
-    placeholderEmail: 'Enter your email', 
-    email: 'Email',
-    username: 'Username',
-    password: 'Password',
-    alreadyHaveAccount: 'Already have an account? Log in',
-    acceptTerms: 'I accept the terms and privacy policy',
-    forgotPassword: 'Forgot password?',
-    dontWorry: 'Don’t worry! It happens. Please enter the email associated with your account.',
-    enterEmailAddress: 'Enter your email address',
-    sendCode: 'Send code',
-    checkEmail: 'Please check your email',
-    codeSentTo: 'We’ve sent a code to',
-    verify: 'Verify',
-    sendCodeAgain: 'Send code again 00:20',
-    resetPassword: 'Reset password',
-    typeNewPassword: 'Please type something you’ll remember',
-    newPassword: 'New password',
-    confirmPassword: 'Confirm new password',
-    mustBe8Characters: 'Must be at least 8 characters',
-    repeatPassword: 'Repeat password',
-    skip: 'Skip',
-    orLoginWith: 'Or Login with',
-    searchMasjid: 'Search Masjid',
-    homeButton: 'Get Result',
-    noResultsFound: "No results found",
-    masjidDetails: "Masjid Details",
-  };
+  welcome: 'Welcome!',
+  introTitle: 'Building a Beggar-Free Bangladesh',
+  introDescription: 'Your donation can make a difference. Join us in creating a positive impact on society.',
+  donateNow: 'Donate Now',
+  exploreCauses: 'Explore Causes',
+  impactTitle: 'Where Does Your Help Go?',
+  impactDescription: 'Your donation directly reaches those who truly need support.',
+  getStarted: 'Get Started',
+  skip: 'Skip',
+  // Login
+  signInTitle: 'Sign In to Your Account',
+  signInDescription: 'Log in to your account to begin your journey.',
+  emailPlaceholder: 'Enter your email',
+  emailLabel: 'Email',
+  passwordLabel: 'Password',
+  passwordPlaceholder: 'Enter your password',
+  forgotPassword: 'Forgot Password?',
+  signInButton: 'Sign In',
+  noAccount: "Don't have an account?",
+  signUpPrompt: 'Create a new account',
+  // Signup
+  signUpTitle: 'Register as an Imam',
+  signUpDescription: 'Provide your details and link your mosque.',
+
+  // Imam Photo
+  imamPhotoLabel: 'Upload Your Photo',
+  imamPhotoPlaceholder: 'Select a photo',
+
+  // Masjid Photo
+  masjidPhotoLabel: 'Upload Mosque Photo',
+  masjidPhotoPlaceholder: 'Select a photo',
+
+  // Masjid Name
+  masjidNameLabel: 'Mosque Name',
+  masjidNamePlaceholder: 'Enter your mosque name',
+
+  // Masjid Location
+  masjidLocationLabel: 'Mosque Location',
+  masjidLocationPlaceholder: 'Enter Upazila, Union, Village',
+
+  // Imam Name
+  imamNameLabel: 'Your Name',
+  imamNamePlaceholder: 'Enter your full name',
+
+  // Imam Email
+  imamEmailLabel: 'Your Email',
+  imamEmailPlaceholder: 'example@email.com',
+
+  // Imam Phone Number
+  imamPhoneLabel: 'Your Phone Number',
+  imamPhonePlaceholder: '017XXXXXXXX',
+
+  // Confirm Password
+  confirmPasswordLabel: 'Confirm Password',
+  confirmPasswordPlaceholder: 'Re-enter your password',
+
+  // Current Address
+  currentAddressLabel: 'Current Address',
+  currentAddressPlaceholder: 'Enter your current address',
+
+  // Committee Members Count
+  committeeMembersLabel: 'Number of Committee Members',
+  committeeMembersPlaceholder: 'Enter total members',
+
+  // Committee Member Details
+  committeeMemberDetailsTitle: 'Committee Member Details',
+
+  // Committee Member Photo
+  committeePhotoLabel: 'Upload Member Photo',
+  committeePhotoPlaceholder: 'Select a photo',
+
+  // Committee Member Name
+  committeeNameLabel: 'Member Name',
+  committeeNamePlaceholder: 'Enter member name',
+
+  // Committee Member Address
+  committeeAddressLabel: 'Current Address',
+  committeeAddressPlaceholder: 'Enter member address',
+
+  // Committee Member Profession
+  committeeProfessionLabel: 'Profession',
+  committeeProfessionPlaceholder: 'Enter member profession',
+
+  // Committee Member Phone
+  committeePhoneLabel: 'Phone Number',
+  committeePhonePlaceholder: '017XXXXXXXX',
+
+  // Terms of Service
+  agreeToTermsLabel: 'I agree to the Terms of Service',
+
+  // Sign Up Button
+  signUpButton: 'Sign Up',
+
+  // Already Have an Account
+  alreadyHaveAccount: 'Already have an account?',
+  signInPrompt: 'Sign In',
+  // 
+  forgotPasswordTitle: 'Forgot Your Password?',
+  forgotPasswordDescription: 'Enter your email or phone number, and we will send 4 digit code.',
+  emailOrPhoneLabel: 'Email or Phone Number',
+  emailOrPhonePlaceholder: 'Enter your email or phone number',
+  resetPasswordButton: 'Reset Password',
+  backToSignIn: 'Back to Sign In',
+  resetLinkSent: 'Reset Link Sent!',
+  checkEmailOrSMS: 'Please check your email or SMS and follow the instructions.',
+  // Otp
+  otpTitle: 'OTP Verification',
+  otpDescription: 'Enter the 4-digit OTP code sent to your email or phone number.',
+  otpPlaceholder: 'Enter OTP code',
+  verifyOtpButton: 'Verify',
+  resendOtp: 'Resend OTP',
+  resendOtpIn: 'Resend OTP in',
+  resendOtpIn1: 'seconds',
+  otpSent: 'OTP Sent!',
+  invalidOtp: 'Invalid OTP! Please enter the correct code.',
+  // Reset Password
+  resetPasswordTitle: 'Reset Your Password',
+  resetPasswordDescription: 'Enter the details below to set a new password.',
+  newPasswordLabel: 'New Password',
+  newPasswordPlaceholder: 'Enter a new password',
+  passwordResetSuccess: 'Your password has been successfully changed!',
+  passwordMismatch: 'Passwords do not match! Please try again.',
+  weakPassword: 'Password is too weak! Please use a stronger password.',
+  // kyc screen
+  kycTitle: 'Verify Your Identity',
+  kycDescription: 'To ensure your authenticity and security, please follow the steps below. Your information will remain encrypted and securely stored.',
+  title1: 'Take a photo of a valid ID',
+  description1: 'Upload a clear picture of a valid national ID, passport, or driver’s license to verify your personal details.',
+  title2: 'Take a selfie of yourself',
+  description2: 'Upload a clear selfie to match your face with your ID photo. Make sure there is enough light and your face is fully visible.',
+  title3: 'Take a photo of your Imam verification document',
+  description3: 'Upload an official document or certificate that verifies you as an Imam.',
+  kycSecurityMessage: 'Your information will be encrypted and securely stored. It will only be used for identity verification and will never be shared for other purposes.',
+  submitVerificationButton: 'Submit for Verification',
+  verificationPending: 'Your verification request is under review. Please wait.',
+  verificationApproved: 'Your verification has been successfully approved!',
+  verificationRejected: 'Your verification has been rejected! Please upload the correct details.',
+  backToDashboard: 'Back to Dashboard',
+  updateButton: 'Update',
+  settingsTitle: 'Settings',
+  changePasswordTitle: 'Change Password',
+  updateEmailTitle: 'Update Email',
+  switchLanguageTitle: 'Switch Language',
+  privacyPolicyTitle: 'Privacy Policy & Security',
+  helpSupportTitle: 'Help & Support',
+  currentPasswordLabel: 'Current Password',
+  currentPasswordPlaceholder: 'Enter your current password',
+  changePasswordButton: 'Change Password',
+  updateEmailButton: 'Update Email',
+  profileTitle: 'Profile',
+  logout: 'Logout',
+  greeting: 'As-salamu alaykum wa Rahmatullah',
+  totalBeggers: 'Total Beggars',
+  totalCommittees: 'Total Committees',
+  beggers: 'Beggars',
+  committees: 'Committee',
   
+  addBegger: 'Add Beggar',
+  addCommittee: 'Add Committee',
+  
+  editAccessRequest: 'Edit Access Request',
+  subject: 'Subject',
+  reason: 'Reason',
+  submit: 'Submit',
+  addBeggerTitle: 'Add Beggar',
+  addBeggerDescription: 'Fill in the details below to add a new beggar.',
+
+  // Personal Information
+  beggerPhoto: 'Beggar’s Photo',
+  beggerName: 'Beggar’s Name',
+  beggerNamePlaceholder: 'Enter full name',
+  beggerAge: 'Beggar’s Age',
+  beggerAgePlaceholder: 'Enter age',
+  beggerGender: 'Select gender',
+  beggerMarriageStatus: 'Select marital status',
+  isWifeDead: 'Is the Wife Deceased?',
+  isHusbandDead: 'Is the Husband Deceased?',
+  husbandProfession: 'Husband’s Profession',
+  husbandProfessionPlaceholder: 'Enter profession',
+  wifeProfession: 'Wife’s Profession',
+  wifeProfessionPlaceholder: 'Enter profession',
+
+  // Children Information
+  hasChildren: 'Does the Beggar Have Children?',
+  numberOfChildren: 'Number of Children',
+  numberOfChildrenPlaceholder: 'Enter number of children',
+  childrenDetails: 'Children’s Details',
+  childName: 'Child’s Name',
+  childNamePlaceholder: 'Enter child’s name',
+  childAge: 'Child’s Age',
+  childAgePlaceholder: 'Enter child’s age',
+  childNumber: 'Child’s Phone Number',
+  childNumberPlaceholder: 'Enter phone number',
+  childProfession: 'Child’s Profession',
+  childProfessionPlaceholder: 'Enter profession',
+  childIncome: 'Child’s Income',
+  childIncomePlaceholder: 'Enter monthly income',
+
+  // Assistance Information
+  receivingAssistance: 'Receiving Assistance?',
+  assistanceType: 'Select type of assistance',
+  assistanceFrequency: 'Select assistance frequency',
+  assistanceLocation: 'Enter assistance location',
+
+  // Contact & Address
+  currentAddress: 'Current Address',
+  phoneNumber: 'Phone Number',
+  phoneNumberPlaceholder: 'Enter phone number',
+  profession: 'Profession',
+  professionPlaceholder: 'Enter profession',
+
+  // Monthly Needs
+  monthlyNeedsTitle: 'Monthly Needs',
+  monthlyNeedsDescription: 'Specify the beggar’s monthly requirements for food, clothing, and medical support.',
+  ricePerMonth: 'Rice (kg/month)',
+  ricePerMonthPlaceholder: 'Enter rice amount',
+  lentilsPerMonth: 'Lentils (kg/month)',
+  lentilsPerMonthPlaceholder: 'Enter lentils amount',
+  oilPerMonth: 'Oil (liters/month)',
+  oilPerMonthPlaceholder: 'Enter oil amount',
+  familyClothing: 'Family Clothing (Year)',
+  selfClothing: 'Self Clothing (Year)',
+  otherFoodItems: 'Enter other food items',
+  monthlyMedicineCost: 'Enter monthly medicine cost',
+  financialNeeds: 'Enter financial needs',
+  ongoingTreatmentDetails: 'Enter ongoing treatment details',
+  notes: 'Additional Notes',
+  financialNeedPlaceholder: 'Enter the amount or purpose of financial assistance',
+  treatmentDetailsPlaceholder: 'Enter any ongoing medical treatments or medication needs',
+  notesPlaceholder: 'Enter any additional details or comments',
+
+  // ID Proofs
+  idProofFrontBack: 'Upload Beggar’s ID (Front & Back)',
+  wifeIdProofFrontBack: 'Upload Wife’s ID (Front & Back)',
+  husbandIdProofFrontBack: 'Upload Husband’s ID (Front & Back)',
+
+  // Submission Confirmation
+  confirmBeforeSubmit: 'Please ensure all information is correctly filled in before submitting.',
+  pincode: 'Pincode',
+  pincodePlaceholder: 'Enter your area pincode',
+  nextStepButton: 'Next Step',
+  documentTypeLabel: 'Document Type',
+  documentTypePlaceholder: 'Select your identity document type',
+  idProofFrontLabel: 'ID Proof (Front)',
+  idProofBackLabel: 'ID Proof (Back)',
+  imamDocumentLabel: 'Imam Verification Document',
+  prevStep: 'Prev Step',
+  submitKyc: 'Submit KYC',  
+  selectPlaceholder:"Select",
+  childrenIncome:"Type",
+  kycUploadTitle: 'Upload Your KYC Information',
+  keySecurityTitle: 'To confirm your personal information'
+
+};

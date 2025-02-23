@@ -17,6 +17,7 @@ import { useAuthStore } from '../store/store';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { AppStackParamList } from '../constants/route';
 import { showToast } from '../utils/toast';
+import Header from '../components/Header';
 
 const UpdateEmailScreen = () => {
 
@@ -39,17 +40,11 @@ const UpdateEmailScreen = () => {
         <SafeAreaWrapper>
             <ScrollView>
                 <View style={globalStyles.container}>
-                    <View style={styles.header}>
-                        <BackButton />
-                        <Heading level={5} weight="Bold" style={styles.headerTitle}>
-                            Change Email
-                        </Heading>
-                        <View />
-                    </View>
+                    <Header title={t('updateEmailTitle')} />
                     <View style={loginStyles.loginForm}>
                         <Input
-                            label={t('email')}
-                            placeholder={t('placeholderEmail')}
+                            label={t('imamEmailLabel')}
+                            placeholder={t('imamEmailPlaceholder')}
                             value={email}
                             onChangeText={setEmail}
                             validation={validateEmail}
@@ -65,7 +60,7 @@ const UpdateEmailScreen = () => {
                             </Paragraph>
                         )}
                         <AppButton
-                            text={t('signIn')}
+                            text={t('updateEmailButton')}
                             onPress={handleSubmit}
                             variant="primary"
                             loading={loading}

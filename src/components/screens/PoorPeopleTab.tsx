@@ -15,6 +15,7 @@ import ApiStrings from '../../lib/apis_string';
 import { useAuthStore } from '../../store/store';
 import { showToast } from '../../utils/toast';
 import ErrorMessage from '../ErrorMessage';
+import { useTranslation } from '../../hooks/useTranslation';
 
 const PeopleTab: React.FC<PeopleTabProps> = ({data, onAdd, loading}) => {
   const [modalType, setModalType] = useState<'edit' | 'delete' | null>(null);
@@ -23,6 +24,7 @@ const PeopleTab: React.FC<PeopleTabProps> = ({data, onAdd, loading}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const {request, loading: requestLoading, error} = useApi();
   const { user } = useAuthStore()
+  const { t } = useTranslation()
 
   const openModal = (person: PoorPeopleResponse, type: 'edit' | 'delete') => {
     setModalType(type);
@@ -37,7 +39,6 @@ const PeopleTab: React.FC<PeopleTabProps> = ({data, onAdd, loading}) => {
         subject, 
         reason: description
     }
-    console.log(payload)
     const { message } = await request('post', ApiStrings.REQUEST_TO_ADMIN, payload);
     showToast('success', message)
     setDescription('')
@@ -92,7 +93,7 @@ const PeopleTab: React.FC<PeopleTabProps> = ({data, onAdd, loading}) => {
       </Modal>
       <TouchableOpacity style={imamStyles.addButton} onPress={onAdd}>
         <Icon name="person-add" size={20} color="white" />
-        <Text style={imamStyles.buttonText}>Add Person</Text>
+        <Text style={imamStyles.buttonText}>{t('addBegger')}</Text>
       </TouchableOpacity>
 
       {loading ? (

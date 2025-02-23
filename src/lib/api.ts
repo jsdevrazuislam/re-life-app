@@ -2,11 +2,10 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuthStore } from "../store/store";
 
-const baseURL = 'http://localhost:3000/api/v1';
+const baseURL = 'https://masjid-app-server.onrender.com/api/v1';
 export const baseURLPhoto = (url:string) : string => {
-  return `http://localhost:3000/${url}`
+  return `https://masjid-app-server.onrender.com/${url}`
 };
-// const baseURL = 'https://masjid-app-server.onrender.com/api/v1';
 
 export const api = axios.create({
   baseURL, 

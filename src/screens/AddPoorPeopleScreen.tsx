@@ -1,8 +1,8 @@
-import React, { useState} from 'react';
-import {View, Text, ScrollView, Platform, Alert, Linking} from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, ScrollView, Platform, Alert, Linking, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import SelectDropdown from '../components/ui/Select';
 import Input from '../components/ui/AppInput';
-import {UploadArea} from './KycScreen';
+import { UploadArea } from './KycScreen';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import globalStyles from '../styles/global.style';
 import styles from '../styles/addPeople.styles';
@@ -21,26 +21,22 @@ import {
   yesNoOptions,
 } from '../data/dump';
 import Textarea from '../components/ui/Textarea';
-import committeeStyles from '../styles/committee.styles';
-import BackButton from '../components/BackButton';
-import {useTranslation} from '../hooks/useTranslation';
-import {
-  NavigationProp,
-  useNavigation,
-} from '@react-navigation/native';
-import {AppStackParamList} from '../constants/route';
+import { useTranslation } from '../hooks/useTranslation';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { AppStackParamList } from '../constants/route';
 import PhoneNumberInput from '../components/ui/PhoneNumberInput';
-import {requestAndroidPermission} from '../utils/permission';
+import { requestAndroidPermission } from '../utils/permission';
 import * as ImagePicker from 'react-native-image-picker';
-import {showToast} from '../utils/toast';
-import {useApi} from '../hooks/useApi';
+import { showToast } from '../utils/toast';
+import { useApi } from '../hooks/useApi';
 import ApiStrings from '../lib/apis_string';
-import {useAuthStore} from '../store/store';
-import {formatFileData} from '../utils/file-format';
+import { useAuthStore } from '../store/store';
+import { formatFileData } from '../utils/file-format';
+import Header from '../components/Header';
 
 const AddPeopleScreen = () => {
-  const {t} = useTranslation();
-  const {user} = useAuthStore();
+  const { t } = useTranslation();
+  const { user } = useAuthStore();
   const [formData, setFormData] = useState<AddPoorPeopleScreenFormState>({
     name: '',
     age: '',
@@ -52,7 +48,7 @@ const AddPeopleScreen = () => {
     husbandProfession: '',
     hasChildren: '',
     numberOfChildren: '',
-    herProfession: '',
+    herProfession: 'ভিক্ষুক',
     contactNumber: '',
     address: '',
     receivingAssistance: '',
@@ -79,12 +75,12 @@ const AddPeopleScreen = () => {
   });
 
   const [childrenDetails, setChildrenDetails] = useState<ChildDetail[]>([]);
-  const {request, loading} = useApi();
+  const { request, loading } = useApi();
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
 
   const handleAddChildren = (count: number) => {
     const numChildren = Math.max(0, count);
-    const updatedChildren = Array.from({length: numChildren}, (_, index) => ({
+    const updatedChildren = Array.from({ length: numChildren }, (_, index) => ({
       name: childrenDetails[index]?.name || '',
       age: childrenDetails[index]?.age || '',
       profession: childrenDetails[index]?.profession || '',
@@ -98,48 +94,72 @@ const AddPeopleScreen = () => {
   const handleSubmit = async () => {
     if (
       !formData.name ||
+      !formData.photoUrl ||
       !formData.age ||
       !formData.gender ||
       !formData.contactNumber ||
       !formData.address ||
       !formData.rice ||
       !formData.lentils ||
+      !formData.marriageStatus ||
       !formData.oil ||
       !formData.clothingFamily ||
       !formData.clothingSelf ||
-      !formData.otherFood ||
-      !formData.medicineCost ||
       !formData.financialNeeds
     ) {
-      showToast('error', 'Please fill all required fields.');
+      showToast('error', 'অনুগ্রহ করে সব প্রয়োজনীয় তথ্য পূরণ করুন');
       return;
     }
 
-    const numberOfChildren = Number(formData.numberOfChildren);
-    if (isNaN(numberOfChildren) || numberOfChildren < 0) {
-      showToast('error', 'Number of children must be a valid number.');
-      return;
+    if (formData.receivingAssistance === 'হ্যাঁ') {
+      if (!formData.assistanceType || !formData.frequency || !formData.assistanceLocation) {
+        showToast('error', 'যদি সাহায্য গ্রহণ করে থাকেন, তবে সহায়তা সম্পর্কিত সব তথ্য পূরণ করুন');
+        return;
+      }
     }
 
-    if (numberOfChildren !== childrenDetails.length) {
-      showToast(
-        'error',
-        `Please provide details for exactly ${numberOfChildren} children.`,
-      );
-      return;
+    if (formData.hasChildren === 'হ্যাঁ') {
+      const numberOfChildren = Number(formData.numberOfChildren);
+      if (isNaN(numberOfChildren) || numberOfChildren < 0) {
+        showToast('error', 'সন্তানের সংখ্যা একটি বৈধ সংখ্যা হতে হবে');
+        return;
+      }
+
+      if (numberOfChildren !== childrenDetails.length) {
+        showToast('error', `আপনাকে অবশ্যই ${numberOfChildren} সন্তানের তথ্য প্রদান করতে হবে।`);
+        return;
+      }
+
+      for (let i = 0; i < childrenDetails.length; i++) {
+        const child = childrenDetails[i];
+
+        if (!child.name || !child.age) {
+          showToast('error', `অনুগ্রহ করে সন্তানের ${i + 1}-এর সমস্ত তথ্য প্রদান করুন`);
+          return;
+        }
+
+        if (Number(child.age) >= 15) {
+          if (!child.profession || !child.income || !child.mobile) {
+            showToast(
+              'error',
+              `১৫ বছর বা তার বেশি বয়সী শিশু ${i + 1}-এর পেশা, আয় এবং ফোন নম্বর প্রদান করুন`
+            );
+            return;
+          }
+        }
+      }
     }
 
-    for (let i = 0; i < childrenDetails.length; i++) {
-      const child = childrenDetails[i];
-      if (
-        !child.name ||
-        !child.age ||
-        !child.profession ||
-        !child.income ||
-        !child.mobile ||
-        !child.frequency
-      ) {
-        showToast('error', `Please fill all details for child ${i + 1}.`);
+    if (formData.gender === 'মহিলা' && formData.isHusbandDead !== 'হ্যাঁ' && ['বিবাহিত', 'বিচ্ছেদপ্রাপ্ত', 'বিধবা/বিপত্নীক'].includes(formData.marriageStatus)) {
+      if (!formData.idProofFrontHusband || !formData.idProofBackHusband) {
+        showToast('error', 'আপনাকে স্বামীর আইডি প্রমাণপত্র প্রদান করতে হবে');
+        return;
+      }
+    }
+
+    if (formData.gender === 'পুরুষ' && formData.isWifeDead !== 'হ্যাঁ' && ['বিবাহিত', 'বিচ্ছেদপ্রাপ্ত', 'বিধবা/বিপত্নীক'].includes(formData.marriageStatus)) {
+      if (!formData.idProofFrontWife || !formData.idProofBackWife) {
+        showToast('error', 'আপনাকে স্ত্রীর আইডি প্রমাণপত্র প্রদান করতে হবে');
         return;
       }
     }
@@ -168,35 +188,26 @@ const AddPeopleScreen = () => {
         rice: formData.rice,
         lentils: formData.lentils,
         oil: formData.oil,
-        otherFoodItems: formData.otherFood,
+        otherFoodItems: formData.otherFood || '',
         clothingForSelf: formData.clothingSelf,
         clothingForFamily: formData.clothingFamily,
-        monthlyMedicineCost: formData.medicineCost,
-        ongoingTreatmentsDetails: formData.treatments,
+        monthlyMedicineCost: formData.medicineCost || '',
+        ongoingTreatmentsDetails: formData.treatments || '',
         financialNeeds: formData.financialNeeds,
-      }),
+      })
     );
-    formDataPayload.append(
-      'idProofFront',
-      formatFileData(formData.idProofFront),
-    );
+    formDataPayload.append('idProofFront', formatFileData(formData.idProofFront));
     formDataPayload.append('idProofBack', formatFileData(formData.idProofBack));
-    formDataPayload.append(
-      'idProofFrontWife',
-      formatFileData(formData.idProofFrontWife),
-    );
-    formDataPayload.append(
-      'idProofBackWife',
-      formatFileData(formData.idProofBackWife),
-    );
+    formDataPayload.append('idProofFrontWife', formatFileData(formData.idProofFrontWife));
+    formDataPayload.append('idProofBackWife', formatFileData(formData.idProofBackWife));
 
-    const {message} = await request(
+    const { message } = await request(
       'post',
       ApiStrings.CREATE_PEOPLE(user?.masjid?._id || ''),
-      formDataPayload,
+      formDataPayload
     );
     showToast('success', message);
-    navigation.navigate('ImamHomeScreen', {activeTab: 'Poor People'});
+    navigation.navigate('ImamHomeScreen', { activeTab: t('beggers')});
   };
 
   const handleImagePicker = async (
@@ -216,7 +227,7 @@ const AddPeopleScreen = () => {
           'Permission Denied',
           'Please enable photo access in Settings to continue.',
           [
-            {text: 'Cancel', style: 'cancel'},
+            { text: 'Cancel', style: 'cancel' },
             {
               text: 'Open Settings',
               onPress: () => Linking.openSettings(),
@@ -228,7 +239,7 @@ const AddPeopleScreen = () => {
     }
 
     ImagePicker.launchImageLibrary(
-      {mediaType: 'photo', quality: 0.8},
+      { mediaType: 'photo', quality: 0.8 },
       response => {
         if (response.didCancel) return;
         if (response.errorMessage) {
@@ -236,7 +247,7 @@ const AddPeopleScreen = () => {
           return;
         }
         if (response.assets && response.assets.length > 0) {
-          setFormData({...formData, [field]: response.assets[0]});
+          setFormData({ ...formData, [field]: response.assets[0] });
         }
       },
     );
@@ -252,432 +263,450 @@ const AddPeopleScreen = () => {
       | 'idProofFrontHusband'
       | 'idProofBackHusband',
   ) => {
-    setFormData({...formData, [field]: ''});
+    setFormData({ ...formData, [field]: '' });
   };
 
   return (
     <SafeAreaWrapper>
-      <ScrollView>
-        <View style={globalStyles.container}>
-          <View style={committeeStyles.flexLayout}>
-            <BackButton />
-            <Heading level={5} weight="Bold">
-              {t('signIn')}
-            </Heading>
-            <View />
-          </View>
-          {/* Photo Upload */}
-          <UploadArea
-            title="Her Photo"
-            imageUri={formData.photoUrl}
-            handlePress={() => handleImagePicker('photoUrl')}
-            handleRemove={() => removeImage('photoUrl')}
-          />
-
-          {/* Basic Information */}
-          <Input
-            label="Name"
-            value={formData.name}
-            style={{marginTop: 20}}
-            onChangeText={text => setFormData({...formData, name: text})}
-          />
-          <Input
-            label="Age"
-            value={formData.age}
-            onChangeText={text => setFormData({...formData, age: text})}
-            keyboardType="numeric"
-            isNumber={true}
-          />
-
-          <SelectDropdown
-            label="Select Gender"
-            value={formData.gender}
-            onChange={value => setFormData({...formData, gender: value})}
-            data={genders}
-          />
-
-          {/* Marriage Status Section */}
-          <SelectDropdown
-            label="Marriage Status"
-            value={formData.marriageStatus}
-            onChange={value =>
-              setFormData({...formData, marriageStatus: value})
-            }
-            data={marriages}
-          />
-
-          {/* Conditional Sections */}
-          {formData.marriageStatus === 'বিবাহিত' && (
-            <>
-              <SelectDropdown
-                label={`Is ${
-                  formData.gender === 'পুরুষ' ? 'Wife' : 'Husband'
-                } Dead?`}
-                value={
-                  formData.gender === 'পুরুষ'
-                    ? formData.isWifeDead
-                    : formData.isHusbandDead
-                }
-                onChange={value =>
-                  setFormData({
-                    ...formData,
-                    ...(formData.gender === 'পুরুষ'
-                      ? {isWifeDead: value}
-                      : {isHusbandDead: value}),
-                  })
-                }
-                data={yesNoOptions}
-              />
-
-              {formData.isWifeDead === 'না' && (
-                <SelectDropdown
-                  label={`${
-                    formData.gender === 'পুরুষ' ? 'Wife' : 'Husband'
-                  } Profession`}
-                  value={
-                    formData.gender === 'পুরুষ'
-                      ? formData.wifeProfession
-                      : formData.husbandProfession
-                  }
-                  onChange={value =>
-                    setFormData({
-                      ...formData,
-                      ...(formData.gender === 'পুরুষ'
-                        ? {wifeProfession: value}
-                        : {husbandProfession: value}),
-                    })
-                  }
-                  data={professions}
-                  search={true}
-                  searchPlaceholder="Enter your search"
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <ScrollView
+          contentContainerStyle={{
+            paddingBottom: 40
+          }}
+        >
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={globalStyles.container}>
+              <Header title={t('addBegger')} />
+              {/* Photo Upload */}
+              <View style={{ marginTop: 20 }}>
+                <UploadArea
+                  title={t('beggerPhoto')}
+                  imageUri={formData.photoUrl}
+                  handlePress={() => handleImagePicker('photoUrl')}
+                  handleRemove={() => removeImage('photoUrl')}
                 />
-              )}
-            </>
-          )}
+              </View>
 
-          {/* Children Section */}
-          <SelectDropdown
-            label="Has Children?"
-            value={formData.hasChildren}
-            onChange={value => setFormData({...formData, hasChildren: value})}
-            data={yesNoOptions}
-          />
-
-          {formData.hasChildren === 'হ্যাঁ' && (
-            <>
+              {/* Basic Information */}
               <Input
-                label="Number of Children"
-                value={formData.numberOfChildren}
+                label={t('beggerName')}
+                value={formData.name}
+                placeholder={t('beggerNamePlaceholder')}
+                style={{ marginTop: 20 }}
+                onChangeText={text => setFormData({ ...formData, name: text })}
+              />
+              <Input
+                placeholder={t('beggerAgePlaceholder')}
+                label={t('beggerAge')}
+                value={formData.age}
+                onChangeText={text => setFormData({ ...formData, age: text })}
                 keyboardType="numeric"
-                onChangeText={text => {
-                  const count = parseInt(text) || 0;
-                  setFormData({...formData, numberOfChildren: text});
-                  handleAddChildren(count);
-                }}
+                isNumber={true}
               />
 
-              {childrenDetails.map((child, index) => (
-                <View key={index} style={styles.childSection}>
-                  <Text style={styles.childHeader}>
-                    Child {index + 1} Details
-                  </Text>
-                  <Input
-                    label="Name"
-                    value={child.name}
-                    onChangeText={text => {
-                      const updated = [...childrenDetails];
-                      updated[index].name = text;
-                      setChildrenDetails(updated);
-                    }}
+              <SelectDropdown
+                label={t('beggerGender')}
+                placeholder={t('beggerGender')}
+                value={formData.gender}
+                onChange={value => setFormData({ ...formData, gender: value })}
+                data={genders}
+              />
+
+              {/* Marriage Status Section */}
+              <SelectDropdown
+                label={t('beggerMarriageStatus')}
+                placeholder={t('beggerMarriageStatus')}
+                value={formData.marriageStatus}
+                onChange={value =>
+                  setFormData({ ...formData, marriageStatus: value })
+                }
+                data={marriages}
+              />
+
+              {['বিবাহিত', 'বিচ্ছেদপ্রাপ্ত', 'বিধবা/বিপত্নীক'].includes(formData.marriageStatus) && (
+                <>
+                  <SelectDropdown
+                    label={formData.gender === 'পুরুষ' ? t('isWifeDead') : t('isHusbandDead')}
+                    value={
+                      formData.gender === 'পুরুষ'
+                        ? formData.isWifeDead
+                        : formData.isHusbandDead
+                    }
+                    onChange={value =>
+                      setFormData({
+                        ...formData,
+                        ...(formData.gender === 'পুরুষ'
+                          ? { isWifeDead: value }
+                          : { isHusbandDead: value }),
+                      })
+                    }
+                    data={yesNoOptions}
+                    placeholder={formData.gender === 'পুরুষ' ? t('wifeProfessionPlaceholder') : t('husbandProfessionPlaceholder')}
                   />
+
+                  {formData.isWifeDead === 'না' && (
+                    <SelectDropdown
+                      label={formData.gender === 'পুরুষ' ? t('wifeProfession') : t('husbandProfession')}
+                      value={
+                        formData.gender === 'পুরুষ'
+                          ? formData.wifeProfession
+                          : formData.husbandProfession
+                      }
+                      onChange={value =>
+                        setFormData({
+                          ...formData,
+                          ...(formData.gender === 'পুরুষ'
+                            ? { wifeProfession: value }
+                            : { husbandProfession: value }),
+                        })
+                      }
+                      data={professions}
+                      search={true}
+                      searchPlaceholder="Enter your search"
+                      placeholder={formData.gender === 'পুরুষ' ? t('wifeProfessionPlaceholder') : t('husbandProfessionPlaceholder')}
+                    />
+                  )}
+
+                  <SelectDropdown
+                    label={t('hasChildren')}
+                    value={formData.hasChildren}
+                    onChange={value => setFormData({ ...formData, hasChildren: value })}
+                    data={yesNoOptions}
+                    placeholder={t('selectPlaceholder')}
+                  />
+                </>
+              )}
+
+              {formData.hasChildren === 'হ্যাঁ' && (
+                <>
                   <Input
-                    label="Age"
-                    value={child.age}
-                    isNumber={true}
+                    label={t('numberOfChildren')}
+                    placeholder={t('numberOfChildren')}
+                    value={formData.numberOfChildren}
                     keyboardType="numeric"
                     onChangeText={text => {
-                      const updated = [...childrenDetails];
-                      updated[index].age = text;
-                      setChildrenDetails(updated);
+                      const count = parseInt(text) || 0;
+                      setFormData({ ...formData, numberOfChildren: text });
+                      handleAddChildren(count);
                     }}
                   />
-                  <PhoneNumberInput
-                    label="Phone Number"
-                    placeholder="Enter your phone number"
-                    value={child.mobile}
-                    onChangeText={text => {
-                      const updated = [...childrenDetails];
-                      updated[index].mobile = text;
-                      setChildrenDetails(updated);
-                    }}
+
+                  {childrenDetails.map((child, index) => (
+                    <View key={index} style={styles.childSection}>
+                      <Text style={styles.childHeader}>
+                        {t('childrenDetails')} {index + 1}
+                      </Text>
+                      <Input
+                        placeholder={t('childName')}
+                        label={t('childName')}
+                        value={child.name}
+                        onChangeText={text => {
+                          const updated = [...childrenDetails];
+                          updated[index].name = text;
+                          setChildrenDetails(updated);
+                        }}
+                      />
+                      <Input
+                        placeholder={t('childAge')}
+                        label={t('childAge')}
+                        value={child.age}
+                        isNumber={true}
+                        keyboardType="numeric"
+                        onChangeText={text => {
+                          const updated = [...childrenDetails];
+                          updated[index].age = text;
+                          setChildrenDetails(updated);
+                        }}
+                      />
+                      <PhoneNumberInput
+                        label={t('childNumber')}
+                        placeholder={t('childNumber')}
+                        value={child.mobile}
+                        onChangeText={text => {
+                          const updated = [...childrenDetails];
+                          updated[index].mobile = text;
+                          setChildrenDetails(updated);
+                        }}
+                      />
+                      <SelectDropdown
+                        label={t('childProfession')}
+                        value={child.profession}
+                        onChange={value => {
+                          const updated = [...childrenDetails];
+                          updated[index].profession = value;
+                          setChildrenDetails(updated);
+                        }}
+                        data={professions}
+                        style={styles.halfInput}
+                        search={true}
+                        searchPlaceholder="Enter your search"
+                        placeholder={t('selectPlaceholder')}
+                      />
+                      <View style={styles.income}>
+                        <Input
+                          label={t('childIncome')}
+                          placeholder={t('childIncome')}
+                          value={child.income}
+                          isNumber={true}
+                          keyboardType="numeric"
+                          onChangeText={text => {
+                            const updated = [...childrenDetails];
+                            updated[index].income = text;
+                            setChildrenDetails(updated);
+                          }}
+                          style={{ width: '65%' }}
+                        />
+                        <SelectDropdown
+                          label={t('childrenIncome')}
+                          value={child.frequency}
+                          placeholder={t('selectPlaceholder')}
+                          onChange={value => {
+                            const updated = [...childrenDetails];
+                            updated[index].frequency = value;
+                            setChildrenDetails(updated);
+                          }}
+                          data={frequencyOptions}
+                          style={{ flex: 1 }}
+                        />
+                      </View>
+                    </View>
+                  ))}
+                </>
+              )}
+
+              {/* Assistance Section */}
+              <SelectDropdown
+                label={t('receivingAssistance')}
+                value={formData.receivingAssistance}
+                onChange={value =>
+                  setFormData({ ...formData, receivingAssistance: value })
+                }
+                data={yesNoOptions}
+                placeholder={t('selectPlaceholder')}
+              />
+
+              {formData.receivingAssistance === 'হ্যাঁ' && (
+                <>
+                  <SelectDropdown
+                    label={t('assistanceType')}
+                    value={formData.assistanceType}
+                    onChange={value =>
+                      setFormData({ ...formData, assistanceType: value })
+                    }
+                    data={assistanceTypes}
+                    placeholder={t('selectPlaceholder')}
+
                   />
                   <SelectDropdown
-                    label="Profession"
-                    value={child.profession}
-                    onChange={value => {
-                      const updated = [...childrenDetails];
-                      updated[index].profession = value;
-                      setChildrenDetails(updated);
-                    }}
-                    data={professions}
-                    style={styles.halfInput}
-                    search={true}
-                    searchPlaceholder="Enter your search"
+                    label={t('assistanceFrequency')}
+                    value={formData.frequency}
+                    onChange={value => setFormData({ ...formData, frequency: value })}
+                    data={frequencyOptions}
+                    placeholder={t('selectPlaceholder')}
                   />
-                  <View style={styles.income}>
-                    <Input
-                      label="Income"
-                      value={child.income}
-                      isNumber={true}
-                      keyboardType="numeric"
-                      onChangeText={text => {
-                        const updated = [...childrenDetails];
-                        updated[index].income = text;
-                        setChildrenDetails(updated);
-                      }}
-                      style={{width: '65%'}}
-                    />
-                    <SelectDropdown
-                      label="Month"
-                      placeholder="Month"
-                      value={child.frequency}
-                      onChange={value => {
-                        const updated = [...childrenDetails];
-                        updated[index].frequency = value;
-                        setChildrenDetails(updated);
-                      }}
-                      data={frequencyOptions}
-                      style={{flex: 1}}
-                    />
-                  </View>
-                </View>
-              ))}
-            </>
-          )}
+                  <Input
+                    label={t('assistanceLocation')}
+                    value={formData.assistanceLocation}
+                    onChangeText={text =>
+                      setFormData({ ...formData, assistanceLocation: text })
+                    }
+                  />
+                </>
+              )}
 
-          {/* Assistance Section */}
-          <SelectDropdown
-            label="Receiving Assistance"
-            value={formData.receivingAssistance}
-            onChange={value =>
-              setFormData({...formData, receivingAssistance: value})
-            }
-            data={yesNoOptions}
-          />
-
-          {formData.receivingAssistance === 'হ্যাঁ' && (
-            <>
-              <SelectDropdown
-                label="Assistance Type"
-                value={formData.assistanceType}
-                onChange={value =>
-                  setFormData({...formData, assistanceType: value})
-                }
-                data={assistanceTypes}
+              <Input
+                label={t('currentAddress')}
+                value={formData.address}
+                onChangeText={text => setFormData({ ...formData, address: text })}
+                placeholder={t('currentAddressPlaceholder1')}
               />
+              <PhoneNumberInput
+                label={t('phoneNumber')}
+                placeholder={t('phoneNumberPlaceholder1')}
+                value={formData.contactNumber}
+                onChangeText={text =>
+                  setFormData({ ...formData, contactNumber: text })
+                }
+              />
+              {/* Essentials Needs Section */}
+              <Heading level={6} weight="Bold" style={styles.sectionTitle}>
+                {t('monthlyNeedsTitle')}
+              </Heading>
+              <Paragraph
+                level="Small"
+                weight="Medium"
+                style={styles.sectionDescription}>
+                {t('monthlyNeedsDescription')}
+              </Paragraph>
+
+              <View style={styles.row}>
+                <SelectDropdown
+                  value={formData.rice}
+                  onChange={text => setFormData({ ...formData, rice: text })}
+                  label={t('ricePerMonth')}
+                  data={riceNeeds}
+                  placeholder={t('selectPlaceholder')}
+                  style={styles.halfInput}
+                />
+                <SelectDropdown
+                  value={formData.lentils}
+                  onChange={text => setFormData({ ...formData, lentils: text })}
+                  label={t('lentilsPerMonth')}
+                  data={riceNeeds}
+                  style={styles.halfInput}
+                  placeholder={t('selectPlaceholder')}
+                />
+              </View>
+              <View style={styles.row}>
+                <SelectDropdown
+                  value={formData.oil}
+                  onChange={text => setFormData({ ...formData, oil: text })}
+                  label={t('oilPerMonth')}
+                  data={oliNeeds}
+                  placeholder={t('selectPlaceholder')}
+                  style={styles.halfInput}
+                />
+                <SelectDropdown
+                  value={formData.clothingFamily}
+                  onChange={text =>
+                    setFormData({ ...formData, clothingFamily: text })
+                  }
+                  label={t('familyClothing')}
+                  data={clothNeeds}
+                  style={styles.halfInput}
+                  placeholder={t('selectPlaceholder')}
+                />
+              </View>
               <SelectDropdown
-                label="Frequency"
-                value={formData.frequency}
-                onChange={value => setFormData({...formData, frequency: value})}
-                data={frequencyOptions}
+                value={formData.clothingSelf}
+                onChange={text => setFormData({ ...formData, clothingSelf: text })}
+                label={t('selfClothing')}
+                data={clothNeeds}
+                style={styles.halfInput}
+                placeholder={t('selectPlaceholder')}
               />
               <Input
-                label="Assistance Location"
-                value={formData.assistanceLocation}
+                label={t('otherFoodItems')}
+                value={formData.otherFood}
+                onChangeText={text => setFormData({ ...formData, otherFood: text })}
+                placeholder={t('otherFoodPlaceholder')}
+              />
+              <Input
+                label={t('monthlyMedicineCost')}
+                placeholder={t('monthlyMedicineCost')}
+                value={formData.medicineCost}
+                isNumber={true}
                 onChangeText={text =>
-                  setFormData({...formData, assistanceLocation: text})
+                  setFormData({ ...formData, medicineCost: text })
                 }
               />
-            </>
-          )}
+              <Input
+                label={t('financialNeeds')}
+                value={formData.financialNeeds}
+                placeholder={t('financialNeedPlaceholder')}
+                isNumber={true}
+                onChangeText={text =>
+                  setFormData({ ...formData, financialNeeds: text })
+                }
+              />
+              <Textarea
+                label={t('ongoingTreatmentDetails')}
+                value={formData.treatments}
+                onChangeText={text => setFormData({ ...formData, treatments: text })}
+                placeholder={t('treatmentDetailsPlaceholder')}
+                maxLength={300}
+                numberOfLines={5}
+              />
+              <Textarea
+                label={t('notes')}
+                value={formData.notes}
+                onChangeText={text => setFormData({ ...formData, notes: text })}
+                placeholder={t('notesPlaceholder')}
+                maxLength={300}
+                numberOfLines={5}
+              />
 
-          <Input
-            label="Address"
-            value={formData.address}
-            onChangeText={text => setFormData({...formData, address: text})}
-          />
-          <PhoneNumberInput
-            label="Contact Number"
-            value={formData.contactNumber}
-            onChangeText={text =>
-              setFormData({...formData, contactNumber: text})
-            }
-          />
-          <SelectDropdown
-            label={`Her Profession`}
-            value={formData.herProfession}
-            onChange={value => setFormData({...formData, herProfession: value})}
-            data={professions}
-            search={true}
-            searchPlaceholder="Enter your search"
-          />
-
-          {/* Essentials Needs Section */}
-          <Heading level={6} weight="Bold" style={styles.sectionTitle}>
-            Essentials Needs Monthly
-          </Heading>
-          <Paragraph
-            level="Small"
-            weight="Medium"
-            style={styles.sectionDescription}>
-            Please specify your monthly requirements for essential items...
-          </Paragraph>
-
-          <View style={styles.row}>
-            <SelectDropdown
-              value={formData.rice}
-              onChange={text => setFormData({...formData, rice: text})}
-              label="Rice (kg/month)"
-              data={riceNeeds}
-              style={styles.halfInput}
-            />
-            <SelectDropdown
-              value={formData.lentils}
-              onChange={text => setFormData({...formData, lentils: text})}
-              label="Lentils (kg/month)"
-              data={riceNeeds}
-              style={styles.halfInput}
-            />
-          </View>
-          <View style={styles.row}>
-            <SelectDropdown
-              value={formData.oil}
-              onChange={text => setFormData({...formData, oil: text})}
-              label="Oil (liters/month)"
-              data={oliNeeds}
-              style={styles.halfInput}
-            />
-            <SelectDropdown
-              value={formData.clothingFamily}
-              onChange={text =>
-                setFormData({...formData, clothingFamily: text})
-              }
-              label="Family Clothing"
-              data={clothNeeds}
-              style={styles.halfInput}
-            />
-          </View>
-          <SelectDropdown
-            value={formData.clothingSelf}
-            onChange={text => setFormData({...formData, clothingSelf: text})}
-            label="Self Clothing"
-            data={clothNeeds}
-            style={styles.halfInput}
-          />
-          <Input
-            label="Other Foods Items"
-            value={formData.otherFood}
-            onChangeText={text => setFormData({...formData, otherFood: text})}
-          />
-          <Input
-            label="Monthly Medicine Cost (BDT)"
-            value={formData.medicineCost}
-            isNumber={true}
-            onChangeText={text =>
-              setFormData({...formData, medicineCost: text})
-            }
-          />
-          <Input
-            label="Financial Needs"
-            value={formData.financialNeeds}
-            isNumber={true}
-            onChangeText={text =>
-              setFormData({...formData, financialNeeds: text})
-            }
-          />
-          <Textarea
-            label="Ongoing Treatments Details"
-            value={formData.treatments}
-            onChangeText={text => setFormData({...formData, treatments: text})}
-            placeholder="Enter details..."
-            maxLength={300}
-            numberOfLines={5}
-          />
-          <Textarea
-            label="Notes"
-            value={formData.notes}
-            onChangeText={text => setFormData({...formData, notes: text})}
-            placeholder="Write your notes here..."
-            maxLength={300}
-            numberOfLines={5}
-          />
-
-          {/* ID Proof Sections */}
-          <Paragraph level="Medium" weight="Bold" style={styles.sectionTitle}>
-            Capture Her ID Proof
-          </Paragraph>
-          <View style={styles.row}>
-            <UploadArea
-              title="Front Side"
-              imageUri={formData.idProofFront}
-              handlePress={() => handleImagePicker('idProofFront')}
-              handleRemove={() => removeImage('idProofFront')}
-            />
-            <UploadArea
-              title="Back Side"
-              imageUri={formData.idProofBack}
-              handlePress={() => handleImagePicker('idProofBack')}
-              handleRemove={() => removeImage('idProofBack')}
-            />
-          </View>
-
-          {formData.gender === 'মহিলা' ? (
-            <>
-              <Paragraph
-                level="Medium"
-                weight="Bold"
-                style={[styles.sectionTitle, {marginTop: 15}]}>
-                Capture Husband ID Proof
+              {/* ID Proof Sections */}
+              <Paragraph level="Medium" weight="Bold" style={styles.sectionTitle}>
+                {t('idProofFrontBack')}
               </Paragraph>
               <View style={styles.row}>
                 <UploadArea
-                  title="Front Side"
-                  imageUri={formData.idProofFrontHusband}
-                  handlePress={() => handleImagePicker('idProofFrontHusband')}
-                  handleRemove={() => removeImage('idProofFrontHusband')}
+                  title={t('idProofFrontLabel')}
+                  imageUri={formData.idProofFront}
+                  handlePress={() => handleImagePicker('idProofFront')}
+                  handleRemove={() => removeImage('idProofFront')}
                 />
                 <UploadArea
-                  title="Back Side"
-                  imageUri={formData.idProofBackHusband}
-                  handlePress={() => handleImagePicker('idProofBackHusband')}
-                  handleRemove={() => removeImage('idProofBackHusband')}
+                  title={t('idProofBackLabel')}
+                  imageUri={formData.idProofBack}
+                  handlePress={() => handleImagePicker('idProofBack')}
+                  handleRemove={() => removeImage('idProofBack')}
                 />
               </View>
-            </>
-          ) : (
-            <>
-              <Paragraph
-                level="Medium"
-                weight="Bold"
-                style={[styles.sectionTitle, {marginTop: 15}]}>
-                Capture Wife ID Proof
-              </Paragraph>
-              <View style={styles.row}>
-                <UploadArea
-                  title="Front Side"
-                  imageUri={formData.idProofFrontWife}
-                  handlePress={() => handleImagePicker('idProofFrontWife')}
-                  handleRemove={() => removeImage('idProofFrontWife')}
-                />
-                <UploadArea
-                  title="Back Side"
-                  imageUri={formData.idProofBackWife}
-                  handlePress={() => handleImagePicker('idProofBackWife')}
-                  handleRemove={() => removeImage('idProofBackWife')}
-                />
-              </View>
-            </>
-          )}
 
-          <AppButton
-            loading={loading}
-            disabled={loading}
-            onPress={handleSubmit}
-            text="Submit"
-            style={{marginTop: 30}}
-          />
-        </View>
-      </ScrollView>
+              {formData.gender === 'মহিলা' ? (
+                <>
+                  <Paragraph
+                    level="Medium"
+                    weight="Bold"
+                    style={[styles.sectionTitle, { marginTop: 15 }]}>
+                    {t('husbandIdProofFrontBack')}
+                  </Paragraph>
+                  <View style={styles.row}>
+                    <UploadArea
+                      title={t('idProofFrontLabel')}
+                      imageUri={formData.idProofFrontHusband}
+                      handlePress={() => handleImagePicker('idProofFrontHusband')}
+                      handleRemove={() => removeImage('idProofFrontHusband')}
+                    />
+                    <UploadArea
+                      title={t('idProofBackLabel')}
+                      imageUri={formData.idProofBackHusband}
+                      handlePress={() => handleImagePicker('idProofBackHusband')}
+                      handleRemove={() => removeImage('idProofBackHusband')}
+                    />
+                  </View>
+                </>
+              ) : (
+                <>
+                  <Paragraph
+                    level="Medium"
+                    weight="Bold"
+                    style={[styles.sectionTitle, { marginTop: 15 }]}>
+                    {t('wifeIdProofFrontBack')}
+                  </Paragraph>
+                  <View style={styles.row}>
+                    <UploadArea
+                      title={t('idProofFrontLabel')}
+                      imageUri={formData.idProofFrontWife}
+                      handlePress={() => handleImagePicker('idProofFrontWife')}
+                      handleRemove={() => removeImage('idProofFrontWife')}
+                    />
+                    <UploadArea
+                      title={t('idProofBackLabel')}
+                      imageUri={formData.idProofBackWife}
+                      handlePress={() => handleImagePicker('idProofBackWife')}
+                      handleRemove={() => removeImage('idProofBackWife')}
+                    />
+                  </View>
+                </>
+              )}
+
+              <AppButton
+                loading={loading}
+                disabled={loading}
+                onPress={handleSubmit}
+                text={t('submit')}
+                style={{ marginTop: 30 }}
+              />
+            </View>
+          </TouchableWithoutFeedback>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaWrapper>
   );
 };

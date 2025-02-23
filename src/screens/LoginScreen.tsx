@@ -1,4 +1,4 @@
-import { View, Alert, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Alert, ScrollView, TouchableOpacity, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import React, { useState } from 'react';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import { AppStackParamList } from '../constants/route';
@@ -16,6 +16,7 @@ import { useApi } from '../hooks/useApi';
 import ApiStrings from '../lib/apis_string';
 import { showToast } from '../utils/toast';
 import { useAuthStore } from '../store/store';
+import LoadingOverlay from '../components/LoadingOverlay';
 
 const LoginScreen = () => {
   const { t } = useTranslation();
@@ -23,83 +24,85 @@ const LoginScreen = () => {
   const [password, setPassword] = useState<string>('');
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
   const { request, loading, error } = useApi();
-  const { setUser , setRole } = useAuthStore()
+  const { setUser, setRole } = useAuthStore()
   const emailError = validateEmail(email);
   const passwordError = validatePassword(password);
 
   const handleSubmit = async () => {
-      const { data, message } = await request('post', ApiStrings.LOGIN, { password, emailOrPhone: email?.toLowerCase() });
-      setUser(data?.user, data?.accessToken, data?.refreshToken)
-      setRole(data?.user?.role)
-      showToast('success', message)
-      navigation.navigate('HomeScreen')
+    const { data, message } = await request('post', ApiStrings.LOGIN, { password, emailOrPhone: email?.toLowerCase() });
+    setUser(data?.user, data?.accessToken, data?.refreshToken)
+    setRole(data?.user?.role)
+    showToast('success', message)
+    navigation.navigate('HomeScreen')
   };
 
   return (
     <SafeAreaWrapper>
-      <ScrollView>
-        <View style={globalStyles.container}>
-          <AppLogo />
-          <Heading level={4} weight="Bold">
-            {t('signIn')}
-          </Heading>
-          <View style={loginStyles.loginForm}>
-            <Input
-              label={t('email')}
-              placeholder={t('placeholderEmail')}
-              value={email}
-              onChangeText={setEmail}
-              validation={validateEmail}
-              keyboardType="email-address"
-            />
-            <Input
-              label={t('password')}
-              placeholder={t('placeholderPassword')}
-              value={password}
-              onChangeText={setPassword}
-              validation={validatePassword}
-              secureTextEntry
-            />
-            {error && <Paragraph style={loginStyles.errorMessage} level='Small' weight='SemiBold'>{error}</Paragraph>}
-            <TouchableOpacity
-              onPress={() => navigation.navigate('ForgotPasswordScreen')}
-              style={loginStyles.forgotPassword}>
-              <Paragraph level="Small">{t('forgotPassword')}</Paragraph>
-            </TouchableOpacity>
-            <AppButton
-              text={t('signIn')}
-              onPress={handleSubmit}
-              variant="primary"
-              loading={loading}
-              disabled={emailError && true || passwordError && true || !email || !password || loading}
-            />
-            <View style={loginStyles.bottom}>
-              <View style={loginStyles.lineContainer}>
-                <View style={loginStyles.line} />
-                <Paragraph level="Small">{t('orLoginWith')}</Paragraph>
-                <View style={loginStyles.line} />
-              </View>
-              <View style={loginStyles.flex}>
-                <Paragraph
-                  style={loginStyles.bottomSecondTextStyle}
-                  level="Small">
-                  {t('alreadyHaveAccount')}
-                </Paragraph>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <ScrollView>
+          <View style={globalStyles.container}>
+          <LoadingOverlay visible={loading} />
+            <AppLogo />
+            <Heading level={4} weight="Bold">
+              {t('signInTitle')}
+            </Heading>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+              <View style={loginStyles.loginForm}>
+                <Input
+                  label={t('emailLabel')}
+                  placeholder={t('emailPlaceholder')}
+                  value={email}
+                  onChangeText={setEmail}
+                  validation={validateEmail}
+                  keyboardType="email-address"
+                />
+                <Input
+                  label={t('passwordLabel')}
+                  placeholder={t('passwordPlaceholder')}
+                  value={password}
+                  onChangeText={setPassword}
+                  validation={validatePassword}
+                  secureTextEntry
+                />
+                {error && <Paragraph style={loginStyles.errorMessage} level='Small' weight='SemiBold'>{error}</Paragraph>}
                 <TouchableOpacity
-                  onPress={() => navigation.navigate('SignupScreen')}>
-                  <Paragraph
-                    style={loginStyles.bottomSecondTextStyle}
-                    level="Small"
-                    weight="Medium">
-                    {' '}
-                    {t('signUp')}
-                  </Paragraph>
+                  onPress={() => navigation.navigate('ForgotPasswordScreen')}
+                  style={loginStyles.forgotPassword}>
+                  <Paragraph level="Small">{t('forgotPassword')}</Paragraph>
                 </TouchableOpacity>
+                <AppButton
+                  text={t('signInButton')}
+                  onPress={handleSubmit}
+                  variant="primary"
+                  disabled={emailError && true || passwordError && true || !email || !password}
+                />
+                <View style={loginStyles.bottom}>
+                  <View style={loginStyles.lineContainer}>
+                    <View style={loginStyles.line} />
+                    <Paragraph level="Small">{t('noAccount')}</Paragraph>
+                    <View style={loginStyles.line} />
+                  </View>
+                  <View style={loginStyles.flex}>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate('SignupScreen')}>
+                      <Paragraph
+                        style={loginStyles.bottomSecondTextStyle}
+                        level="Small"
+                        weight="Medium">
+                        {' '}
+                        {t('signUpPrompt')}
+                      </Paragraph>
+                    </TouchableOpacity>
+                  </View>
+                </View>
               </View>
-            </View>
+            </TouchableWithoutFeedback>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaWrapper>
   );
 };

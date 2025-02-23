@@ -5,6 +5,7 @@ interface IFile{
     type: string,
     uri: string,
     width?:number
+    isUpdate?:boolean
 }
 
 interface FormState {

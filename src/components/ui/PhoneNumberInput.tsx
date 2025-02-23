@@ -55,11 +55,10 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
   return (
     <View style={[styles.container, style]}>
       {label && <Text style={styles.label}>{label}</Text>}
-      <View style={[styles.inputWrapper, disabled && styles.disabledWrapper, inputWrapper]}>
+      <View style={[styles.inputWrapper, error ? styles.error : styles.default , disabled && styles.disabledWrapper, inputWrapper]}>
         <TextInput
           style={[
             styles.input, 
-            error ? styles.inputError : null, 
             disabled ? styles.disabledInput : null,
             inputStyles
           ]}
@@ -73,6 +72,8 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
           onBlur={handleBlur}
           keyboardType="phone-pad"
           maxLength={11} 
+          placeholderTextColor={Colors.placeholder}
+          
         />
       </View>
       {error && <Text style={styles.errorText}>{error}</Text>}
@@ -84,6 +85,14 @@ const styles = ScaledSheet.create({
   container: {
     marginBottom: 16,
   },
+  default:{
+    borderWidth: 1,
+    borderColor: '#ccc',
+  },
+  error:{
+    borderWidth: 1,
+    borderColor: Colors.danger
+  },
   label: {
     marginBottom: 8,
     fontFamily: 'Quicksand-Regular',
@@ -93,8 +102,6 @@ const styles = ScaledSheet.create({
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#ccc',
     borderRadius: 8,
     overflow: 'hidden',
     paddingRight: 12,

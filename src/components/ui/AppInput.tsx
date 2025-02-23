@@ -75,11 +75,10 @@ const Input: React.FC<InputProps> = ({
   return (
     <View style={[styles.container, style]}>
       {label && <Text style={styles.label}>{label}</Text>}
-      <View style={[styles.inputWrapper, disabled && styles.disabledWrapper, inputWrapper]}>
+      <View style={[styles.inputWrapper, error ? styles.error : styles.default , disabled && styles.disabledWrapper, inputWrapper]}>
         <TextInput
           style={[
             styles.input,
-            error ? styles.inputError : null,
             disabled ? styles.disabledInput : null,
             inputStyles,
           ]}
@@ -90,6 +89,7 @@ const Input: React.FC<InputProps> = ({
           keyboardType={isNumber ? 'numeric' : keyboardType}
           secureTextEntry={secureTextEntry && !isPasswordVisible}
           editable={!disabled} 
+          placeholderTextColor={Colors.placeholder}
         />
         {secureTextEntry && !disabled && (
           <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)} style={styles.iconWrapper}>
@@ -117,19 +117,25 @@ const styles = ScaledSheet.create({
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#ccc',
     borderRadius: 8,
     overflow: 'hidden',
     paddingRight: 12,
     backgroundColor: Colors.white, 
+  },
+  default:{
+    borderWidth: 1,
+    borderColor: '#ccc',
+  },
+  error:{
+    borderWidth: 1,
+    borderColor: Colors.danger
   },
   input: {
     flex: 1,
     padding: 12,
     fontFamily: 'Quicksand-Regular',
     fontSize: '14@ms',
-    color: Colors.text, // Ensures text is visible
+    color: Colors.text,
   },
   inputError: {
     borderColor: 'red',

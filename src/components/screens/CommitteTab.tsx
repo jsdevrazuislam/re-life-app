@@ -17,6 +17,7 @@ import Input from '../ui/AppInput';
 import Textarea from '../ui/Textarea';
 import ErrorMessage from '../ErrorMessage';
 import AppButton from '../ui/AppButton';
+import { useTranslation } from '../../hooks/useTranslation';
 
 const CommitteeTab: React.FC<CommitteeTabProps> = ({data, loading}) => {
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
@@ -26,6 +27,7 @@ const CommitteeTab: React.FC<CommitteeTabProps> = ({data, loading}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const {request, loading: requestLoading, error} = useApi();
   const {user} = useAuthStore();
+  const { t } = useTranslation()
 
   const openModal = (type: 'edit' | 'delete') => {
     setModalType(type);
@@ -40,7 +42,6 @@ const CommitteeTab: React.FC<CommitteeTabProps> = ({data, loading}) => {
       subject,
       reason: description,
     };
-    console.log(payload);
     const {message} = await request(
       'post',
       ApiStrings.REQUEST_TO_ADMIN,
@@ -101,7 +102,7 @@ const CommitteeTab: React.FC<CommitteeTabProps> = ({data, loading}) => {
         style={imamStyles.addButton}
         onPress={() => navigation.navigate('AddCommitteeScreen')}>
         <Icon name="group-add" size={20} color="white" />
-        <Text style={imamStyles.buttonText}>Add Committee</Text>
+        <Text style={imamStyles.buttonText}>{t('addCommittee')}</Text>
       </TouchableOpacity>
 
       {loading ? (

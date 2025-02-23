@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import { Colors } from '../configs/colors';
@@ -9,36 +9,44 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { AppStackParamList } from '../constants/route';
 import Paragraph from '../components/ui/Paragraph';
 import Heading from '../components/ui/Heading';
+import { useTranslation } from '../hooks/useTranslation';
 
 const KYCVerifyScreen = () => {
+ 
+  const navigation = useNavigation<NavigationProp<AppStackParamList>>();
+  const { t } = useTranslation()
+  
   const steps = [
     {
       icon: 'credit-card',
-      title: 'Take a picture of a valid ID',
-      description: 'To check your personal information are correct',
+      title: t('title1'),
+      description: t('description1'),
     },
     {
       icon: 'camera-alt',
-      title: 'Take a selfie of yourself',
-      description: 'To match your face to your passport or ID photo',
+      title: t('title2'),
+      description: t('description2'),
     },
     {
       icon: 'description',
-      title: 'Take a selfie of your immam document',
-      description: 'To match your face to your passport or ID photo',
+      title: t('title3'),
+      description: t('description3'),
+    },
+    {
+      icon: 'lock',
+      title: t('keySecurityTitle'),
+      description: t('kycSecurityMessage'),
     },
   ];
 
-  const navigation = useNavigation<NavigationProp<AppStackParamList>>();
-  
 
   return (
     <SafeAreaWrapper>
       <ScrollView contentContainerStyle={kycStartedStyles.scrollContent}>
         <View style={kycStartedStyles.header}>
-          <Heading level={5} weight='Bold' style={kycStartedStyles.title}>Verifying your identity</Heading>
+          <Heading level={5} weight='Bold' style={kycStartedStyles.title}>{t('kycTitle')}</Heading>
           <Paragraph level='Small' weight='Medium' style={kycStartedStyles.subtitle}>
-            Please submit the following documents to process your application
+            {t('kycDescription')}
           </Paragraph>
         </View>
 
@@ -56,12 +64,6 @@ const KYCVerifyScreen = () => {
       </ScrollView>
 
       <View style={kycStartedStyles.footer}>
-        <View style={kycStartedStyles.securityInfo}>
-          <Icon name="lock" size={20} color="#4CAF50" />
-          <Paragraph level='Small' weight='Medium' style={kycStartedStyles.securityText}>
-            Your info will be encrypted and stored securely
-          </Paragraph>
-        </View>
         <AppButton text='Get Started' onPress={() => navigation.navigate('KycScreen')} />
       </View>
     </SafeAreaWrapper>

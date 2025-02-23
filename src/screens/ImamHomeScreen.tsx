@@ -19,6 +19,7 @@ import { useAuthStore } from '../store/store';
 import ApiStrings from '../lib/apis_string';
 import { showToast } from '../utils/toast';
 import { baseURLPhoto } from '../lib/api';
+import { useTranslation } from '../hooks/useTranslation';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -27,43 +28,36 @@ const Tab = createMaterialTopTabNavigator();
 
 
 const DashboardScreen = () => {
+  const { t } = useTranslation()
   const [people, setPeople] = useState<PoorPeopleResponse[]>([]);
   const [committees, setCommittees] = useState<CommitteeResponse[]>([]);
   const [isMenuVisible, setMenuVisible] = useState(false);
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
   const route = useRoute<ImamHomeScreenRouteProp>();
-  const [activeTab, setActiveTab] = useState(route.params?.activeTab || 'Poor People');
+  const [activeTab, setActiveTab] = useState(route.params?.activeTab || t('beggers'));
   const toggleMenu = () => setMenuVisible(!isMenuVisible);
   const { request, loading } = useApi();
   const { logout, user } = useAuthStore()
   const [total, setTotal] = useState({
-    totalPeople:0,
+    totalPeople: 0,
     totalCommittees: 0
   })
-
-  // Dynamic greeting
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return 'Good Morning';
-    if (hour < 18) return 'Good Afternoon';
-    return 'Good Evening';
-  };
 
   const handleAddPerson = () => {
     navigation.navigate('AddPoorPeopleScreen')
   };
   const handleLogout = async () => {
     toggleMenu()
-    await request('get', ApiStrings.LOGOUT);
     logout()
     showToast('success', 'Logout Successfully')
+    await request('get', ApiStrings.LOGOUT);
   }
 
   useEffect(() => {
     (async () => {
       if (user?.kycStatus === 'verified') {
         const { data } = await request('get', ApiStrings.GET_MASJID_DETAILS(user?.masjid?._id || ''));
-        setTotal({ ...total, totalPeople: data?.totalPoorPeople, totalCommittees: data?.totalCommittees})
+        setTotal({ ...total, totalPeople: data?.totalPoorPeople, totalCommittees: data?.totalCommittees })
         setCommittees(data?.committees)
         setPeople(data?.poorPeople)
       }
@@ -72,7 +66,7 @@ const DashboardScreen = () => {
 
   useEffect(() => {
     if (route.params?.activeTab) {
-      setActiveTab(route.params.activeTab);
+      setActiveTab(route.params.activeTab === t('beggers') ? t('beggers') : t('committees'));
     }
   }, [route.params?.activeTab]);
 
@@ -82,7 +76,7 @@ const DashboardScreen = () => {
       <View style={globalStyles.container}>
         <View style={imamStyles.header}>
           <View>
-            <Paragraph level='Medium' weight='Bold' style={imamStyles.greeting}>{getGreeting()},</Paragraph>
+            <Paragraph level='Medium' weight='Bold' style={imamStyles.greeting}>{t('greeting')},</Paragraph>
             <Paragraph level='Medium' weight='Bold' style={imamStyles.greeting}>{user?.fullName}</Paragraph>
           </View>
           <TouchableOpacity onPress={toggleMenu}>
@@ -101,7 +95,7 @@ const DashboardScreen = () => {
                 navigation.navigate('ProfileScreen')
               }}>
                 <Feather name="user" size={20} color="#333" />
-                <Text style={imamStyles.menuText}>Profile</Text>
+                <Text style={imamStyles.menuText}>{t('profileTitle')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={imamStyles.menuItem} onPress={() => {
@@ -109,13 +103,13 @@ const DashboardScreen = () => {
                 navigation.navigate('ImamSettingsScreen')
               }}>
                 <Feather name="settings" size={20} color="#333" />
-                <Text style={imamStyles.menuText}>Settings</Text>
+                <Text style={imamStyles.menuText}>{t('settingsTitle')}</Text>
               </TouchableOpacity>
 
               <TouchableOpacity style={imamStyles.menuItem} onPress={handleLogout}>
                 <Feather name="log-out" size={20} color="red" />
                 <Text style={[imamStyles.menuText, { color: "red" }]}>
-                  Logout
+                  {t('logout')}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -125,12 +119,12 @@ const DashboardScreen = () => {
         <View style={imamStyles.statsContainer}>
           <View style={imamStyles.statCard}>
             <Icon name="people" size={32} color={Colors.primary} />
-            <Paragraph level='Small' weight='Medium' style={imamStyles.statLabel}>Total People</Paragraph>
+            <Paragraph level='Small' weight='Medium' style={imamStyles.statLabel}>{t("totalBeggers")}</Paragraph>
             <Heading level={5} weight='Bold' style={imamStyles.statValue}>{people?.length}</Heading>
           </View>
           <View style={imamStyles.statCard}>
             <Icon name="groups" size={32} color="#4CAF50" />
-            <Paragraph level='Small' weight='Medium' style={imamStyles.statLabel}>Committees</Paragraph>
+            <Paragraph level='Small' weight='Medium' style={imamStyles.statLabel}>{t("totalCommittees")}</Paragraph>
             <Heading level={5} weight='Bold' style={imamStyles.statValue}>{committees?.length}</Heading>
           </View>
         </View>
@@ -142,10 +136,10 @@ const DashboardScreen = () => {
             tabBarIndicatorStyle: { backgroundColor: Colors.black },
             tabBarStyle: { backgroundColor: "transparent", elevation: 0 },
           }}>
-          <Tab.Screen name="Poor People">
+          <Tab.Screen name={t('beggers')}>
             {() => <PeopleTab loading={loading} data={people} onAdd={handleAddPerson} />}
           </Tab.Screen>
-          <Tab.Screen name="Committee">
+          <Tab.Screen name={t('committees')}>
             {() => <CommitteeTab loading={loading} data={committees} />}
           </Tab.Screen>
         </Tab.Navigator>

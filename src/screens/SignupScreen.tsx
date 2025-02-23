@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView, Image, Platform, Alert, Linking } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Image, Platform, Alert, Linking, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import React, { useState } from 'react';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import globalStyles from '../styles/global.style';
@@ -35,6 +35,7 @@ import { Colors } from '../configs/colors';
 import { validateCommitteeAddress } from '../validations/add.committee';
 import { UploadArea } from './KycScreen';
 import kycScreenStyles from '../styles/kycScreen.styles';
+import LoadingOverlay from '../components/LoadingOverlay';
 
 
 const SignupScreen = () => {
@@ -52,7 +53,7 @@ const SignupScreen = () => {
   const emailError = validateEmail(email);
   const passwordError = validatePassword(password);
   const { request, loading, error } = useApi();
-  const { setUserId, setStatus, setTempEmail} = useAuthStore();
+  const { setUserId, setStatus, setTempEmail } = useAuthStore();
   const [committeeDetails, setCommitteeDetails] = useState<CommitteeDetails[]>(
     [],
   );
@@ -274,226 +275,227 @@ const SignupScreen = () => {
 
   return (
     <SafeAreaWrapper>
-      <ScrollView>
-        <View style={globalStyles.container}>
-          <AppLogo />
-          <Heading level={4} weight="Bold">
-            {t('createAccount')}
-          </Heading>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        <ScrollView
+        contentContainerStyle={{
+          paddingBottom: 30
+        }}
+        >
+          <View style={globalStyles.container}>
+           <LoadingOverlay visible={loading} />
+            <AppLogo />
+            <Heading level={4} weight="Bold">
+              {t('signUpTitle')}
+            </Heading>
+            <Paragraph level='Small'>{t('signUpDescription')}</Paragraph>
 
-          <View style={signupStyles.form}>
-            <View style={kycScreenStyles.uploadSection}>
-              <Heading level={6} weight="Bold" style={styles.sectionTitle}>
-                Capture Id Proof
-              </Heading>
-              <Paragraph
-                level="Small"
-                weight="Medium"
-              >
-                Lorem Ipsum is simply dummy text of the printing and
-                typesetting industry. Lorem Ipsum has been the industry's
-                standard dummy text ever since the 1500s.
-              </Paragraph>
-
-              <View style={[kycScreenStyles.uploadRow, { marginTop: 20 }]}>
-                <UploadArea
-                  title="Your Profile"
-                  imageUri={formData.profileUrl}
-                  handlePress={() => handleImagePicker('profileUrl')}
-                  handleRemove={() => removeImage('profileUrl')}
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+              <View style={signupStyles.form}>
+                <View style={[kycScreenStyles.uploadRow, { marginTop: 20 }]}>
+                  <UploadArea
+                    title={t('imamPhotoLabel')}
+                    imageUri={formData.profileUrl}
+                    handlePress={() => handleImagePicker('profileUrl')}
+                    handleRemove={() => removeImage('profileUrl')}
+                  />
+                  <UploadArea
+                    title={t('masjidPhotoLabel')}
+                    imageUri={formData.masjidProfile}
+                    handlePress={() => handleImagePicker('masjidProfile')}
+                    handleRemove={() => removeImage('masjidProfile')}
+                  />
+                </View>
+                <Input
+                  label={t('masjidNameLabel')}
+                  placeholder={t('masjidNamePlaceholder')}
+                  value={name}
+                  onChangeText={setName}
+                  validation={validateName}
                 />
-                <UploadArea
-                  title="Masjid Photo"
-                  imageUri={formData.masjidProfile}
-                  handlePress={() => handleImagePicker('masjidProfile')}
-                  handleRemove={() => removeImage('masjidProfile')}
-                />
-              </View>
-            </View>
-            <Input
-              label={t('mosquesName')}
-              placeholder={t('mosquesNamePlaceholder')}
-              value={name}
-              onChangeText={setName}
-              validation={validateName}
-            />
-            <Paragraph level="Small" weight="Medium">
-              Masjid Location
-            </Paragraph>
-            <ScrollView
-              style={{ marginTop: 10 }}
-              horizontal
-              showsHorizontalScrollIndicator={false}>
-              <SelectDropdown
-                data={districts}
-                value={formData.location.district}
-                onChange={value => handleLocationChange('district', value)}
-                placeholder="Select a district"
-                style={profileStyles.paddingRight}
-                search={true}
-                searchPlaceholder="Search district"
-              />
-              <SelectDropdown
-                data={upazilas}
-                value={formData.location.upazila}
-                onChange={value => handleLocationChange('upazila', value)}
-                placeholder="Select an upazila"
-                style={profileStyles.paddingRight}
-                search={true}
-                searchPlaceholder="Search upazila"
-              />
-              <SelectDropdown
-                data={unions}
-                value={formData.location.union}
-                onChange={value => handleLocationChange('union', value)}
-                placeholder="Select a union"
-                style={profileStyles.paddingRight}
-                search={true}
-                searchPlaceholder="Search union"
-              />
-              <SelectDropdown
-                data={villages}
-                value={formData.location.village}
-                onChange={value => handleLocationChange('village', value)}
-                placeholder="Select a village"
-                search={true}
-                searchPlaceholder="Search village"
-              />
-            </ScrollView>
-            <Input
-              label={t('username')}
-              placeholder={t('placeholderUsername')}
-              value={username}
-              onChangeText={setUsername}
-              validation={validateUsername}
-            />
-            <Input
-              label={t('email')}
-              placeholder={t('placeholderEmail')}
-              value={email}
-              onChangeText={setEmail}
-              validation={validateEmail}
-              keyboardType="email-address"
-            />
-            <PhoneNumberInput
-              label="Phone Number"
-              placeholder="Enter your phone number"
-              value={mobile}
-              onChangeText={text => setMobile(text)}
-            />
-            <Input
-              label={t('password')}
-              placeholder={t('placeholderPassword')}
-              value={password}
-              onChangeText={setPassword}
-              validation={validatePassword}
-              secureTextEntry
-            />
-            <Input
-              label={t('Address')}
-              placeholder={t('address')}
-              value={formData.address}
-              onChangeText={(text) => setFormData({ ...formData, address: text })}
-              validation={validateCommitteeAddress}
-            />
-            <Input
-              label="Number of Committee"
-              value={numberOfCommittee}
-              keyboardType="numeric"
-              onChangeText={text => {
-                const count = parseInt(text) || 0;
-                setNumberOfCommittee(text);
-                handleCommittee(count);
-              }}
-            />
-            {committeeDetails.map((committee, index) => (
-              <View key={index} style={styles.childSection}>
-                <Text style={styles.childHeader}>
-                  Committee {index + 1} Details
-                </Text>
-                <UploadArea
-                  handlePress={() => handleCommitteeImagePicker(index)}
-                  handleRemove={() => removeCommitteeImage(index)}
-                  imageUri={committee.profilePicture}
-                  title='Upload Profile Picture'
+                <Paragraph level="Small" weight="Medium">
+                  {t('masjidLocationLabel')}
+                </Paragraph>
+                <ScrollView
+                  style={{ marginTop: 10 }}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}>
+                  <SelectDropdown
+                    data={districts}
+                    value={formData.location.district}
+                    onChange={value => handleLocationChange('district', value)}
+                    placeholder="Select a district"
+                    style={profileStyles.paddingRight}
+                    search={true}
+                    searchPlaceholder="Search district"
+                  />
+                  <SelectDropdown
+                    data={upazilas}
+                    value={formData.location.upazila}
+                    onChange={value => handleLocationChange('upazila', value)}
+                    placeholder="Select an upazila"
+                    style={profileStyles.paddingRight}
+                    search={true}
+                    searchPlaceholder="Search upazila"
+                  />
+                  <SelectDropdown
+                    data={unions}
+                    value={formData.location.union}
+                    onChange={value => handleLocationChange('union', value)}
+                    placeholder="Select a union"
+                    style={profileStyles.paddingRight}
+                    search={true}
+                    searchPlaceholder="Search union"
+                  />
+                  <SelectDropdown
+                    data={villages}
+                    value={formData.location.village}
+                    onChange={value => handleLocationChange('village', value)}
+                    placeholder="Select a village"
+                    search={true}
+                    searchPlaceholder="Search village"
+                  />
+                </ScrollView>
+                <Input
+                  label={t('imamNameLabel')}
+                  placeholder={t('imamNamePlaceholder')}
+                  value={username}
+                  onChangeText={setUsername}
+                  validation={validateUsername}
                 />
                 <Input
-                  label="Name"
-                  value={committee.name}
-                  onChangeText={text => {
-                    const updated = [...committeeDetails];
-                    updated[index].name = text;
-                    setCommitteeDetails(updated);
-                  }}
-                  style={{ marginTop: 15 }}
-                  inputStyles={{ backgroundColor: Colors.white }}
-                  inputWrapper={{ backgroundColor: Colors.white }}
-                />
-                <Input
-                  label="Address"
-                  value={committee.address}
-                  keyboardType="numeric"
-                  onChangeText={text => {
-                    const updated = [...committeeDetails];
-                    updated[index].address = text;
-                    setCommitteeDetails(updated);
-                  }}
-                  inputStyles={{ backgroundColor: Colors.white }}
-                  inputWrapper={{ backgroundColor: Colors.white }}
-                />
-                <SelectDropdown
-                  label="Profession"
-                  value={committee.profession}
-                  onChange={value => {
-                    const updated = [...committeeDetails];
-                    updated[index].profession = value;
-                    setCommitteeDetails(updated);
-                  }}
-                  data={professions}
-                  style={styles.halfInput}
-                  inputStyles={{ backgroundColor: Colors.white }}
+                  label={t('imamEmailLabel')}
+                  placeholder={t('imamEmailPlaceholder')}
+                  value={email}
+                  onChangeText={setEmail}
+                  validation={validateEmail}
+                  keyboardType="email-address"
                 />
                 <PhoneNumberInput
-                  label="Phone Number"
-                  placeholder="Enter your phone number"
-                  value={committee.mobile}
-                  inputStyles={{ backgroundColor: Colors.white }}
-                  inputWrapper={{ backgroundColor: Colors.white }}
+                  label={t('imamPhoneLabel')}
+                  placeholder={t('imamPhonePlaceholder')}
+                  value={mobile}
+                  onChangeText={text => setMobile(text)}
+                />
+                <Input
+                  label={t('passwordLabel')}
+                  placeholder={t('confirmPasswordLabel')}
+                  value={password}
+                  onChangeText={setPassword}
+                  validation={validatePassword}
+                  secureTextEntry
+                />
+                <Input
+                  label={t('currentAddressLabel')}
+                  placeholder={t('currentAddressPlaceholder')}
+                  value={formData.address}
+                  onChangeText={(text) => setFormData({ ...formData, address: text })}
+                  validation={validateCommitteeAddress}
+                />
+                <Input
+                  label={t('committeeMembersLabel')}
+                  placeholder={t('committeeMembersPlaceholder')}
+                  value={numberOfCommittee}
+                  keyboardType="numeric"
                   onChangeText={text => {
-                    const updated = [...committeeDetails];
-                    updated[index].mobile = text;
-                    setCommitteeDetails(updated);
+                    const count = parseInt(text) || 0;
+                    setNumberOfCommittee(text);
+                    handleCommittee(count);
                   }}
                 />
-              </View>
-            ))}
-            <Checkbox
-              label={t('acceptTerms')}
-              value={isChecked}
-              onValueChange={setIsChecked}
-            />
-            {error && <ErrorMessage error={error} />}
+                {committeeDetails.map((committee, index) => (
+                  <View key={index} style={styles.childSection}>
+                    <Text style={styles.childHeader}>
+                      {t('committeeMemberDetailsTitle')} {index + 1}
+                    </Text>
+                    <UploadArea
+                      handlePress={() => handleCommitteeImagePicker(index)}
+                      handleRemove={() => removeCommitteeImage(index)}
+                      imageUri={committee.profilePicture}
+                      title={t('committeePhotoLabel')}
+                    />
+                    <Input
+                      label={t('committeeNameLabel')}
+                      placeholder={t('committeeNamePlaceholder')}
+                      value={committee.name}
+                      onChangeText={text => {
+                        const updated = [...committeeDetails];
+                        updated[index].name = text;
+                        setCommitteeDetails(updated);
+                      }}
+                      style={{ marginTop: 15 }}
+                      inputStyles={{ backgroundColor: Colors.white }}
+                      inputWrapper={{ backgroundColor: Colors.white }}
+                    />
+                    <Input
+                      label={t('committeeAddressLabel')}
+                      placeholder={t('committeeAddressPlaceholder')}
+                      value={committee.address}
+                      onChangeText={text => {
+                        const updated = [...committeeDetails];
+                        updated[index].address = text;
+                        setCommitteeDetails(updated);
+                      }}
+                      inputStyles={{ backgroundColor: Colors.white }}
+                      inputWrapper={{ backgroundColor: Colors.white }}
+                    />
+                    <SelectDropdown
+                      label={t('committeeProfessionLabel')}
+                      placeholder={t('committeeProfessionPlaceholder')}
+                      value={committee.profession}
+                      onChange={value => {
+                        const updated = [...committeeDetails];
+                        updated[index].profession = value;
+                        setCommitteeDetails(updated);
+                      }}
+                      data={professions}
+                      style={styles.halfInput}
+                      inputStyles={{ backgroundColor: Colors.white }}
+                    />
+                    <PhoneNumberInput
+                      label={t('committeePhoneLabel')}
+                      placeholder={t('committeePhonePlaceholder')}
+                      value={committee.mobile}
+                      inputStyles={{ backgroundColor: Colors.white }}
+                      inputWrapper={{ backgroundColor: Colors.white }}
+                      onChangeText={text => {
+                        const updated = [...committeeDetails];
+                        updated[index].mobile = text;
+                        setCommitteeDetails(updated);
+                      }}
+                    />
+                  </View>
+                ))}
+                <Checkbox
+                  label={t('agreeToTermsLabel')}
+                  value={isChecked}
+                  onValueChange={setIsChecked}
+                />
+                {error && <ErrorMessage error={error} />}
 
-            <AppButton
-              style={{ marginTop: 20 }}
-              text={t('createAccount')}
-              onPress={handleSubmit}
-              variant="primary"
-              loading={loading}
-              disabled={isFormInvalid}
-            />
-            <View style={signupStyles.bottomCenter}>
-              <Text style={signupStyles.bottomTextFirst}>
-                {t('alreadyHaveAccount')}{' '}
-              </Text>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('LoginScreen')}>
-                <Text style={signupStyles.bottomTextSecond}>{t('signIn')}</Text>
-              </TouchableOpacity>
-            </View>
+                <AppButton
+                  style={{ marginTop: 20 }}
+                  text={t('signUpButton')}
+                  onPress={handleSubmit}
+                  variant="primary"
+                  disabled={isFormInvalid}
+                />
+                <View style={signupStyles.bottomCenter}>
+                  <Text style={signupStyles.bottomTextFirst}>
+                    {t('alreadyHaveAccount')}{' '}
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate('LoginScreen')}>
+                    <Text style={signupStyles.bottomTextSecond}>{t('signInPrompt')}</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </TouchableWithoutFeedback>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaWrapper>
   );
 };

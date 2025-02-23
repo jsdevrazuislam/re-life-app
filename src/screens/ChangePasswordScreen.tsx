@@ -17,6 +17,7 @@ import { useAuthStore } from '../store/store';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { AppStackParamList } from '../constants/route';
 import { showToast } from '../utils/toast';
+import Header from '../components/Header';
 
 const ChangePasswordScreen = () => {
     const { request, loading, error } = useApi();
@@ -53,17 +54,11 @@ const ChangePasswordScreen = () => {
         <SafeAreaWrapper>
             <ScrollView>
                 <View style={globalStyles.container}>
-                    <View style={styles.header}>
-                        <BackButton />
-                        <Heading level={5} weight="Bold" style={styles.headerTitle}>
-                            Change Password
-                        </Heading>
-                        <View />
-                    </View>
+                    <Header title={t('changePasswordTitle')} />
                     <View style={loginStyles.loginForm}>
                         <Input
-                            label={t('password')}
-                            placeholder={t('placeholderPassword')}
+                            label={t('currentPasswordLabel')}
+                            placeholder={t('currentPasswordPlaceholder')}
                             value={formData.currentPassword}
                             onChangeText={text =>
                                 setFormData({ ...formData, currentPassword: text })
@@ -72,8 +67,8 @@ const ChangePasswordScreen = () => {
                             secureTextEntry
                         />
                         <Input
-                            label={t('password')}
-                            placeholder={t('placeholderPassword')}
+                            label={t('newPasswordLabel')}
+                            placeholder={t('newPasswordPlaceholder')}
                             value={formData.newPassword}
                             onChangeText={text =>
                                 setFormData({ ...formData, newPassword: text })
@@ -82,8 +77,8 @@ const ChangePasswordScreen = () => {
                             secureTextEntry
                         />
                         <Input
-                            label={t('password')}
-                            placeholder={t('placeholderPassword')}
+                            label={t('confirmPasswordLabel')}
+                            placeholder={t('confirmPasswordPlaceholder')}
                             value={formData.confirmPasword}
                             onChangeText={text =>
                                 setFormData({ ...formData, confirmPasword: text })
@@ -100,7 +95,7 @@ const ChangePasswordScreen = () => {
                             </Paragraph>
                         )}
                         <AppButton
-                            text={t('signIn')}
+                            text={t('changePasswordButton')}
                             onPress={handleSubmit}
                             variant="primary"
                             loading={loading}

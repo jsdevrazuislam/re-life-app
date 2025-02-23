@@ -8,6 +8,7 @@ export const Colors = {
     info: '#17A2B8',
     light: '#F6F8F9',
     white: '#fff',
+    placeholder: '#808080',
     border: '#EBEDED',
     black: '#000',
     dark: '#343A40',

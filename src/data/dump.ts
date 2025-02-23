@@ -48,7 +48,7 @@ export const marriages = [
   { "label": "বিবাহিত", "value": "বিবাহিত" },
   { "label": "অবিবাহিত", "value": "অবিবাহিত" },
   { "label": "বিচ্ছেদপ্রাপ্ত", "value": "বিচ্ছেদপ্রাপ্ত" },
-  { "label": "বিধবা/বিপত্নীক", "value": "বিধবা/বিপত্নীক" },
+  { "label": "বিধবা/তালাক", "value": "বিধবা/তালাক" },
   { "label": "অজানা", "value": "অজানা" }
 ]
 export const riceNeeds = rice;

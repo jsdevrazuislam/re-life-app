@@ -1,4 +1,15 @@
-import { View, Platform, Alert, Linking, Image, TouchableOpacity, ScrollView } from 'react-native';
+import {
+  View,
+  Platform,
+  Alert,
+  Linking,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from 'react-native';
 import React, { useEffect, useState } from 'react';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import globalStyles from '../styles/global.style';
@@ -8,8 +19,11 @@ import Heading from '../components/ui/Heading';
 import profileStyles from '../styles/profile.styles';
 import { useTranslation } from '../hooks/useTranslation';
 import * as ImagePicker from 'react-native-image-picker';
-import Icon from "react-native-vector-icons/Ionicons";
-import { validateCommitteeAddress, validateCommitteeName } from '../validations/add.committee';
+import Icon from 'react-native-vector-icons/Ionicons';
+import {
+  validateCommitteeAddress,
+  validateCommitteeName,
+} from '../validations/add.committee';
 import Input from '../components/ui/AppInput';
 import SelectDropdown from '../components/ui/Select';
 import { validateEmail } from '../validations/signup';
@@ -24,6 +38,7 @@ import ApiStrings from '../lib/apis_string';
 import PhoneNumberInput from '../components/ui/PhoneNumberInput';
 import { showToast } from '../utils/toast';
 import { formatFileData } from '../utils/file-format';
+import Header from '../components/Header';
 
 interface ProfileForm {
   name: string;
@@ -32,73 +47,70 @@ interface ProfileForm {
   email: string;
   phoneNumber: string;
   location: {
-    district: string,
-    upazila: string,
-    union: string,
-    village: string,
+    district: string;
+    upazila: string;
+    union: string;
+    village: string;
   };
   image: IFile | null | undefined;
 }
 
-
 const ProfileScreen = () => {
   const { t } = useTranslation();
-  const { user, setUserInfo} = useAuthStore()
-  const { request, loading } = useApi()
+  const { user, setUserInfo } = useAuthStore();
+  const { request, loading, error } = useApi();
   const [formData, setFormData] = useState<ProfileForm>({
     name: '',
     address: '',
-    fullName: "",
-    phoneNumber: "",
+    fullName: '',
+    phoneNumber: '',
     email: '',
     location: {
       district: '',
       upazila: '',
       union: '',
-      village: ''
+      village: '',
     },
     image: null,
   });
 
- 
   const handleImagePicker = async () => {
-    if (Platform.OS === "android") {
+    if (Platform.OS === 'android') {
       const hasPermission = await requestAndroidPermission();
       if (!hasPermission) {
         Alert.alert(
-          "Permission Denied",
-          "Please enable photo access in Settings to continue.",
+          'Permission Denied',
+          'Please enable photo access in Settings to continue.',
           [
-            { text: "Cancel", style: "cancel" },
+            { text: 'Cancel', style: 'cancel' },
             {
-              text: "Open Settings",
+              text: 'Open Settings',
               onPress: () => Linking.openSettings(),
             },
-          ]
+          ],
         );
         return;
       }
     }
 
     ImagePicker.launchImageLibrary(
-      { mediaType: "photo", quality: 0.8 },
-      (response) => {
+      { mediaType: 'photo', quality: 0.8 },
+      response => {
         if (response.didCancel) {
-          console.log("User cancelled image picker");
+          console.log('User cancelled image picker');
         } else if (response.errorMessage) {
-          console.log("ImagePicker Error: ", response.errorMessage);
+          console.log('ImagePicker Error: ', response.errorMessage);
         } else if (response.assets && response.assets.length > 0) {
           setFormData({ ...formData, image: response.assets[0] as IFile });
         }
-      }
+      },
     );
   };
 
-
   const removeImage = async () => {
-    if(formData.image?.uri) {
-      await request('delete', ApiStrings.DELETE_PROFILE)
-      setFormData({ ...formData, image: null })
+    if (formData.image?.uri) {
+      await request('delete', ApiStrings.DELETE_PROFILE);
+      setFormData({ ...formData, image: null });
     }
   };
 
@@ -106,34 +118,36 @@ const ProfileScreen = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleLocationChange = (field: keyof ProfileForm["location"], value: string) => {
+  const handleLocationChange = (
+    field: keyof ProfileForm['location'],
+    value: string,
+  ) => {
     setFormData(prevState => ({
       ...prevState,
       location: {
         ...prevState.location,
-        [field]: value
-      }
+        [field]: value,
+      },
     }));
   };
 
-
   const handleSubmit = async () => {
-
     const apiFormData = new FormData();
     apiFormData.append('fullName', formData.fullName);
     apiFormData.append('address', formData.address);
     apiFormData.append('phoneNumber', formData.phoneNumber);
-    apiFormData.append('profilePicture', formatFileData(formData.image))
-
+    console.log("formData.image", formatFileData(formData.image))
+    if(!formData.image?.isUpdate){
+      apiFormData.append('profilePicture', formatFileData(formData.image));
+    }
 
     const { data, message } = await request(
       'put',
       ApiStrings.UPDATE_PROFILE,
       apiFormData,
     );
-    setUserInfo(data)
+    setUserInfo(data);
     showToast('success', message);
-
   };
 
   useEffect(() => {
@@ -151,130 +165,154 @@ const ProfileScreen = () => {
           village: user.masjid?.location?.village || '',
         },
         image: {
-          uri: user.profileUrl ?  baseURLPhoto(user.profileUrl) : "",
-          fileName:'',
-          type: ''
-        }
+          uri: user.profileUrl ? baseURLPhoto(user.profileUrl) : '',
+          fileName: '',
+          isUpdate: true,
+          type: '',
+        },
       });
     }
   }, [user]);
 
   return (
     <SafeAreaWrapper bg={Colors.light}>
-      <ScrollView>
-        <View style={globalStyles.container}>
-          <View style={profileStyles.headerNavigation}>
-            <BackButton />
-            <Heading level={5} weight="Bold">
-              {t('signIn')}
-            </Heading>
-            <View />
-          </View>
-          <View style={profileStyles.form}>
-            <View style={profileStyles.relative}>
-              <View style={profileStyles.imageWrapper}>
-                {formData.image?.uri ? (
-                  <Image source={{ uri: formData.image?.uri }} style={profileStyles.image} />
-                ) : (
-                  <View style={profileStyles.placeholder} />
-                )}
+      <KeyboardAvoidingView
+       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+              style={{ flex: 1 }}
+      >
+        <ScrollView>
+          <View style={globalStyles.container}>
+            <Header title={t("profileTitle")} />
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+              <View style={profileStyles.form}>
+                <View style={profileStyles.relative}>
+                  <View style={profileStyles.imageWrapper}>
+                    {formData.image?.uri ? (
+                      <Image
+                        source={{ uri: formData.image?.uri }}
+                        style={profileStyles.image}
+                      />
+                    ) : (
+                      <View style={profileStyles.placeholder} />
+                    )}
+                  </View>
+                  <TouchableOpacity
+                    onPress={
+                      formData.image?.uri ? removeImage : handleImagePicker
+                    }
+                    style={[
+                      profileStyles.iconWrapper,
+                      {
+                        backgroundColor: formData.image?.uri
+                          ? Colors.danger
+                          : Colors.primary,
+                      },
+                    ]}>
+                    {formData.image?.uri ? (
+                      <Icon name="trash" size={20} color="white" />
+                    ) : (
+                      <Icon name="camera" size={20} color="white" />
+                    )}
+                  </TouchableOpacity>
+                </View>
+                <Input
+                  label={t('masjidNameLabel')}
+                  placeholder={t('masjidNamePlaceholder')}
+                  value={formData.name}
+                  onChangeText={text => handleInputChange('name', text)}
+                  validation={validateCommitteeName}
+                  disabled
+                />
+                <Paragraph level="Small" weight="Medium">
+                  {t('masjidLocationLabel')}
+                </Paragraph>
+                <ScrollView
+                  style={{ marginTop: 10 }}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}>
+                  <SelectDropdown
+                    data={districts}
+                    value={formData.location.district}
+                    onChange={value => handleLocationChange('district', value)}
+                    placeholder="Select a district"
+                    style={profileStyles.paddingRight}
+                    search={true}
+                    searchPlaceholder="Search district"
+                    disabled
+                  />
+                  <SelectDropdown
+                    data={upazilas}
+                    value={formData.location.upazila}
+                    onChange={value => handleLocationChange('upazila', value)}
+                    placeholder="Select an upazila"
+                    style={profileStyles.paddingRight}
+                    search={true}
+                    searchPlaceholder="Search upazila"
+                    disabled
+                  />
+                  <SelectDropdown
+                    data={unions}
+                    value={formData.location.union}
+                    onChange={value => handleLocationChange('union', value)}
+                    placeholder="Select a union"
+                    style={profileStyles.paddingRight}
+                    search={true}
+                    searchPlaceholder="Search union"
+                    disabled
+                  />
+                  <SelectDropdown
+                    data={villages}
+                    value={formData.location.village}
+                    onChange={value => handleLocationChange('village', value)}
+                    placeholder="Select a village"
+                    search={true}
+                    searchPlaceholder="Search village"
+                    disabled
+                  />
+                </ScrollView>
+                <Input
+                  label={t('imamNameLabel')}
+                  placeholder={t('imamNamePlaceholder')}
+                  value={formData.fullName}
+                  onChangeText={text => handleInputChange('fullName', text)}
+                  validation={validateCommitteeName}
+                />
+                <Input
+                  label={t('currentAddressLabel')}
+                  placeholder={t('currentAddressPlaceholder')}
+                  value={formData.address}
+                  onChangeText={text => handleInputChange('address', text)}
+                  validation={validateCommitteeAddress}
+                />
+
+                <Input
+                  label={t('imamEmailLabel')}
+                  placeholder={t('imamEmailPlaceholder')}
+                  value={formData.email}
+                  onChangeText={text => handleInputChange('email', text)}
+                  validation={validateEmail}
+                  keyboardType="phone-pad"
+                  disabled
+                />
+                <PhoneNumberInput
+                  label={t('imamPhoneLabel')}
+                  placeholder={t('imamPhonePlaceholder')}
+                  value={formData.phoneNumber}
+                  onChangeText={text => handleInputChange('email', text)}
+                />
               </View>
-              <TouchableOpacity onPress={formData.image?.uri ? removeImage : handleImagePicker} style={[profileStyles.iconWrapper, { backgroundColor: formData.image?.uri ? Colors.danger : Colors.primary }]}>
-                {formData.image?.uri ? <Icon name="trash" size={20} color="white" /> : <Icon name="camera" size={20} color="white" />}
-              </TouchableOpacity>
-            </View>
-            <Input
-              label={t('Masjid Name')}
-              placeholder={t('placeholderEmail')}
-              value={formData.name}
-              onChangeText={text => handleInputChange('name', text)}
-              validation={validateCommitteeName}
-              disabled
-            />
-            <Paragraph level='Small' weight='Medium'>Masjid Location</Paragraph>
-            <ScrollView style={{ marginTop: 10 }} horizontal showsHorizontalScrollIndicator={false}>
-              <SelectDropdown
-                data={districts}
-                value={formData.location.district}
-                onChange={value => handleLocationChange('district', value)}
-                placeholder="Select a district"
-                style={profileStyles.paddingRight}
-                search={true}
-                searchPlaceholder='Search district'
-                disabled
-              />
-              <SelectDropdown
-                data={upazilas}
-                value={formData.location.upazila}
-                onChange={value => handleLocationChange('upazila', value)}
-                placeholder="Select an upazila"
-                style={profileStyles.paddingRight}
-                search={true}
-                searchPlaceholder='Search upazila'
-                disabled
-              />
-              <SelectDropdown
-                data={unions}
-                value={formData.location.union}
-                onChange={value => handleLocationChange('union', value)}
-                placeholder="Select a union"
-                style={profileStyles.paddingRight}
-                search={true}
-                searchPlaceholder='Search union'
-                disabled
-              />
-              <SelectDropdown
-                data={villages}
-                value={formData.location.village}
-                onChange={value => handleLocationChange('village', value)}
-                placeholder="Select a village"
-                search={true}
-                searchPlaceholder='Search village'
-                disabled
-              />
-            </ScrollView>
-            <Input
-              label={t('Your Name')}
-              placeholder={t('placeholderEmail')}
-              value={formData.fullName}
-              onChangeText={text => handleInputChange('fullName', text)}
-              validation={validateCommitteeName}
-            />
-            <Input
-              label={t('Your Address')}
-              placeholder={t('placeholderEmail')}
-              value={formData.address}
-              onChangeText={text => handleInputChange('address', text)}
-              validation={validateCommitteeAddress}
-            />
+            </TouchableWithoutFeedback>
 
-            <Input
-              label={t('Your Email')}
-              placeholder={t('placeholderEmail')}
-              value={formData.email}
-              onChangeText={text => handleInputChange('email', text)}
-              validation={validateEmail}
-              keyboardType="phone-pad"
-              disabled
-            />
-            <PhoneNumberInput
-              label={t('Your Contract Number')}
-              placeholder={t('placeholderEmail')}
-              value={formData.phoneNumber}
-              onChangeText={text => handleInputChange('email', text)}
+            <AppButton
+              text={t('updateButton')}
+              onPress={handleSubmit}
+              variant="primary"
+              loading={loading}
+              disabled={loading}
             />
           </View>
-
-          <AppButton
-            text={t('signIn')}
-            onPress={handleSubmit}
-            variant="primary"
-            loading={loading}
-            disabled={loading}
-          />
-
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaWrapper>
   );
 };

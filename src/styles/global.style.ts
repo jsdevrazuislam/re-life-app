@@ -1,9 +1,8 @@
 import { StyleSheet } from "react-native";
-import { Colors } from "../configs/colors";
 
 const globalStyles = StyleSheet.create({
     container: {
-      padding: 16,
+      paddingHorizontal: 16,
       flex:1,
     },
   });

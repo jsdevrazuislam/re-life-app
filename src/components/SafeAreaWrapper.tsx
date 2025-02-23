@@ -14,7 +14,8 @@ const SafeAreaWrapper: FC<SafeAreaWrapperProps> = ({
       style={{
         backgroundColor: bg,
         paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
-        height
+        height,
+        flex
       }}
       {...props}>
       {children}

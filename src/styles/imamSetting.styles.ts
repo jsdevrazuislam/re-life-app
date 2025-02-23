@@ -48,7 +48,6 @@ const styles = ScaledSheet.create({
     },
     userEmail: {
       color: '#666',
-      marginTop: '5@vs',
     },
     settingsGroup: {
       backgroundColor: Colors.white,

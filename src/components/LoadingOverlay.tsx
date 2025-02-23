@@ -1,0 +1,55 @@
+import React from "react";
+import { View, Text, ActivityIndicator, Modal } from "react-native";
+import { ScaledSheet } from "react-native-size-matters";
+import Icon from "react-native-vector-icons/Ionicons";
+
+interface LoadingOverlayProps {
+  visible: boolean;
+  message?: string;
+}
+
+const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ visible, message = "Processing, please wait..." }) => {
+  if (!visible) return null;
+
+  return (
+    <Modal transparent animationType="fade" visible={visible}>
+      <View style={styles.overlay}>
+        <View style={styles.container}>
+          <Icon name="cloud-upload-outline" size={40} color="white" />
+          <ActivityIndicator size="large" color="white" style={styles.loader} />
+          <Text style={styles.message}>{message}</Text>
+        </View>
+      </View>
+    </Modal>
+  );
+};
+
+const styles = ScaledSheet.create({
+  overlay: {
+    flex: 1,
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1000,
+  },
+  container: {
+    backgroundColor: "#333",
+    padding: "20@ms",
+    borderRadius: "10@ms",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  loader: {
+    marginVertical: "10@ms",
+  },
+  message: {
+    color: "white",
+    fontSize: "16@ms",
+    textAlign: "center",
+  },
+});
+
+export default LoadingOverlay;

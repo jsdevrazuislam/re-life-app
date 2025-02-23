@@ -5,6 +5,7 @@ import { useAuthStore } from './src/store/store';
 import SplashScreen from 'react-native-splash-screen';
 import SplashScreenComponent from './src/screens/SplashScreen';
 
+
 const App = () => {
   const { loadUserFromStorage, isLoading, role, userTempId, user, status } = useAuthStore();
 
