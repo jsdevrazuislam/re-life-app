@@ -17,7 +17,7 @@ export const imamStyles = ScaledSheet.create({
     borderBottomColor: '#ddd',
     paddingBottom: 10,
     marginBottom: 15,
-},
+  },
   greeting: {
     color: Colors.text,
   },
@@ -27,7 +27,7 @@ export const imamStyles = ScaledSheet.create({
     borderRadius: 30,
     backgroundColor: "#ddd",
   },
-  container:{
+  container: {
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -41,7 +41,7 @@ export const imamStyles = ScaledSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 5,
-},
+  },
   skeletonText: {
     width: 120,
     height: 15,
@@ -176,17 +176,7 @@ export const imamStyles = ScaledSheet.create({
     marginTop: 8,
     paddingHorizontal: 10,
   },
-  supportButton: {
-    marginTop: 20,
-    backgroundColor: Colors.primary,
-    paddingVertical: 12,
-    paddingHorizontal: 25,
-    borderRadius: 5,
-  },
-  supportButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
+  
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -201,6 +191,14 @@ export const imamStyles = ScaledSheet.create({
     marginTop: 5,
     paddingHorizontal: 20,
   },
-  
+  rejectionContainer: {
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  rejectionReason: {
+    color: Colors.danger,
+    textAlign: 'center',
+    marginBottom: 10,
+  },
 
 });

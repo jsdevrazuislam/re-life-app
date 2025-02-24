@@ -43,7 +43,7 @@ const AdminStackNavigator = () => (
 );
 
 const Stack = createStackNavigator();
-const AppNavigator = ({ role, status, userTempId } : { role:string, user:IUser | null, status:string, userTempId:string }) => {
+const AppNavigator = ({ role, status, userTempId, user } : { role:string, user:IUser | null, status:string, userTempId:string }) => {
 
   if (status === 'otp_pending') {
     return (

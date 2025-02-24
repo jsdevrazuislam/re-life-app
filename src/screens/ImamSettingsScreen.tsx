@@ -84,7 +84,7 @@ const SettingsScreen = () => {
                 <Switch
                   value={language === 'bn'}
                   onValueChange={val => setLanguage(val ? 'bn' : 'en')}
-                  trackColor={{false: '#767577', true: '#81b0ff'}}
+                  trackColor={{false: '#767577', true: Colors.primary}}
                   thumbColor={language === 'bn' ? Colors.primary : '#f4f3f4'}
                 />
               }

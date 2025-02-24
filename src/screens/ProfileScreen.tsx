@@ -137,7 +137,7 @@ const ProfileScreen = () => {
     apiFormData.append('address', formData.address);
     apiFormData.append('phoneNumber', formData.phoneNumber);
     console.log("formData.image", formatFileData(formData.image))
-    if(!formData.image?.isUpdate){
+    if (!formData.image?.isUpdate) {
       apiFormData.append('profilePicture', formatFileData(formData.image));
     }
 
@@ -177,10 +177,14 @@ const ProfileScreen = () => {
   return (
     <SafeAreaWrapper bg={Colors.light}>
       <KeyboardAvoidingView
-       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-              style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
       >
-        <ScrollView>
+        <ScrollView
+        contentContainerStyle={{
+          paddingBottom: 30
+        }}
+        >
           <View style={globalStyles.container}>
             <Header title={t("profileTitle")} />
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

@@ -286,7 +286,9 @@ const SignupScreen = () => {
         >
           <View style={globalStyles.container}>
            <LoadingOverlay visible={loading} />
-            <AppLogo />
+            <View style={{ justifyContent: 'center', alignItems:'center', marginBottom: 10}}>
+              <AppLogo />
+            </View>
             <Heading level={4} weight="Bold">
               {t('signUpTitle')}
             </Heading>

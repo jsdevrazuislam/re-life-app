@@ -5,6 +5,10 @@ const loginStyles = ScaledSheet.create({
     loginForm:{
         marginTop: '20@ms'
     },
+    middleAlign:{
+        justifyContent:'center',
+        alignItems:'center'
+    },
     forgotPassword:{
         justifyContent:'flex-end',
         alignItems:'flex-end',

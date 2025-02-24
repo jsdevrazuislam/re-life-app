@@ -1,10 +1,10 @@
 import React from 'react';
-import {Image, Text, TouchableOpacity, View} from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import openingStyles from '../styles/opening_screen.styles';
 import globalStyles from '../styles/global.style';
 import Heading from '../components/ui/Heading';
-import {Typography} from '../styles/typography';
+import { Typography } from '../styles/typography';
 import AppButton from '../components/ui/AppButton';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { AppStackParamList } from '../constants/route';
@@ -24,12 +24,12 @@ const OpeningScreen = () => {
         </TouchableOpacity>
         <View style={openingStyles.container}>
           <Image
-            source={require('../assets/start-open.png')}
+            source={require('../assets/app_logo.png')}
             style={openingStyles.image}
           />
         </View>
         <View style={openingStyles.appTitle}>
-          <Heading style={{ textAlign:'center'}} level={3} weight="Bold">
+          <Heading style={{ textAlign: 'center' }} level={3} weight="Bold">
             {t('introTitle')}
           </Heading>
           <Text

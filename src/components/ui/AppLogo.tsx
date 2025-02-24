@@ -4,12 +4,10 @@ import signupStyles from '../../styles/signup.style';
 
 const AppLogo = () => {
   return (
-    <View style={signupStyles.container}>
       <Image
         source={require('../../assets/app_logo.png')}
         style={signupStyles.logo}
       />
-    </View>
   );
 };
 

@@ -9,7 +9,6 @@ export const kycStartedStyles = ScaledSheet.create({
         paddingBottom: '20@vs',
     },
     header: {
-        marginTop: '40@vs',
         marginBottom: '30@vs',
     },
     title: {

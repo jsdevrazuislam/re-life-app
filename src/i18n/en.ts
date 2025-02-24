@@ -250,6 +250,18 @@ export default {
   selectPlaceholder:"Select",
   childrenIncome:"Type",
   kycUploadTitle: 'Upload Your KYC Information',
-  keySecurityTitle: 'To confirm your personal information'
+  keySecurityTitle: 'To confirm your personal information',
+  kycPendingTitle: 'Your KYC is Under Review',
+kycPendingMessage: 'Your information is being reviewed. Please wait, this may take some time. Check back later for updates.',
+
+kycApprovedTitle: 'Your KYC is Approved',
+kycApprovedMessage: 'Congratulations! Your KYC verification is complete and approved. You now have full access.',
+
+kycRejectedTitle: 'Your KYC is Rejected',
+kycRejectedMessage: 'Sorry, your KYC verification has failed. Please check all details and upload the correct documents before reapplying.',
+tryAgain: 'Try Again',
+contractSupportTitle: 'Contract Support',
+
+
 
 };

@@ -1,16 +1,11 @@
 import {Colors} from '../configs/colors';
-import {Fonts} from '../configs/fonts';
 import { ScaledSheet } from 'react-native-size-matters';
 
 const signupStyles = ScaledSheet.create({
   logo: {
-    width: '46@ms',
+    width: '60@ms',
     height: '44@ms',
-    objectFit:'cover'
-  },
-  container:{
-    justifyContent: 'flex-end',
-    alignItems:'flex-end'
+    objectFit:'fill'
   },
   form:{
     marginTop: '20@ms'

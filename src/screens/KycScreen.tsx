@@ -50,13 +50,14 @@ interface FormState {
 }
 
 const KycScreen = () => {
+  const { setUserId, userTempId, setUser, setRole, setStatus, tempUser, setTempUser } = useAuthStore();
   const [currentStep, setCurrentStep] = useState(1);
   const { t } = useTranslation();
   const [showError, setShowError] = useState(false)
   const [formData, setFormData] = useState<FormState>({
-    name: '',
-    mobile: '',
-    email: '',
+    name: tempUser?.name ?? '',
+    mobile: tempUser?.phoneNumber ?? '',
+    email: tempUser?.email ?? '',
     pincode: '',
     documentType: '',
     idProofFront: null,
@@ -64,7 +65,6 @@ const KycScreen = () => {
     imamDocument: null,
   });
 
-  const { setUserId, userTempId, setUser, setRole, setStatus } = useAuthStore();
   const nameError = validateCommitteeName(formData.name);
   const mobileError = validateCommitteeNumber(formData.mobile);
   const emailError = validateEmail(formData.email);
@@ -101,8 +101,9 @@ const KycScreen = () => {
     formDataPayload.append("idProofBack", formatFileData(formData?.idProofBack));
     formDataPayload.append("imamDocument", formatFileData(formData?.imamDocument));
     const { data, message } = await request('post', ApiStrings.KYC_VERIFY, formDataPayload);
-    setUser(data?.user, data?.accessToken, data?.refreshToken)
+    await setUser(data?.user, data?.accessToken, data?.refreshToken)
     showToast('success', message)
+    setTempUser(null)
     setUserId('');
     setStatus('')
     navigation.navigate('ImamPendingScreen')

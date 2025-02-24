@@ -5,6 +5,7 @@ import ApiStrings from '../lib/apis_string';
 
 interface AuthState {
   user: IUser | null;
+  tempUser: TempUser | null;
   accessToken: string | null;
   refreshToken: string | null;
   role: string | null;
@@ -12,6 +13,7 @@ interface AuthState {
   status: string | null;
   isAuthenticated: boolean;
   setUserInfo: (user: IUser) => void;
+  setTempUser: (user: TempUser | null) => void;
   logout: () => void;
   setUser: (user: IUser, accessToken: string, refreshToken: string) => void;
   setRole: (role: string) => void;
@@ -31,6 +33,7 @@ const initialState = {
   refreshToken: null,
   isAuthenticated: false,
   role: null,
+  tempUser: null,
   isLoading: true,
   status: '',
   userTempId: null,
@@ -47,6 +50,7 @@ export const useAuthStore = create<AuthState>(set => ({
     await AsyncStorage.removeItem('status');
     await AsyncStorage.removeItem('userTempId');
     await AsyncStorage.removeItem('userTempEmail');
+    await AsyncStorage.removeItem('tempUser');
 
     set({
       user: null,
@@ -54,6 +58,7 @@ export const useAuthStore = create<AuthState>(set => ({
       refreshToken: null,
       userTempId: null,
       role: null,
+      tempUser: null,
       isAuthenticated: false,
     });
   },
@@ -66,8 +71,10 @@ export const useAuthStore = create<AuthState>(set => ({
       const refreshToken = await AsyncStorage.getItem('refreshToken');
       const status = await AsyncStorage.getItem('status');
       const userTempEmail = await AsyncStorage.getItem('userTempEmail');
+      const user = await AsyncStorage.getItem('tempUser');
+      const tempUser = user ? JSON.parse(user) : null;
 
-      set({ status, userTempId , userTempEmail})
+      set({ status, userTempId , userTempEmail, tempUser})
 
       const { data } = await api.get(ApiStrings.GET_MASJIDS_NAME);
       set({ masjids: data?.data?.data })
@@ -93,6 +100,10 @@ export const useAuthStore = create<AuthState>(set => ({
 
   },
   setRole:(role) => set({ role }),
+  setTempUser: async (tempUser) => {
+    set({ tempUser})
+    await AsyncStorage.setItem('tempUser', JSON.stringify(tempUser));
+  },
   setUserId: async (userTempId) => {
     set({ userTempId })
     await AsyncStorage.setItem('userTempId', userTempId);
