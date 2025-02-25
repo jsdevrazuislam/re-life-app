@@ -17,6 +17,7 @@ import { NavigationProp, useNavigation, useRoute } from '@react-navigation/nativ
 import { AppStackParamList } from '../constants/route';
 import { baseURLPhoto } from '../lib/api';
 import ImageView from 'react-native-image-zoom-viewer';
+import ImageComponent from '../components/ui/Image';
 
 const HomeViewDetailsInfoScreen = () => {
   const { t } = useTranslation();
@@ -46,7 +47,7 @@ const HomeViewDetailsInfoScreen = () => {
           <View style={homeViewDetailsStyles.headerSection}>
             <BackButton />
             <Paragraph level="Medium" weight="Bold" style={homeViewDetailsStyles.headerTitle}>
-              {t('masjidDetails')}
+              {t('details')}
             </Paragraph>
             <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
               <Icon name="user-circle" size={24} />
@@ -56,12 +57,12 @@ const HomeViewDetailsInfoScreen = () => {
             {/* Masjid Image */}
             <TouchableOpacity
               onPress={() => {
-                setSelectedImage(baseURLPhoto(singleData?.masjidProfile));
+                setSelectedImage(singleData?.masjidProfile);
                 setVisible(true);
               }}
             >
-              <Image
-                source={{ uri: baseURLPhoto(singleData?.masjidProfile) }}
+              <ImageComponent
+                source={{ uri: singleData?.masjidProfile }}
                 style={homeViewDetailsStyles.masjidImage}
               />
             </TouchableOpacity>
@@ -70,7 +71,7 @@ const HomeViewDetailsInfoScreen = () => {
             <View style={homeViewDetailsStyles.content}>
               <View style={homeViewDetailsStyles.flexLayout}>
                 <Paragraph level="Small" weight="Bold" style={homeViewDetailsStyles.label}>
-                  Masjid Name:
+                  {t('masjidName')}:
                 </Paragraph>
                 <Paragraph level="Small" weight="Medium" style={homeViewDetailsStyles.value}>
                   {singleData?.name}
@@ -78,7 +79,7 @@ const HomeViewDetailsInfoScreen = () => {
               </View>
               <View style={homeViewDetailsStyles.flexLayout}>
                 <Paragraph level="Small" weight="Bold" style={homeViewDetailsStyles.label}>
-                  Location:
+                  {t('masjidLocationLabel')}:
                 </Paragraph>
                 <Paragraph level="Small" weight="Medium" style={homeViewDetailsStyles.value}>
                   {`${singleData.location.district} > ${singleData.location.upazila} > ${singleData.location.union} > ${singleData.location.village}`}
@@ -89,7 +90,7 @@ const HomeViewDetailsInfoScreen = () => {
             {/* Imam Details */}
             <View style={homeViewDetailsStyles.imamDetails}>
               <Heading level={5} weight="Bold">
-                Imam Details
+                {t('imamDetails')}
               </Heading>
 
               <Carousel
@@ -99,17 +100,17 @@ const HomeViewDetailsInfoScreen = () => {
                   <View style={[homeViewDetailsStyles.imamCard]}>
                     {item.isPresentImam && (
                       <Paragraph level="XSmall" weight="Medium" style={homeViewDetailsStyles.subTitle}>
-                        Present Imam
+                        {t('presentImam')}
                       </Paragraph>
                     )}
                     <TouchableOpacity
                       onPress={() => {
-                        setSelectedImage(baseURLPhoto(item.profilePicture));
+                        setSelectedImage(item.profilePicture);
                         setVisible(true);
                       }}
                     >
-                      <Image
-                        source={{ uri: baseURLPhoto(item.profilePicture) }}
+                      <ImageComponent
+                        source={item.profilePicture}
                         style={homeViewDetailsStyles.profileImage}
                       />
                     </TouchableOpacity>
@@ -117,7 +118,7 @@ const HomeViewDetailsInfoScreen = () => {
                       <View style={homeViewDetailsStyles.labelIcon}>
                         <Icon name="user-circle" size={16} color={Colors.text} />
                         <Paragraph level="Small" weight="Bold" style={homeViewDetailsStyles.label}>
-                          Name:
+                          {t('name')}:
                         </Paragraph>
                       </View>
                       <Paragraph level="Small" weight="Medium" style={homeViewDetailsStyles.value}>
@@ -128,7 +129,7 @@ const HomeViewDetailsInfoScreen = () => {
                       <View style={homeViewDetailsStyles.labelIcon}>
                         <MaterialIcons name="phone" size={16} color={Colors.text} />
                         <Paragraph level="Small" weight="Bold" style={homeViewDetailsStyles.label}>
-                          Mobile:
+                          {t('mobile')}:
                         </Paragraph>
                       </View>
                       <Paragraph level="Small" weight="Medium" style={homeViewDetailsStyles.value}>
@@ -139,7 +140,7 @@ const HomeViewDetailsInfoScreen = () => {
                       <View style={homeViewDetailsStyles.labelIcon}>
                         <MaterialIcons name="location-on" size={16} />
                         <Paragraph level="Small" weight="Bold" style={homeViewDetailsStyles.label}>
-                          Address:
+                          {t('address')}:
                         </Paragraph>
                       </View>
                       <Paragraph level="Small" weight="Medium" style={homeViewDetailsStyles.value}>
@@ -172,17 +173,18 @@ const HomeViewDetailsInfoScreen = () => {
             {/* Committee & Poor People Information */}
             <View style={homeViewDetailsStyles.content}>
             <HorizontalCardList
-              title="Committee Details"
-              subTitle={`Total Members: ${singleData.committeeDetails?.length || 0}`}
+              title={t('committeeDetails')}
+              subTitle={`${t("totalMembers")}: ${singleData.committeeDetails?.length || 0}`}
               data={singleData?.committeeDetails?.map((item) => ({
                 ...item,
                 photo: String(baseURLPhoto(item.profilePicture)), 
               })) || []}
               imageKey="photo"
+              isCommitteeCard={true}
             />
               <HorizontalCardList
-                title="Poor People Information"
-                subTitle={`Total People: ${singleData.poorPeopleInformations?.length || 0}`}
+                title={t('poorPeopleInformation')}
+                subTitle={`${t("totalMembers")}: ${singleData.poorPeopleInformations?.length || 0}`}
                 imageKey="newPhoto"
                 onPress={(data) => navigation.navigate('PoorPeopleView', { item: data })}
                 data={

@@ -9,32 +9,41 @@ import villagesData from './villages.json'
 
 
 
-export const districts = locations.districts.map((item) => {
-  return {
+const removeDuplicates = (arr: { label: string; value: string }[]) => {
+  const seen = new Set();
+  return arr.filter((item) => {
+    const duplicate = seen.has(item.value);
+    seen.add(item.value);
+    return !duplicate;
+  });
+};
+
+export const districts = removeDuplicates(
+  locations.districts.map((item) => ({
     label: item.label,
-    value: item.label
-  }
-})
+    value: item.label,
+  }))
+);
 
-export const upazilas = locations.upazilas.map((item) => {
-  return {
+export const upazilas = removeDuplicates(
+  locations.upazilas.map((item) => ({
     label: item.label,
-    value: item.label
-  }
-})
+    value: item.label,
+  }))
+);
 
-export const unions = locations.unions.map((item) => {
-  return {
+export const unions = removeDuplicates(
+  locations.unions.map((item) => ({
     label: item.label,
-    value: item.label
-  }
-})
+    value: item.label,
+  }))
+);
 
-export const villages = villagesData;
+export const villages = removeDuplicates(villagesData);
 
-export const professions = professionsData
-export const frequencyOptions = frequency;
-export const assistanceTypes = assistance;
+export const professions = removeDuplicates(professionsData)
+export const frequencyOptions = removeDuplicates(frequency);
+export const assistanceTypes = removeDuplicates(assistance);
 export const yesNoOptions = [
   { "label": "হ্যাঁ", "value": "হ্যাঁ" },
   { "label": "না", "value": "না" }

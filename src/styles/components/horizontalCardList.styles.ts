@@ -34,6 +34,38 @@ const horizontalCardListStyles = ScaledSheet.create({
         padding: '10@ms'
     },
     container: { marginVertical: '10@ms' },
+    modalContainer: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)', 
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+      },
+      modalContent: {
+        width: '90%',
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        padding: 20,
+        alignItems: 'center',
+      },
+      modalImage: {
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+        marginBottom: 15,
+      },
+      closeButton: {
+        position: 'absolute',
+        top: 10,
+        right: 10,
+        padding: 5,
+      },
+      closeText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#333',
+      },
+    
 });
 
 export default horizontalCardListStyles;

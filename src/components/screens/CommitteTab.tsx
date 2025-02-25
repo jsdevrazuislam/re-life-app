@@ -18,6 +18,7 @@ import Textarea from '../ui/Textarea';
 import ErrorMessage from '../ErrorMessage';
 import AppButton from '../ui/AppButton';
 import { useTranslation } from '../../hooks/useTranslation';
+import ImageComponent from '../ui/Image';
 
 const CommitteeTab: React.FC<CommitteeTabProps> = ({data, loading}) => {
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
@@ -126,13 +127,13 @@ const CommitteeTab: React.FC<CommitteeTabProps> = ({data, loading}) => {
         <View style={imamStyles.emptyContainer}>
           <Icon name="people-outline" size={60} color="#888" />
           <Heading level={6} weight="Bold" style={imamStyles.emptyTitle}>
-            No committee added yet
+            {t('emptyPeopleTitle')}
           </Heading>
           <Paragraph
             level="Small"
             weight="Medium"
             style={imamStyles.emptyDescription}>
-            Tap the button above to add a new committee in need.
+            {t('emptyPeopleDescription')}
           </Paragraph>
         </View>
       ) : (
@@ -140,8 +141,8 @@ const CommitteeTab: React.FC<CommitteeTabProps> = ({data, loading}) => {
           {data.map(item => (
             <View key={item._id} style={imamStyles.infoCard}>
               <View style={imamStyles.cardContent}>
-                <Image
-                  source={{uri: baseURLPhoto(item?.profilePicture)}}
+                <ImageComponent
+                  source={baseURLPhoto(item?.profilePicture)}
                   style={imamStyles.infoPhoto}
                 />
                 <View style={imamStyles.cardText}>

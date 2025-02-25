@@ -3,10 +3,12 @@ import {
   Animated,
   ActivityIndicator,
   TouchableOpacity,
-  NativeSyntheticEvent, NativeScrollEvent,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
   ScrollView,
+  RefreshControl
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import Paragraph from '../components/ui/Paragraph';
 import globalStyles from '../styles/global.style';
@@ -33,7 +35,7 @@ const HomeScreen = () => {
   const [masjids, setMasjids] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [isSearch, setIsSearch] = useState(false);
   const [filters, setFilters] = useState({
     district: '',
     upazila: '',
@@ -41,30 +43,39 @@ const HomeScreen = () => {
     village: '',
     name: '',
   });
+  const [refreshing, setRefreshing] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const [hasMore, setHasMore] = useState(true);
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setMasjids([]); 
+    setCurrentPage(1);
+    setErrorMessage('');
+    fetchMasjids(1, filters);
+    setRefreshing(false);
+  }, [filters]);
 
   const fetchMasjids = async (page = 1, newFilters = filters) => {
-    if (isLoading || !hasMore) return;
+    if (isLoading) return;
 
     setIsLoading(true);
     try {
-      const query = new URLSearchParams({
-        ...newFilters,
-        page: page.toString(),
-        limit: '10',
-      }).toString();
-      const { data } = await api.get(`${ApiStrings.GET_MASJIDS}?${query}`);
+      const query = new URLSearchParams(
+        Object.fromEntries(Object.entries(newFilters).filter(([_, value]) => value))
+      ).toString();
 
-      if (data.data.masjids.length < 10) {
-        setHasMore(false);
+      const { data } = await api.get(`${ApiStrings.GET_MASJIDS}?${query}&page=${page}&limit=10`);
+
+      console.log("data", data)
+
+      if (data.data.masjids.length === 0) {
+        setErrorMessage(t('noResultsFound'));
+      } else {
+        setErrorMessage('');
       }
 
-      setMasjids(
-        page === 1 ? data.data.masjids : [...masjids, ...data.data.masjids],
-      );
+      setMasjids(page === 1 ? data.data.masjids : [...masjids, ...data.data.masjids]);
       setCurrentPage(data.data.currentPage);
-      setTotalPages(data.data.totalPages);
 
       Animated.timing(fadeAnim, {
         toValue: 1,
@@ -73,24 +84,27 @@ const HomeScreen = () => {
       }).start();
     } catch (error) {
       console.error('Error fetching masjids:', error);
+      setErrorMessage(t('errorFetchingData'));
     } finally {
       setIsLoading(false);
+      setIsSearch(false);
     }
   };
 
   const handleValueChange = (value: string, type: string) => {
-    setFilters(prevFilters => ({
+    setFilters((prevFilters) => ({
       ...prevFilters,
       [type.toLowerCase()]: value,
     }));
   };
 
   const getSearchResult = () => {
+    setIsSearch(true);
     setMasjids([]);
     setCurrentPage(1);
+    setErrorMessage('');
     fetchMasjids(1, filters);
   };
-
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
@@ -104,23 +118,68 @@ const HomeScreen = () => {
 
   return (
     <SafeAreaWrapper bg={Colors.light}>
-      <ScrollView onScroll={handleScroll} scrollEventThrottle={16}>
+      <ScrollView
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+      >
         <View style={globalStyles.container}>
           <View style={homeStyles.headerSection}>
             <AppLogo />
-            <Paragraph level="Medium">{t('searchMasjid')}</Paragraph>
+            <Paragraph level="Medium">{t('searchButton')}</Paragraph>
             <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
               <Icon name="user-circle" size={24} />
             </TouchableOpacity>
           </View>
 
-          <AreaSelector label="Masjid Name" placeholder="Select Masjid Name" data={masjidsNameList || []} onChange={value => handleValueChange(value, 'name')} />
-          <AreaSelector label="District" placeholder="Select District" data={districts} onChange={value => handleValueChange(value, 'district')} />
-          <AreaSelector label="Upazila" placeholder="Select Upazila" data={upazilas} onChange={value => handleValueChange(value, 'upazila')} />
-          <AreaSelector label="Union" placeholder="Select Union" data={unions} onChange={value => handleValueChange(value, 'union')} />
-          <AreaSelector label="Village" placeholder="Select Village" data={villages} onChange={value => handleValueChange(value, 'village')} />
+          <AreaSelector
+            value={filters.name}
+            style={homeStyles.filterMargin}
+            label={t('masjidName')}
+            placeholder={t('masjidNamePlaceholder1')}
+            data={masjidsNameList || []}
+            onChange={(value) => handleValueChange(value, 'name')}
+          />
+          <AreaSelector
+            value={filters.district}
+            style={homeStyles.filterMargin}
+            label={t('district')}
+            placeholder={t('districtPlaceholder')}
+            data={districts}
+            onChange={(value) => handleValueChange(value, 'district')}
+          />
+          <AreaSelector
+            value={filters.upazila}
+            style={homeStyles.filterMargin}
+            label={t('upazila')}
+            placeholder={t('upazilaPlaceholder')}
+            data={upazilas}
+            onChange={(value) => handleValueChange(value, 'upazila')}
+          />
+          <AreaSelector
+            value={filters.union}
+            style={homeStyles.filterMargin}
+            label={t('union')}
+            placeholder={t('unionPlaceholder')}
+            data={unions}
+            onChange={(value) => handleValueChange(value, 'union')}
+          />
+          <AreaSelector
+            value={filters.village}
+            style={homeStyles.filterMargin}
+            label={t('village')}
+            placeholder={t('villagePlaceholder')}
+            data={villages}
+            onChange={(value) => handleValueChange(value, 'village')}
+          />
 
-          <AppButton style={{ marginTop: 30 }} text={t('homeButton')} onPress={getSearchResult} />
+          <AppButton style={{ marginTop: 20 }} text={t('searchPlaceholder')} onPress={getSearchResult} />
+
+          {errorMessage && (
+            <Paragraph level="Small" style={{ textAlign: 'center', marginTop: 20 }}>
+              {errorMessage}
+            </Paragraph>
+          )}
 
           {masjids.length > 0 ? (
             <Animated.View style={[homeStyles.viewArea, { opacity: fadeAnim }]}>
@@ -129,7 +188,7 @@ const HomeScreen = () => {
               ))}
             </Animated.View>
           ) : (
-            !isLoading && <Paragraph level="Small" style={{ textAlign: 'center', marginTop: 20 }}>{t('noResultsFound')}</Paragraph>
+            !isLoading && isSearch && <Paragraph level="Small" style={{ textAlign: 'center', marginTop: 20 }}>{t('noResultsFound')}</Paragraph>
           )}
 
           {isLoading && <ActivityIndicator size="large" color="#007AFF" style={{ marginTop: 20 }} />}

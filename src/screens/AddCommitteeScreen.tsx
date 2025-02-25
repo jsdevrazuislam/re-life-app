@@ -33,6 +33,7 @@ import { useAuthStore } from '../store/store';
 import { formatFileData } from '../utils/file-format';
 import { baseURLPhoto } from '../lib/api';
 import Header from '../components/Header';
+import LoadingOverlay from '../components/LoadingOverlay';
 
 
 interface CommitteeForm {
@@ -131,6 +132,7 @@ const AddCommitteeScreen = () => {
 
   return (
     <SafeAreaWrapper bg={Colors.white}>
+      <LoadingOverlay visible={loading} />
       <ScrollView>
         <View style={globalStyles.container}>
           <Header title={t('addCommittee')} />
@@ -180,7 +182,6 @@ const AddCommitteeScreen = () => {
           <AppButton
             text={t('submit')}
             onPress={handleSubmit}
-            loading={loading}
             disabled={isFormInvalid || loading}
             variant="primary"
           />

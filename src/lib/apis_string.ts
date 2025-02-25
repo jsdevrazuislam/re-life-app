@@ -5,7 +5,7 @@ const ApiStrings = {
     CHANGE_PASSWORD:'/users/change-password',
     RESET_PASSWORD:'/users/reset-password',
     UPDATE_EMAIL:'/users/change-email',
-    DELETE_PROFILE:'/users/profile-image',
+    DELETE_PROFILE:(fileId:string) => `/users/delete/${fileId}`,
     UPDATE_PROFILE:'/users/update-profile',
     SIGNUP:'/users/register',
     RESEND_OTP:'/users/resend-otp',

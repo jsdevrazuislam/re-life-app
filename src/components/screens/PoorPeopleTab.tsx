@@ -16,6 +16,7 @@ import { useAuthStore } from '../../store/store';
 import { showToast } from '../../utils/toast';
 import ErrorMessage from '../ErrorMessage';
 import { useTranslation } from '../../hooks/useTranslation';
+import ImageComponent from '../ui/Image';
 
 const PeopleTab: React.FC<PeopleTabProps> = ({data, onAdd, loading}) => {
   const [modalType, setModalType] = useState<'edit' | 'delete' | null>(null);
@@ -117,13 +118,13 @@ const PeopleTab: React.FC<PeopleTabProps> = ({data, onAdd, loading}) => {
         <View style={imamStyles.emptyContainer}>
           <Icon name="people-outline" size={60} color="#888" />
           <Heading level={6} weight="Bold" style={imamStyles.emptyTitle}>
-            No people added yet
+            {t('emptyPeopleTitle')}
           </Heading>
           <Paragraph
             level="Small"
             weight="Medium"
             style={imamStyles.emptyDescription}>
-            Tap the button above to add a new person in need.
+            {t('emptyPeopleDescription')}
           </Paragraph>
         </View>
       ) : (
@@ -131,8 +132,8 @@ const PeopleTab: React.FC<PeopleTabProps> = ({data, onAdd, loading}) => {
           {data.map(item => (
             <View key={item?._id} style={imamStyles.infoCard}>
               <View style={imamStyles.cardContent}>
-                <Image
-                  source={{uri: baseURLPhoto(item?.photoUrl || '')}}
+                <ImageComponent
+                  source={baseURLPhoto(item?.photoUrl || '')}
                   style={imamStyles.infoPhoto}
                 />
                 <View style={imamStyles.cardText}>

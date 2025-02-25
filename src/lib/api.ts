@@ -2,9 +2,9 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuthStore } from "../store/store";
 
-const baseURL = 'https://ready-taxis-flow.loca.lt/api/v1';
+const baseURL = 'https://tangy-walls-run.loca.lt/api/v1';
 export const baseURLPhoto = (url:string) : string => {
-  return `https://ready-taxis-flow.loca.lt/${url}`
+  return url
 };
 
 export const api = axios.create({

@@ -87,7 +87,7 @@ const AppNavigator = ({ role, status, userTempId, user } : { role:string, user:I
   if (role === 'imam') {
     return (
       <Stack.Navigator screenOptions={stackNavigationOptions}>
-        <Stack.Screen name={AppRoutes.IMAM_PENDING_SCREEN} component={ImamPendingScreen} />
+        {["pending", "rejected"].includes(user?.kycStatus ?? '') &&  <Stack.Screen name={AppRoutes.IMAM_PENDING_SCREEN} component={ImamPendingScreen} />}
         <Stack.Screen name={AppRoutes.IMAM_HOME_SCREEN} component={ImamHomeScreen} />
         <Stack.Screen name={AppRoutes.ADD_COMMITTEE_SCREEN} component={AddCommitteeScreen} />
         <Stack.Screen name={AppRoutes.PROFILE_SCREEN} component={ProfileScreen} />

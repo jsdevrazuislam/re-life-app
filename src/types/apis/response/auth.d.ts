@@ -1,6 +1,7 @@
  interface IUser {
     __v: number;
     _id: string;
+    fileId: string;
     createdAt: string;
     documentType: string;
     email: string;

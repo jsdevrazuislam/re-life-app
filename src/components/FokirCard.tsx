@@ -5,13 +5,16 @@ import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {AppStackParamList} from '../constants/route';
 import Paragraph from './ui/Paragraph';
 import { baseURLPhoto } from '../lib/api';
+import { useTranslation } from '../hooks/useTranslation';
+import ImageComponent from './ui/Image';
 
 const FokirCard: FC<FokirCardProps> = ({data}) => {
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
+  const { t } = useTranslation()
 
   return (
     <View style={cardStyles.flexLayout}>
-      <Image source={{uri: baseURLPhoto(data?.masjidProfile) }} style={cardStyles.image} />
+      <ImageComponent source={baseURLPhoto(data?.masjidProfile)} style={cardStyles.image} />
       <View style={cardStyles.textContainer}>
         <Paragraph
           level="Medium"
@@ -23,18 +26,18 @@ const FokirCard: FC<FokirCardProps> = ({data}) => {
           level="XSmall"
           weight="Regular"
           style={cardStyles.locationName}>
-          Location:{' '}
+          {t('masjidLocationLabel')}:{' '}
           {`${data.location?.district} ${data.location?.upazila} ${data.location?.union} ${data.location?.village}`}
         </Paragraph>
         <View style={cardStyles.footer_action}>
           <Paragraph level="Small" weight='Bold' style={cardStyles.showPeople}>
-            {data.poorPeopleInformations?.length} Poor People
+            {data.poorPeopleInformations?.length} {t('poorPeople')}
           </Paragraph>
           <TouchableOpacity
             style={cardStyles.viewButton}
             onPress={() => navigation.navigate('HomeViewDetailsInfo', { item: data})}>
             <Paragraph level="XSmall" style={cardStyles.viewLabel}>
-              View
+              {t("view")}
             </Paragraph>
           </TouchableOpacity>
         </View>
