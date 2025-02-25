@@ -3,5 +3,7 @@ export interface ParagraphProps{
     weight?: 'SemiBold' | 'Regular' | 'Medium' | 'Bold'; 
     style?: TextStyle; 
     children: React.ReactNode; 
+    numberOfLines?: number | undefined;
+    ellipsizeMode?: "head" | "tail" | "middle" | "clip" | undefined
 }
 

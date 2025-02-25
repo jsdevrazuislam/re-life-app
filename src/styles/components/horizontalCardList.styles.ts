@@ -10,7 +10,7 @@ const horizontalCardListStyles = ScaledSheet.create({
         color: Colors.text
     },
     label: {  color: Colors.text, textTransform: 'capitalize' },
-    value: { color: Colors.lightGray },
+    value: { color: Colors.lightGray, width: '120@ms' },
     card: {
         backgroundColor: Colors.white,
         borderRadius: '8@ms',
@@ -46,13 +46,14 @@ const horizontalCardListStyles = ScaledSheet.create({
         backgroundColor: '#fff',
         borderRadius: 10,
         padding: 20,
-        alignItems: 'center',
+        // alignItems: 'center',
       },
       modalImage: {
         width: 100,
         height: 100,
         borderRadius: 50,
         marginBottom: 15,
+        alignSelf: 'center',
       },
       closeButton: {
         position: 'absolute',

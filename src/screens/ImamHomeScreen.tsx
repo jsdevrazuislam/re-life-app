@@ -81,7 +81,7 @@ const DashboardScreen = () => {
             <Paragraph level='Medium' weight='Bold' style={imamStyles.greeting}>{user?.fullName}</Paragraph>
           </View>
           <TouchableOpacity onPress={toggleMenu}>
-            {user?.profileUrl ? <ImageComponent source={baseURLPhoto(user?.profileUrl ?? "")} style={imamStyles.profileAvatar} /> : <EvilIcons name='user' />}
+            {user?.profileUrl ? <ImageComponent imageStyle={{ borderRadius: 40}} source={baseURLPhoto(user?.profileUrl ?? "")} style={imamStyles.profileAvatar} /> : <EvilIcons name='user' />}
           </TouchableOpacity>
           <Modal
             visible={isMenuVisible}

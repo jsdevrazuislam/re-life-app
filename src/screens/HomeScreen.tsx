@@ -66,7 +66,6 @@ const HomeScreen = () => {
 
       const { data } = await api.get(`${ApiStrings.GET_MASJIDS}?${query}&page=${page}&limit=10`);
 
-      console.log("data", data)
 
       if (data.data.masjids.length === 0) {
         setErrorMessage(t('noResultsFound'));
@@ -175,12 +174,6 @@ const HomeScreen = () => {
 
           <AppButton style={{ marginTop: 20 }} text={t('searchPlaceholder')} onPress={getSearchResult} />
 
-          {errorMessage && (
-            <Paragraph level="Small" style={{ textAlign: 'center', marginTop: 20 }}>
-              {errorMessage}
-            </Paragraph>
-          )}
-
           {masjids.length > 0 ? (
             <Animated.View style={[homeStyles.viewArea, { opacity: fadeAnim }]}>
               {masjids.map((item, index) => (
@@ -188,10 +181,10 @@ const HomeScreen = () => {
               ))}
             </Animated.View>
           ) : (
-            !isLoading && isSearch && <Paragraph level="Small" style={{ textAlign: 'center', marginTop: 20 }}>{t('noResultsFound')}</Paragraph>
+            !isLoading && isSearch || errorMessage && <Paragraph level="Small" style={{ textAlign: 'center', marginTop: 20 }}>{errorMessage || t('noResultsFound')}</Paragraph>
           )}
 
-          {isLoading && <ActivityIndicator size="large" color="#007AFF" style={{ marginTop: 20 }} />}
+          {isLoading && <ActivityIndicator size="large" color={Colors.primary} style={{ marginTop: 20 }} />}
         </View>
       </ScrollView>
     </SafeAreaWrapper>

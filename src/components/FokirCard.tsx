@@ -14,7 +14,7 @@ const FokirCard: FC<FokirCardProps> = ({data}) => {
 
   return (
     <View style={cardStyles.flexLayout}>
-      <ImageComponent source={baseURLPhoto(data?.masjidProfile)} style={cardStyles.image} />
+      <ImageComponent imageStyle={{ borderRadius: 5}} source={baseURLPhoto(data?.masjidProfile)} style={cardStyles.image} />
       <View style={cardStyles.textContainer}>
         <Paragraph
           level="Medium"
@@ -26,7 +26,7 @@ const FokirCard: FC<FokirCardProps> = ({data}) => {
           level="XSmall"
           weight="Regular"
           style={cardStyles.locationName}>
-          {t('masjidLocationLabel')}:{' '}
+          <Paragraph level='XSmall' weight='Bold'>{t('masjidLocationLabel')}</Paragraph>:{' '}
           {`${data.location?.district} ${data.location?.upazila} ${data.location?.union} ${data.location?.village}`}
         </Paragraph>
         <View style={cardStyles.footer_action}>

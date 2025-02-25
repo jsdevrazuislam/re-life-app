@@ -8,6 +8,8 @@ const Paragraph: React.FC<ParagraphProps> = ({
   weight = 'Regular',
   style,
   children,
+  numberOfLines,
+  ellipsizeMode
 }) => {
   const key = `paragraph${level}${
     weight === 'Regular' ? 'Regular' : weight
@@ -15,7 +17,7 @@ const Paragraph: React.FC<ParagraphProps> = ({
 
   
   const paragraphStyle = Typography[key] || {};
-  return <Text style={[paragraphStyle, style]}>{children}</Text>;
+  return <Text style={[paragraphStyle, style]} numberOfLines={numberOfLines} ellipsizeMode={ellipsizeMode}>{children}</Text>;
 };
 
 export default Paragraph;

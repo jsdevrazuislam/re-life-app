@@ -67,6 +67,10 @@ const HorizontalCardList: React.FC<HorizontalCardListProps> = ({
                 <ImageComponent
                   source={{ uri: item[imageKey] }}
                   style={horizontalCardListStyles.detailsProfilePicture}
+                  imageStyle={{
+                     borderTopLeftRadius: 10, 
+                     borderTopRightRadius: 10
+                   }}
                 />
               </TouchableOpacity>
             )}
@@ -107,9 +111,10 @@ const HorizontalCardList: React.FC<HorizontalCardListProps> = ({
               </TouchableOpacity>
               
               {selectedItem?.[imageKey] && (
-                <Image
+                <ImageComponent
                   source={{ uri: selectedItem[imageKey] }}
                   style={horizontalCardListStyles.modalImage}
+                  imageStyle={{ borderRadius: 50}}
                 />
               )}
 
@@ -119,7 +124,7 @@ const HorizontalCardList: React.FC<HorizontalCardListProps> = ({
                     <Paragraph level="Small" weight="Bold" style={horizontalCardListStyles.label}>
                       {keyMapping[key]}:
                     </Paragraph>
-                    <Paragraph level="Small" weight="Medium" style={horizontalCardListStyles.value}>
+                    <Paragraph  level="Small" weight="Medium" style={horizontalCardListStyles.value}>
                       {String(selectedItem[key])}
                     </Paragraph>
                   </View>

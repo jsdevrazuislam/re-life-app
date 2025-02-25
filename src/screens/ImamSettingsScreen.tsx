@@ -14,6 +14,7 @@ import {NavigationProp, useNavigation} from '@react-navigation/native';
 import {AppStackParamList} from '../constants/route';
 import Header from '../components/Header';
 import { useTranslation } from '../hooks/useTranslation';
+import ImageComponent from '../components/ui/Image';
 
 type SettingItemProps = {
   icon: string;
@@ -53,9 +54,10 @@ const SettingsScreen = () => {
 
           <View style={styles.profileSection}>
             <View style={styles.avatarContainer}>
-              <Image
-                source={{uri: baseURLPhoto(user?.profileUrl ?? '')}}
+              <ImageComponent
+                source={{uri: user?.profileUrl}}
                 style={styles.avatar}
+                imageStyle={{ borderRadius: 50}}
               />
             </View>
             <Heading level={6} weight="Bold" style={styles.userName}>

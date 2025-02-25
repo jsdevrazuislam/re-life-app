@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Re Life</string>
+    <string name="default_channel_id">kyc-updates</string>
 </resources>

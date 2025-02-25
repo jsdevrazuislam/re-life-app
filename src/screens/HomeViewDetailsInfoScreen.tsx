@@ -1,4 +1,4 @@
-import { View, Image, TouchableOpacity, Dimensions, Modal } from 'react-native';
+import { View, TouchableOpacity, Dimensions, Modal } from 'react-native';
 import React, { useRef, useState } from 'react';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -64,6 +64,7 @@ const HomeViewDetailsInfoScreen = () => {
               <ImageComponent
                 source={{ uri: singleData?.masjidProfile }}
                 style={homeViewDetailsStyles.masjidImage}
+                imageStyle={{ borderRadius: 10 }}
               />
             </TouchableOpacity>
 
@@ -81,7 +82,7 @@ const HomeViewDetailsInfoScreen = () => {
                 <Paragraph level="Small" weight="Bold" style={homeViewDetailsStyles.label}>
                   {t('masjidLocationLabel')}:
                 </Paragraph>
-                <Paragraph level="Small" weight="Medium" style={homeViewDetailsStyles.value}>
+                <Paragraph level="Small" weight="Medium" style={[homeViewDetailsStyles.value, { flexShrink: 1}]}>
                   {`${singleData.location.district} > ${singleData.location.upazila} > ${singleData.location.union} > ${singleData.location.village}`}
                 </Paragraph>
               </View>
@@ -112,6 +113,7 @@ const HomeViewDetailsInfoScreen = () => {
                       <ImageComponent
                         source={item.profilePicture}
                         style={homeViewDetailsStyles.profileImage}
+                        imageStyle={{ borderRadius: 50 }}
                       />
                     </TouchableOpacity>
                     <View style={homeViewDetailsStyles.flexLayout}>
@@ -152,7 +154,7 @@ const HomeViewDetailsInfoScreen = () => {
                 onSnapToItem={handleSnapToItem}
                 loop={false}
                 width={Dimensions.get('window').width * 0.9}
-                height={200}
+                height={220}
               />
 
               {/* Carousel Dots */}

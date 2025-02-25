@@ -135,6 +135,7 @@ const PeopleTab: React.FC<PeopleTabProps> = ({data, onAdd, loading}) => {
                 <ImageComponent
                   source={baseURLPhoto(item?.photoUrl || '')}
                   style={imamStyles.infoPhoto}
+                  imageStyle={{ borderRadius: 3}}
                 />
                 <View style={imamStyles.cardText}>
                   <Paragraph

@@ -19,6 +19,7 @@ export const AppRoutes = {
     CHANGE_PASSWORD:'ChangePasswordScreen',
     UPDATE_EMAIL:'UpdateEmailScreen',
     RESET_PASSWORD_SCREEN:'ResetPasswordScreen',
+    BLOCK_SCREEN:'BlockScreen',
 }
 
 export type AppStackParamList = {
@@ -33,6 +34,7 @@ export type AppStackParamList = {
     UpdateEmailScreen: undefined; 
     ImamPendingScreen: undefined; 
     KycStartedScreen: undefined; 
+    BlockScreen: undefined;
     AddPoorPeopleScreen: undefined;
     ImamHomeScreen: {
         activeTab?:string

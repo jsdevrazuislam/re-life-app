@@ -52,3 +52,8 @@
     label:string,
     value:string
   }
+
+  interface Notification{
+    title:string,
+    message:string
+  }

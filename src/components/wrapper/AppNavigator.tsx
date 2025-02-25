@@ -24,6 +24,7 @@ import ImamPendingScreen from '../../screens/ImamPendingScreen';
 import UpdateEmailScreen from '../../screens/UpdateEmailScreen';
 import ChangePasswordScreen from '../../screens/ChangePasswordScreen';
 import ResetPasswordScreen from '../../screens/ResetPasswordScreen';
+import BlockedUserScreen from '../../screens/BlockScreen';
 
 
 const Tab = createBottomTabNavigator();
@@ -95,6 +96,7 @@ const AppNavigator = ({ role, status, userTempId, user } : { role:string, user:I
         <Stack.Screen name={AppRoutes.ADD_POOR_PEOPLE_SCREEN} component={AddPeopleScreen} />
         <Stack.Screen name={AppRoutes.UPDATE_EMAIL} component={UpdateEmailScreen} />
         <Stack.Screen name={AppRoutes.CHANGE_PASSWORD} component={ChangePasswordScreen} />
+        <Stack.Screen name={AppRoutes.BLOCK_SCREEN} component={BlockedUserScreen} />
       </Stack.Navigator>
     );
   }

@@ -18,6 +18,7 @@ export const cardStyles = ScaledSheet.create({
     gap: '10@ms',
     backgroundColor: Colors.white,
     padding: '10@ms',
+    marginBottom: '10@ms',
   },
   textContainer: {
     flex: 1, 

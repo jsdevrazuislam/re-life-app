@@ -30,10 +30,17 @@ const LoginScreen = () => {
 
   const handleSubmit = async () => {
     const { data, message } = await request('post', ApiStrings.LOGIN, { password, emailOrPhone: email?.toLowerCase() });
-    setUser(data?.user, data?.accessToken, data?.refreshToken)
-    setRole(data?.user?.role)
+    const user = data?.user;
+    await setUser(user, data?.accessToken, data?.refreshToken)
+    setRole(user?.role)
     showToast('success', message)
-    navigation.navigate('HomeScreen')
+    if(user?.kycStatus === 'pending' || 'rejected'){
+      navigation.navigate('ImamPendingScreen')
+    } else if(user?.isBlocked){
+      navigation.navigate('BlockScreen')
+    } else {
+      navigation.navigate('HomeScreen')
+    }
   };
 
   return (
