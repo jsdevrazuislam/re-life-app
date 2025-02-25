@@ -4,16 +4,22 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 import horizontalCardListStyles from '../styles/components/horizontalCardList.styles';
 import Heading from './ui/Heading';
 import Paragraph from './ui/Paragraph';
+import { useTranslation } from '../hooks/useTranslation';
+import ImageComponent from './ui/Image';
 
 const HorizontalCardList: React.FC<HorizontalCardListProps> = ({
   title,
   subTitle,
   data,
   imageKey,
+  isCommitteeCard,
   onPress,
 }) => {
   const [visible, setVisible] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<CommitteeResponse | any>(null);
+  const { t } = useTranslation();
 
   // Prepare images for the viewer
   const images = data.map((item) => ({ url: item[imageKey] || '' })).filter((img) => img.url);
@@ -26,8 +32,23 @@ const HorizontalCardList: React.FC<HorizontalCardListProps> = ({
     }
   };
 
-  // Define the keys that should be displayed
-  const allowedKeys = ['name', 'age', 'profession', 'address', 'mobile']; // Only render these fields
+  const allowedKeys = ['name', 'age', 'profession', 'address', 'mobile'];
+
+  const keyMapping: Record<string, string> = {
+    name: t("name"),
+    age: t("age"),
+    profession: t("profession"),
+    address: t("address"),
+    mobile: t("mobile"),
+  };
+
+  const openDetailsModal = (item:CommitteeResponse) => {
+    if (isCommitteeCard) {
+      setSelectedItem(item);
+      setModalVisible(true);
+    }
+  };
+
 
   return (
     <View style={horizontalCardListStyles.container}>
@@ -40,10 +61,10 @@ const HorizontalCardList: React.FC<HorizontalCardListProps> = ({
         showsHorizontalScrollIndicator={false}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => onPress?.(item)} style={horizontalCardListStyles.card}>
+          <TouchableOpacity onPress={() => onPress?.(item) ?? openDetailsModal(item)} style={horizontalCardListStyles.card}>
             {imageKey && item[imageKey] && (
               <TouchableOpacity onPress={() => openImage(item[imageKey])}>
-                <Image
+                <ImageComponent
                   source={{ uri: item[imageKey] }}
                   style={horizontalCardListStyles.detailsProfilePicture}
                 />
@@ -55,7 +76,7 @@ const HorizontalCardList: React.FC<HorizontalCardListProps> = ({
                 item[key] && (
                   <View key={key} style={horizontalCardListStyles.flexLayout}>
                     <Paragraph level="Small" weight="Bold" style={horizontalCardListStyles.label}>
-                      {key.replace(/_/g, ' ')}:
+                      {keyMapping[key] || key}:
                     </Paragraph>
                     <Paragraph level="Small" weight="Medium" style={horizontalCardListStyles.value}>
                       {String(item[key])}
@@ -68,7 +89,6 @@ const HorizontalCardList: React.FC<HorizontalCardListProps> = ({
         )}
       />
 
-      {/* Image Viewer Modal */}
       <Modal visible={visible} transparent={true}>
         <ImageViewer
           imageUrls={images}
@@ -78,6 +98,37 @@ const HorizontalCardList: React.FC<HorizontalCardListProps> = ({
           onCancel={() => setVisible(false)}
         />
       </Modal>
+      {isCommitteeCard && (
+        <Modal visible={modalVisible} transparent={true} animationType="slide">
+          <View style={horizontalCardListStyles.modalContainer}>
+            <View style={horizontalCardListStyles.modalContent}>
+              <TouchableOpacity onPress={() => setModalVisible(false)} style={horizontalCardListStyles.closeButton}>
+                <Text style={horizontalCardListStyles.closeText}>✕</Text>
+              </TouchableOpacity>
+              
+              {selectedItem?.[imageKey] && (
+                <Image
+                  source={{ uri: selectedItem[imageKey] }}
+                  style={horizontalCardListStyles.modalImage}
+                />
+              )}
+
+              {allowedKeys.map((key) => (
+                selectedItem?.[key] && (
+                  <View key={key} style={horizontalCardListStyles.flexLayout}>
+                    <Paragraph level="Small" weight="Bold" style={horizontalCardListStyles.label}>
+                      {keyMapping[key]}:
+                    </Paragraph>
+                    <Paragraph level="Small" weight="Medium" style={horizontalCardListStyles.value}>
+                      {String(selectedItem[key])}
+                    </Paragraph>
+                  </View>
+                )
+              ))}
+            </View>
+          </View>
+        </Modal>
+      )}
     </View>
   );
 };

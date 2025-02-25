@@ -1,10 +1,12 @@
  interface IUser {
     __v: number;
     _id: string;
+    fileId: string;
     createdAt: string;
     documentType: string;
     email: string;
     address: string;
+    rejectionReason: string;
     fullName: string;
     isBlocked: boolean;
     kycDocuments: KycDocuments;
@@ -17,6 +19,14 @@
     updatedAt: string;
     verified: boolean;
   }
+
+  interface TempUser{
+    name:string;
+    phoneNumber:string;
+    email:string,
+    status:string
+  }
+
    interface KycDocuments {
     _id: string;
     imam_document_url: string;

@@ -13,6 +13,7 @@ interface CardItem {
     onPress?:(data:any) => void
     imageKey: string; 
     keyIndex?:number,
+    isCommitteeCard?:boolean
   }
 
   interface DataItem {

@@ -49,4 +49,6 @@ interface AddPoorPeopleScreenFormState{
         idProofBackWife: IFile | null,
         idProofFrontHusband: IFile | null,
         idProofBackHusband: IFile | null,
+        idProofBackFather: IFile | null,
+        idProofFrontFather: IFile | null,
 }

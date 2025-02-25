@@ -1,6 +1,6 @@
 export default {
   welcome: 'স্বাগতম!',
-  introTitle: 'একটি ভিক্ষুক মুক্ত বাংলাদেশ গড়ার পথে',
+  introTitle: 'একটি ভিক্ষুক মুক্ত বাংলাদেশ গড়ার লক্ষ্যে',
   introDescription: 'আপনার দান পরিবর্তন আনতে পারে। আসুন, একসাথে সমাজকে ইতিবাচকভাবে পরিবর্তন করি।',
   donateNow: 'এখনই দান করুন',
   exploreCauses: 'আমাদের কারণসমূহ দেখুন',
@@ -177,7 +177,9 @@ export default {
   beggerAge: 'ভিক্ষুকের বয়স',
   beggerAgePlaceholder: 'বয়স লিখুন',
   beggerGender: 'ভিক্ষুকের লিঙ্গ নির্বাচন করুন',
+  beggerGender1: 'ভিক্ষুকের লিঙ্গ',
   beggerMarriageStatus: 'বৈবাহিক অবস্থা নির্বাচন করুন',
+  beggerMarriageStatus1: 'বৈবাহিক অবস্থা',
   isWifeDead: 'ভিক্ষুকের স্ত্রী মারা গেছেন?',
   isHusbandDead: 'ভিক্ষুকের স্বামী মারা গেছেন?',
   husbandProfession: 'স্বামীর পেশা',
@@ -204,14 +206,18 @@ export default {
   // Assistance Information
   receivingAssistance: 'ভিক্ষুক সহায়তা পাচ্ছে কি?',
   assistanceType: 'সহায়তার ধরন নির্বাচন করুন',
+  assistanceType1: 'সহায়তার ধরন',
   assistanceFrequency: 'সহায়তার পরিমাণ নির্বাচন করুন',
+  assistanceFrequency1: 'সহায়তার পরিমাণ',
   selectPlaceholder:"নির্বাচন করুন",
   assistanceLocation: 'সহায়তার অবস্থান লিখুন',
+  assistanceLocation1: 'সহায়তার অবস্থান',
 
   // Contact & Address
   currentAddress: 'বর্তমান ঠিকানা',
   currentAddressPlaceholder1: 'ভিক্ষুকের বর্তমান ঠিকানা লিখুন',
   phoneNumberPlaceholder1: 'ভিক্ষুকের ফোন নম্বর লিখুন',
+  phoneNumberPlaceholder2: 'ভিক্ষুকের ফোন নম্বর',
   phoneNumber: 'ফোন নম্বর',
   phoneNumberPlaceholder: 'ফোন নম্বর লিখুন',
   profession: 'পেশা',
@@ -221,6 +227,13 @@ export default {
   monthlyNeedsTitle: 'ভিক্ষুকের মাসিক চাহিদা',
   monthlyNeedsDescription: 'ভিক্ষুকের খাদ্য, পোশাক ও চিকিৎসার মাসিক চাহিদা নির্ধারণ করুন।',
   ricePerMonth: 'চাল (কেজি/মাস)',
+  rice: 'চাল',
+  lentils: 'ডাল',
+  oil: 'তেল',
+  otherFoodItems1: 'অন্যান্য খাদ্য সামগ্রী',
+  monthlyMedicineCost1: 'মাসিক ওষুধের খরচ',
+  financialNeedPlaceholder1: 'প্রয়োজনীয় অর্থের পরিমাণ',
+  treatmentDetailsPlaceholder1: 'চলমান চিকিৎসা বা ওষুধের প্রয়োজনীয়তা',
   ricePerMonthPlaceholder: 'চালের পরিমাণ লিখুন',
   lentilsPerMonth: 'ডাল (কেজি/মাস)',
   lentilsPerMonthPlaceholder: 'ডালের পরিমাণ লিখুন',
@@ -240,6 +253,7 @@ export default {
 
   // ID Proofs
   idProofFrontBack: 'ভিক্ষুকের আইডি (সামনে ও পিছনে আপলোড করুন)',
+  fatherIdProofFrontBack: 'ভিক্ষুকের পিতার আইডি (সামনে ও পিছনে আপলোড করুন)',
   wifeIdProofFrontBack: 'স্ত্রীর আইডি (সামনে ও পিছনে আপলোড করুন)',
   husbandIdProofFrontBack: 'স্বামীর আইডি (সামনে ও পিছনে আপলোড করুন)',
 
@@ -257,6 +271,63 @@ export default {
   childrenIncome: 'ধরন',  
   submitKyc: 'KYC জমা দিন',  
   kycUploadTitle: 'আপনার KYC তথ্য আপলোড করুন',
+  kycPendingTitle: 'আপনার KYC যাচাই করা হচ্ছে',
+  kycPendingMessage: 'আপনার তথ্য পর্যালোচনা করা হচ্ছে। দয়া করে অপেক্ষা করুন, এটি কিছু সময় নিতে পারে। আপডেটের জন্য পরে আবার চেক করুন।',
+
+  kycApprovedTitle: 'আপনার KYC অনুমোদিত হয়েছে',
+  kycApprovedMessage: 'অভিনন্দন! আপনার KYC যাচাই সম্পন্ন হয়েছে এবং অনুমোদিত হয়েছে। আপনি এখন সম্পূর্ণ অ্যাক্সেস পেতে পারবেন।',
+
+  kycRejectedTitle: 'আপনার KYC প্রত্যাখ্যাত হয়েছে',
+  kycRejectedMessage: 'দুঃখিত, আপনার KYC যাচাই ব্যর্থ হয়েছে। অনুগ্রহ করে সমস্ত তথ্য আবার যাচাই করুন এবং প্রয়োজনীয় ডকুমেন্ট আপলোড করে পুনরায় আবেদন করুন।',
+  tryAgain: 'আবার চেষ্টা করুন',
+  contractSupportTitle: 'আমাদের সাথে যোগাযোগ করুন',
+  searchPlaceholder: 'খুঁজুন...',
+searchButton: 'অনুসন্ধান',
+noResultsFound: 'কোনো ফলাফল পাওয়া যায়নি। অনুগ্রহ করে সঠিক তথ্য দিয়ে আবার চেষ্টা করুন।',
+searchAgainSuggestion: 'আপনার অনুসন্ধানের সাথে মিলে এমন কোনো তথ্য পাওয়া যায়নি। অন্য কীওয়ার্ড দিয়ে আবার চেষ্টা করুন।',
+
+masjidName: 'মসজিদের নাম',
+masjidNamePlaceholder1: 'মসজিদের নাম নির্বাচন করুন',
+district: 'জেলা',
+districtPlaceholder: 'জেলা নির্বাচন করুন',
+upazila: 'উপজেলা',
+upazilaPlaceholder: 'উপজেলা নির্বাচন করুন',
+union: 'ইউনিয়ন',
+unionPlaceholder: 'ইউনিয়ন নির্বাচন করুন',
+village: 'গ্রাম',
+villagePlaceholder: 'গ্রাম নির্বাচন করুন',
+
+poorPeople: 'দরিদ্র ব্যক্তির',
+poorPeopleInformation: 'দরিদ্র ব্যক্তির তথ্য',
+view: 'দেখুন',
+details: 'বিস্তারিত দেখুন',
+imamDetails: 'ইমামের বিস্তারিত দেখুন',
+presentImam: 'বর্তমান ইমামের',
+
+committeeDetails: 'কমিটির বিবরণ',
+totalMembers: 'মোট সদস্য',
+name: 'নাম',
+address: 'ঠিকানা',
+mobile: 'মোবাইল',
+age: 'বয়স',
+
+supportDetails: 'সহায়তার তথ্য',
+contactInformation: 'যোগাযোগের তথ্য',
+assistanceDetails: 'সহায়তার বিবরণ',
+monthlyEssentials: 'মাসিক প্রয়োজনীয় জিনিসপত্র',
+
+documents: 'নথিপত্র',
+idFront: 'পরিচয়পত্র (সামনের অংশ)',
+idBack: 'পরিচয়পত্র (পেছনের অংশ)',
+wifeIdFront: 'স্ত্রীর পরিচয়পত্র (সামনের অংশ)',
+fatherIdFront: 'বাবা পরিচয়পত্র (সামনের অংশ)',
+fatherIdBack: 'বাবা পরিচয়পত্র (সামনের অংশ)',
+wifeIdBack: 'স্ত্রীর পরিচয়পত্র (পেছনের অংশ)',
+emptyPeopleTitle: 'এখনো কোনো লোক যোগ করা হয়নি',
+emptyPeopleDescription: 'নতুন সাহায্যপ্রার্থী যোগ করতে উপরে বাটনে ট্যাপ করুন।',
+years: 'বছর',
+
+
 
 
 

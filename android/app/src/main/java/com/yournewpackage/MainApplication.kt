@@ -1,4 +1,4 @@
-package com.awesomeproject
+package com.yournewpackage
 import com.oblador.vectoricons.VectorIconsPackage;
 import android.app.Application
 import com.facebook.react.PackageList

@@ -14,8 +14,6 @@ import React, { useEffect, useState } from 'react';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import globalStyles from '../styles/global.style';
 import { Colors } from '../configs/colors';
-import BackButton from '../components/BackButton';
-import Heading from '../components/ui/Heading';
 import profileStyles from '../styles/profile.styles';
 import { useTranslation } from '../hooks/useTranslation';
 import * as ImagePicker from 'react-native-image-picker';
@@ -39,6 +37,8 @@ import PhoneNumberInput from '../components/ui/PhoneNumberInput';
 import { showToast } from '../utils/toast';
 import { formatFileData } from '../utils/file-format';
 import Header from '../components/Header';
+import LoadingOverlay from '../components/LoadingOverlay';
+import ImageComponent from '../components/ui/Image';
 
 interface ProfileForm {
   name: string;
@@ -109,7 +109,7 @@ const ProfileScreen = () => {
 
   const removeImage = async () => {
     if (formData.image?.uri) {
-      await request('delete', ApiStrings.DELETE_PROFILE);
+      await request('post', ApiStrings.DELETE_PROFILE(user?.fileId ?? ''));
       setFormData({ ...formData, image: null });
     }
   };
@@ -137,7 +137,7 @@ const ProfileScreen = () => {
     apiFormData.append('address', formData.address);
     apiFormData.append('phoneNumber', formData.phoneNumber);
     console.log("formData.image", formatFileData(formData.image))
-    if(!formData.image?.isUpdate){
+    if (!formData.image?.isUpdate) {
       apiFormData.append('profilePicture', formatFileData(formData.image));
     }
 
@@ -177,10 +177,15 @@ const ProfileScreen = () => {
   return (
     <SafeAreaWrapper bg={Colors.light}>
       <KeyboardAvoidingView
-       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-              style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
       >
-        <ScrollView>
+        <LoadingOverlay visible={loading} />
+        <ScrollView
+          contentContainerStyle={{
+            paddingBottom: 30
+          }}
+        >
           <View style={globalStyles.container}>
             <Header title={t("profileTitle")} />
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -188,8 +193,8 @@ const ProfileScreen = () => {
                 <View style={profileStyles.relative}>
                   <View style={profileStyles.imageWrapper}>
                     {formData.image?.uri ? (
-                      <Image
-                        source={{ uri: formData.image?.uri }}
+                      <ImageComponent
+                        source={formData.image?.uri}
                         style={profileStyles.image}
                       />
                     ) : (
@@ -226,50 +231,58 @@ const ProfileScreen = () => {
                 <Paragraph level="Small" weight="Medium">
                   {t('masjidLocationLabel')}
                 </Paragraph>
-                <ScrollView
-                  style={{ marginTop: 10 }}
-                  horizontal
-                  showsHorizontalScrollIndicator={false}>
-                  <SelectDropdown
-                    data={districts}
-                    value={formData.location.district}
-                    onChange={value => handleLocationChange('district', value)}
-                    placeholder="Select a district"
-                    style={profileStyles.paddingRight}
-                    search={true}
-                    searchPlaceholder="Search district"
-                    disabled
-                  />
-                  <SelectDropdown
-                    data={upazilas}
-                    value={formData.location.upazila}
-                    onChange={value => handleLocationChange('upazila', value)}
-                    placeholder="Select an upazila"
-                    style={profileStyles.paddingRight}
-                    search={true}
-                    searchPlaceholder="Search upazila"
-                    disabled
-                  />
-                  <SelectDropdown
-                    data={unions}
-                    value={formData.location.union}
-                    onChange={value => handleLocationChange('union', value)}
-                    placeholder="Select a union"
-                    style={profileStyles.paddingRight}
-                    search={true}
-                    searchPlaceholder="Search union"
-                    disabled
-                  />
-                  <SelectDropdown
-                    data={villages}
-                    value={formData.location.village}
-                    onChange={value => handleLocationChange('village', value)}
-                    placeholder="Select a village"
-                    search={true}
-                    searchPlaceholder="Search village"
-                    disabled
-                  />
-                </ScrollView>
+
+                <View style={{ width: '100%', gap: 10, marginTop: 10, marginBottom: 20, flexDirection: 'row', flexWrap: 'wrap' }}>
+                  <View style={{ width: '48%' }}>
+                    <SelectDropdown
+                      data={districts}
+                      value={formData.location.district}
+                      onChange={value => handleLocationChange('district', value)}
+                      placeholder="Select a district"
+                      search={true}
+                      searchPlaceholder="Search district"
+                      disabled
+                    />
+                  </View>
+
+                  <View style={{ width: '48%' }}>
+                    <SelectDropdown
+                      data={upazilas}
+                      value={formData.location.upazila}
+                      onChange={value => handleLocationChange('upazila', value)}
+                      placeholder="Select an upazila"
+                      search={true}
+                      searchPlaceholder="Search upazila"
+                      disabled
+                    />
+                  </View>
+
+                  <View style={{ width: '48%' }}>
+                    <SelectDropdown
+                      data={unions}
+                      value={formData.location.union}
+                      onChange={value => handleLocationChange('union', value)}
+                      placeholder="Select a union"
+                      search={true}
+                      searchPlaceholder="Search union"
+                      disabled
+                    />
+                  </View>
+
+                  <View style={{ width: '48%' }}>
+                    <SelectDropdown
+                      data={villages}
+                      value={formData.location.village}
+                      onChange={value => handleLocationChange('village', value)}
+                      placeholder="Select a village"
+                      search={true}
+                      searchPlaceholder="Search village"
+                      disabled
+                    />
+                  </View>
+                </View>
+
+
                 <Input
                   label={t('imamNameLabel')}
                   placeholder={t('imamNamePlaceholder')}
@@ -307,8 +320,6 @@ const ProfileScreen = () => {
               text={t('updateButton')}
               onPress={handleSubmit}
               variant="primary"
-              loading={loading}
-              disabled={loading}
             />
           </View>
         </ScrollView>

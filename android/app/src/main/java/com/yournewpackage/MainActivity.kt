@@ -1,4 +1,4 @@
-package com.awesomeproject
+package com.yournewpackage
 import android.os.Bundle;
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
@@ -12,7 +12,7 @@ class MainActivity : ReactActivity() {
    * Returns the name of the main component registered from JavaScript. This is used to schedule
    * rendering of the component.
    */
-  override fun getMainComponentName(): String = "AwesomeProject"
+  override fun getMainComponentName(): String = "Re Life"
   override fun onCreate(savedInstanceState: Bundle?) {
     SplashScreen.show(this, true); 
     super.onCreate(null)

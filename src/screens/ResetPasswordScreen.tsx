@@ -2,9 +2,6 @@ import { View, ScrollView } from 'react-native';
 import React, { useState } from 'react';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import globalStyles from '../styles/global.style';
-import styles from '../styles/imamSetting.styles';
-import BackButton from '../components/BackButton';
-import Heading from '../components/ui/Heading';
 import loginStyles from '../styles/login.style';
 import { useTranslation } from '../hooks/useTranslation';
 import Input from '../components/ui/AppInput';
@@ -17,6 +14,8 @@ import { useAuthStore } from '../store/store';
 import { NavigationProp, useNavigation, useRoute } from '@react-navigation/native';
 import { AppStackParamList } from '../constants/route';
 import { showToast } from '../utils/toast';
+import Header from '../components/Header';
+import LoadingOverlay from '../components/LoadingOverlay';
 
 const ResetPasswordScreen = () => {
 
@@ -37,12 +36,20 @@ const ResetPasswordScreen = () => {
       return;
     }
 
-    const { message } = await request('post', ApiStrings.RESET_PASSWORD, {
+    console.log({
       emailOrPhone: userTempEmail,
       otp: route.params?.otp,
       newPassword: formData.newPassword,
       userId: userTempId
+    })
+
+    const { message } = await request('post', ApiStrings.RESET_PASSWORD, {
+      emailOrPhone: userTempEmail || route?.params?.email,
+      otp: route.params?.otp,
+      newPassword: formData.newPassword,
+      userId: userTempId
     });
+    
     setRole('')
     setStatus('')
     setTempEmail('')
@@ -54,13 +61,8 @@ const ResetPasswordScreen = () => {
     <SafeAreaWrapper>
       <ScrollView>
         <View style={globalStyles.container}>
-          <View style={styles.header}>
-            <BackButton />
-            <Heading level={5} weight="Bold" style={styles.headerTitle}>
-              {t('resetPasswordTitle')}
-            </Heading>
-            <View />
-          </View>
+          <Header title={t('resetPasswordTitle')} />
+          <LoadingOverlay visible={loading} />
           <View style={loginStyles.loginForm}>
             <Input
               label={t('newPasswordLabel')}
@@ -94,9 +96,8 @@ const ResetPasswordScreen = () => {
               text={t('resetPasswordButton')}
               onPress={handleSubmit}
               variant="primary"
-              loading={loading}
               style={{ marginTop: '85%' }}
-              disabled={!formData.confirmPasword || !formData.newPassword || loading}
+              disabled={!formData.confirmPasword || !formData.newPassword}
             />
           </View>
         </View>

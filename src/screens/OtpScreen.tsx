@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, TextInput, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import globalStyles from '../styles/global.style';
 import otpStyles from '../styles/otpScreen.styles';
@@ -15,8 +15,7 @@ import ErrorMessage from '../components/ErrorMessage';
 import { useAuthStore } from '../store/store';
 import ApiStrings from '../lib/apis_string';
 import { AppStackParamList } from '../constants/route';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { Colors } from '../configs/colors';
+import { NavigationProp, useNavigation, useRoute } from '@react-navigation/native';
 import LoadingOverlay from '../components/LoadingOverlay';
 
 const OtpScreen = () => {
@@ -26,10 +25,12 @@ const OtpScreen = () => {
     const [isVerifyDisabled, setIsVerifyDisabled] = useState(true);
     const { t } = useTranslation();
     const { request, loading, error } = useApi();
-    const { userTempId, setStatus, userTempEmail, setUserId, setTempEmail } =
+    const { userTempId, setStatus, userTempEmail, setUserId, setTempEmail, setTempUser } =
         useAuthStore();
     const navigation = useNavigation<NavigationProp<AppStackParamList>>();
     const inputRefs = useRef<Array<TextInput | null>>([]);
+    const route = useRoute<HomeViewDetailsInfoRouteProp>();
+    const email = route?.params?.email as string;
 
     useEffect(() => {
         if (timer > 0) {
@@ -44,7 +45,7 @@ const OtpScreen = () => {
 
     const handleResendCode = async () => {
         const { data } = await request('post', ApiStrings.RESEND_OTP, {
-            emailOrPhone: userTempEmail,
+            emailOrPhone: userTempEmail || email,
         });
         setUserId(data?.id);
         setTempEmail(data?.email);
@@ -64,7 +65,8 @@ const OtpScreen = () => {
                 ApiStrings.OTP_VERIFY,
                 payload,
             );
-            setStatus(data);
+            setTempUser(data);
+            setStatus(data?.status);
             showToast('success', message);
             navigation.navigate('KycStartedScreen');
         } else {
@@ -75,7 +77,7 @@ const OtpScreen = () => {
             );
             setStatus(data);
             showToast('success', message);
-            navigation.navigate('ResetPasswordScreen', { otp: otp.join('') });
+            navigation.navigate('ResetPasswordScreen', { otp: otp.join(''), email: userTempEmail || email  });
         }
     };
 
@@ -94,7 +96,7 @@ const OtpScreen = () => {
 
     const handleBackspace = (text: string, index: number) => {
         if (!text && index > 0) {
-            inputRefs.current[index - 1]?.focus(); // Move back on delete
+            inputRefs.current[index - 1]?.focus();
         }
     };
 
@@ -104,73 +106,71 @@ const OtpScreen = () => {
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
             >
-                <ScrollView>
-                    <TouchableWithoutFeedback
-                        onPress={Keyboard.dismiss}
-                    >
-                        <View style={globalStyles.container}>
-                            <LoadingOverlay visible={loading} />
-                            <View style={otpStyles.headerNavigation}>
-                                <BackButton />
-                                <AppLogo />
-                            </View>
-                            <Heading level={3} weight="Bold">
-                                {t('otpTitle')}
-                            </Heading>
-                            <Paragraph level="Medium">
-                                {t('otpDescription')} {userTempEmail?.toLowerCase()}
-                            </Paragraph>
-                            <View style={otpStyles.otpContainer}>
-                                {otp.map((digit, index) => (
-                                    <TextInput
-                                        key={index}
-                                        ref={ref => (inputRefs.current[index] = ref)}
-                                        style={otpStyles.otpInput}
-                                        maxLength={1}
-                                        keyboardType="numeric"
-                                        value={digit}
-                                        onChangeText={text => handleOtpChange(text, index)}
-                                        onKeyPress={({ nativeEvent }) => {
-                                            if (nativeEvent.key === 'Backspace') {
-                                                handleBackspace(digit, index);
-                                            }
-                                        }}
-                                        autoFocus={index === 0}
-                                    />
-                                ))}
-                            </View>
-                            {error && <ErrorMessage error={error} />}
-                            <AppButton
-                                onPress={handleVerify}
-                                disabled={isVerifyDisabled}
-                                variant="primary"
-                                text={t('verifyOtpButton')}
-                            />
-                            <TouchableOpacity
-                                style={otpStyles.resendButton}
-                                onPress={handleResendCode}
-                                disabled={isResendDisabled || loading}>
-                                {timer > 0 ? (
-                                    <Paragraph
-                                        level="Small"
-                                        weight="SemiBold"
-                                        style={otpStyles.resendText}>
-                                        {t('resendOtpIn')}{' '}
-                                        {timer}
-                                        {t('resendOtpIn1')}
-                                    </Paragraph>
-                                ) : (
-                                    <Paragraph
-                                        level="Small"
-                                        weight="SemiBold"
-                                        style={otpStyles.resendText}>
-                                        {t('resendOtp')}
-                                    </Paragraph>
-                                )}
-                            </TouchableOpacity>
+                <TouchableWithoutFeedback
+                    onPress={Keyboard.dismiss}
+                >
+                    <View style={globalStyles.container}>
+                        <LoadingOverlay visible={loading} />
+                        <View style={otpStyles.headerNavigation}>
+                            <BackButton />
+                            <AppLogo />
                         </View>
-                    </TouchableWithoutFeedback>
-                </ScrollView>
+                        <Heading level={3} weight="Bold">
+                            {t('otpTitle')}
+                        </Heading>
+                        <Paragraph level="Medium">
+                            {t('otpDescription')} {userTempEmail?.toLowerCase()}
+                        </Paragraph>
+                        <View style={otpStyles.otpContainer}>
+                            {otp.map((digit, index) => (
+                                <TextInput
+                                    key={index}
+                                    ref={ref => (inputRefs.current[index] = ref)}
+                                    style={otpStyles.otpInput}
+                                    maxLength={1}
+                                    keyboardType="numeric"
+                                    value={digit}
+                                    onChangeText={text => handleOtpChange(text, index)}
+                                    onKeyPress={({ nativeEvent }) => {
+                                        if (nativeEvent.key === 'Backspace') {
+                                            handleBackspace(digit, index);
+                                        }
+                                    }}
+                                    autoFocus={index === 0}
+                                />
+                            ))}
+                        </View>
+                        {error && <ErrorMessage error={error} />}
+                        <AppButton
+                            onPress={handleVerify}
+                            disabled={isVerifyDisabled}
+                            variant="primary"
+                            text={t('verifyOtpButton')}
+                        />
+                        <TouchableOpacity
+                            style={otpStyles.resendButton}
+                            onPress={handleResendCode}
+                            disabled={isResendDisabled || loading}>
+                            {timer > 0 ? (
+                                <Paragraph
+                                    level="Small"
+                                    weight="SemiBold"
+                                    style={otpStyles.resendText}>
+                                    {t('resendOtpIn')}{' '}
+                                    {timer}
+                                    {t('resendOtpIn1')}
+                                </Paragraph>
+                            ) : (
+                                <Paragraph
+                                    level="Small"
+                                    weight="SemiBold"
+                                    style={otpStyles.resendText}>
+                                    {t('resendOtp')}
+                                </Paragraph>
+                            )}
+                        </TouchableOpacity>
+                    </View>
+                </TouchableWithoutFeedback>
             </KeyboardAvoidingView>
         </SafeAreaWrapper>
     );

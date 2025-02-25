@@ -1,120 +1,156 @@
-import React, { useState } from 'react';
-import { View, Text, StyleProp, ViewStyle, TextStyle } from 'react-native';
-import { Dropdown } from 'react-native-element-dropdown';
+import React, { useRef, useState, useMemo, useCallback } from 'react';
+import { View, Text, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform, StyleProp, ViewStyle } from 'react-native';
+import { Modalize } from 'react-native-modalize';
+import { Portal } from 'react-native-portalize';
+import Icon from 'react-native-vector-icons/Feather';
+import Paragraph from './Paragraph';
+import { Colors } from '../../configs/colors';
 import { ScaledSheet } from 'react-native-size-matters';
-import { dropdownStyles } from '../../styles/components/dropdown.style';
+import Input from './AppInput';
+import { useTranslation } from '../../hooks/useTranslation';
+
+interface DropdownItem {
+  label: string;
+  value: string;
+}
 
 interface SelectDropdownProps {
   label?: string;
-  data: { label: string; value: string }[];
-  value: string | null;
+  data: DropdownItem[];
+  value: string;
   onChange: (value: string) => void;
-  validation?: (value: string) => string | null;
   placeholder?: string;
-  style?: StyleProp<ViewStyle>;
   search?: boolean;
   searchPlaceholder?: string;
-  inputStyles?: StyleProp<TextStyle>;
-  disabled?: boolean; 
+  style?: StyleProp<ViewStyle>;
+  disabled?: boolean;
 }
 
 const SelectDropdown: React.FC<SelectDropdownProps> = ({
-  label,
   data,
   value,
   onChange,
-  validation,
   placeholder = 'Select an option',
+  search = false,
+  searchPlaceholder = 'Search...',
   style,
-  search,
-  searchPlaceholder,
-  inputStyles,
-  disabled = false, 
+  label,
+  disabled = false,
 }) => {
-  const [error, setError] = useState<string | null>(null);
-  const [touched, setTouched] = useState(false);
+  const modalRef = useRef<Modalize>(null);
+  const [searchText, setSearchText] = useState('');
+  const { t } = useTranslation();
 
-  const handleSelect = (itemValue: string) => {
-    if (disabled) return; 
-    onChange(itemValue);
-    if (validation) {
-      setError(validation(itemValue));
-    }
-  };
+  const filteredData = useMemo(() => {
+    if (!search) return data;
+    return data.filter((item) =>
+      item.label.toLowerCase().includes(searchText.toLowerCase())
+    );
+  }, [data, searchText, search]);
 
-  const handleBlur = () => {
-    if (disabled) return;
-    setTouched(true);
-    if (validation) {
-      setError(validation(value || ''));
-    }
-  };
+  const handleChange = useCallback(
+    (value: string) => {
+      onChange(value);
+      modalRef.current?.close();
+    },
+    [onChange]
+  );
 
   return (
-    <View style={[styles.container, style]}>
+    <View style={{ marginTop: 10 }}>
       {label && <Text style={styles.label}>{label}</Text>}
-      <Dropdown
-        data={data}
-        labelField="label"
-        valueField="value"
-        value={value}
-        onChange={item => handleSelect(item.value)}
-        placeholder={placeholder}
+      <TouchableOpacity
+        onPress={() => !disabled && modalRef.current?.open()}
         style={[
-          styles.dropdown,
-          error ? styles.inputError : null,
-          disabled ? styles.disabledDropdown : null,
-          inputStyles,
+          styles.dropdownButton,
+          style,
+          disabled && styles.disabledDropdown,
         ]}
-        selectedTextStyle={[styles.selectedText, disabled ? styles.disabledText : null]}
-        placeholderStyle={styles.placeholder}
-        containerStyle={styles.dropdownContainer}
-        inputSearchStyle={dropdownStyles.inputSearchStyle}
-        onBlur={handleBlur}
-        search={search && !disabled}
-        searchPlaceholder={searchPlaceholder}
-        disable={disabled}
-      />
-      {error && <Text style={styles.errorText}>{error}</Text>}
+        disabled={disabled}
+      >
+        <Paragraph
+          style={[{ color: Colors.placeholder }, disabled && styles.disabledText]}
+          level='Small'
+        >
+          {value || placeholder}
+        </Paragraph>
+        <Icon name='chevron-down' size={16} color={disabled ? Colors.lightGray : Colors.text} />
+      </TouchableOpacity>
+
+      <Portal>
+        <Modalize ref={modalRef} adjustToContentHeight>
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+            <View style={styles.modalContent}>
+              {search && (
+                <Input
+                  placeholder={searchPlaceholder}
+                  value={searchText}
+                  onChangeText={setSearchText}
+                />
+              )}
+
+              <FlatList
+                nestedScrollEnabled={true}
+                scrollEnabled={false}
+                data={filteredData}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    onPress={() => handleChange(item.value)}
+                    style={styles.option}
+                  >
+                    <Paragraph style={{ color: Colors.text }} level='Small' weight='Medium'>
+                      {item.label}
+                    </Paragraph>
+                  </TouchableOpacity>
+                )}
+                keyExtractor={(item) => `${item.value}-${item.label}`}
+                initialNumToRender={10}
+                maxToRenderPerBatch={10}
+                windowSize={5}
+                ListEmptyComponent={
+                  <Paragraph level="Small" style={{ textAlign: 'center', marginTop: 20 }}>
+                    {t('noResultsFound')}
+                  </Paragraph>
+                }
+              />
+            </View>
+          </KeyboardAvoidingView>
+        </Modalize>
+      </Portal>
     </View>
   );
 };
 
+export default React.memo(SelectDropdown);
+
+
 const styles = ScaledSheet.create({
-  container: {
-    marginBottom: 16,
-  },
-  placeholder: {
-    color: '#ccc',
-  },
   label: {
-    marginBottom: 8,
+    marginBottom: 2,
     fontFamily: 'Quicksand-Regular',
     fontSize: '14@ms',
     lineHeight: '18@ms',
     letterSpacing: '0@ms',
     fontWeight: '400',
   },
-  dropdown: {
+  dropdownButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 10,
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 8,
-    padding: 12,
-    backgroundColor: 'white',
+    borderRadius: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: Colors.white
   },
-  selectedText: {
-    color: '#333',
+  modalContent: {
+    padding: 20,
   },
-  inputError: {
-    borderColor: 'red',
-  },
-  errorText: {
-    color: 'red',
-    fontSize: 12,
-    marginTop: 4,
-  },
-  dropdownContainer: {
-    borderRadius: 8,
+  option: {
+    padding: 15,
+    borderBottomWidth: 1,
+    borderColor: Colors.border,
   },
   disabledDropdown: {
     backgroundColor: '#f0f0f0',
@@ -124,6 +160,3 @@ const styles = ScaledSheet.create({
     color: '#a0a0a0',
   },
 });
-
-export default SelectDropdown;
-

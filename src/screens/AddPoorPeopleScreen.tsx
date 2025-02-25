@@ -33,6 +33,7 @@ import ApiStrings from '../lib/apis_string';
 import { useAuthStore } from '../store/store';
 import { formatFileData } from '../utils/file-format';
 import Header from '../components/Header';
+import LoadingOverlay from '../components/LoadingOverlay';
 
 const AddPeopleScreen = () => {
   const { t } = useTranslation();
@@ -72,6 +73,9 @@ const AddPeopleScreen = () => {
     idProofBackWife: null,
     idProofFrontHusband: null,
     idProofBackHusband: null,
+    idProofBackFather: null,
+    idProofFrontFather: null
+
   });
 
   const [childrenDetails, setChildrenDetails] = useState<ChildDetail[]>([]);
@@ -150,16 +154,46 @@ const AddPeopleScreen = () => {
       }
     }
 
-    if (formData.gender === 'মহিলা' && formData.isHusbandDead !== 'হ্যাঁ' && ['বিবাহিত', 'বিচ্ছেদপ্রাপ্ত', 'বিধবা/বিপত্নীক'].includes(formData.marriageStatus)) {
-      if (!formData.idProofFrontHusband || !formData.idProofBackHusband) {
+    if (
+      ['পুরুষ', 'মহিলা'].includes(formData.gender) &&
+      ['বিবাহিত', 'বিচ্ছেদপ্রাপ্ত', 'বিধবা/তালাক'].includes(formData.marriageStatus)
+    ) {
+      if (
+        formData.gender === 'মহিলা' &&
+        (!formData.idProofFrontHusband || !formData.idProofBackHusband)
+      ) {
         showToast('error', 'আপনাকে স্বামীর আইডি প্রমাণপত্র প্রদান করতে হবে');
         return;
       }
-    }
 
-    if (formData.gender === 'পুরুষ' && formData.isWifeDead !== 'হ্যাঁ' && ['বিবাহিত', 'বিচ্ছেদপ্রাপ্ত', 'বিধবা/বিপত্নীক'].includes(formData.marriageStatus)) {
-      if (!formData.idProofFrontWife || !formData.idProofBackWife) {
+      if (
+        formData.gender === 'মহিলা' &&
+        (!formData.husbandProfession || !formData.isHusbandDead)
+      ) {
+        showToast('error', 'আপনাকে স্বামীর প্রমাণপত্র প্রদান করতে হবে');
+        return;
+      }
+    
+      if (
+        formData.gender === 'পুরুষ' &&
+        (!formData.idProofFrontWife || !formData.idProofBackWife)
+      ) {
         showToast('error', 'আপনাকে স্ত্রীর আইডি প্রমাণপত্র প্রদান করতে হবে');
+        return;
+      }
+      if (
+        formData.gender === 'পুরুষ' &&
+        (!formData.wifeProfession || !formData.isWifeDead)
+      ) {
+        showToast('error', 'আপনাকে স্ত্রীর প্রমাণপত্র প্রদান করতে হবে');
+        return;
+      }
+    }
+  
+    // Validate ID Proof for Unmarried people (Father's ID)
+    if (formData.marriageStatus === 'অবিবাহিত') {
+      if (!formData.idProofFrontFather || !formData.idProofBackFather) {
+        showToast('error', 'আপনাকে পিতার আইডি প্রমাণপত্র প্রদান করতে হবে');
         return;
       }
     }
@@ -200,6 +234,8 @@ const AddPeopleScreen = () => {
     formDataPayload.append('idProofBack', formatFileData(formData.idProofBack));
     formDataPayload.append('idProofFrontWife', formatFileData(formData.idProofFrontWife));
     formDataPayload.append('idProofBackWife', formatFileData(formData.idProofBackWife));
+    formDataPayload.append('idProofFrontFather', formatFileData(formData.idProofFrontFather));
+    formDataPayload.append('idProofFrontFather', formatFileData(formData.idProofFrontFather));
 
     const { message } = await request(
       'post',
@@ -218,7 +254,9 @@ const AddPeopleScreen = () => {
       | 'idProofBackWife'
       | 'photoUrl'
       | 'idProofFrontHusband'
-      | 'idProofBackHusband',
+      | 'idProofBackHusband' 
+      | 'idProofFrontFather'
+      | 'idProofBackFather'
   ) => {
     if (Platform.OS === 'android') {
       const hasPermission = await requestAndroidPermission();
@@ -261,7 +299,9 @@ const AddPeopleScreen = () => {
       | 'idProofBackWife'
       | 'photoUrl'
       | 'idProofFrontHusband'
-      | 'idProofBackHusband',
+      | 'idProofBackHusband'
+      | 'idProofFrontFather'
+      | 'idProofBackFather'
   ) => {
     setFormData({ ...formData, [field]: '' });
   };
@@ -277,6 +317,7 @@ const AddPeopleScreen = () => {
             paddingBottom: 40
           }}
         >
+          <LoadingOverlay visible={loading} />
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={globalStyles.container}>
               <Header title={t('addBegger')} />
@@ -648,57 +689,56 @@ const AddPeopleScreen = () => {
                 />
               </View>
 
-              {formData.gender === 'মহিলা' ? (
-                <>
-                  <Paragraph
-                    level="Medium"
-                    weight="Bold"
-                    style={[styles.sectionTitle, { marginTop: 15 }]}>
-                    {t('husbandIdProofFrontBack')}
-                  </Paragraph>
-                  <View style={styles.row}>
-                    <UploadArea
-                      title={t('idProofFrontLabel')}
-                      imageUri={formData.idProofFrontHusband}
-                      handlePress={() => handleImagePicker('idProofFrontHusband')}
-                      handleRemove={() => removeImage('idProofFrontHusband')}
-                    />
-                    <UploadArea
-                      title={t('idProofBackLabel')}
-                      imageUri={formData.idProofBackHusband}
-                      handlePress={() => handleImagePicker('idProofBackHusband')}
-                      handleRemove={() => removeImage('idProofBackHusband')}
-                    />
-                  </View>
-                </>
-              ) : (
-                <>
-                  <Paragraph
-                    level="Medium"
-                    weight="Bold"
-                    style={[styles.sectionTitle, { marginTop: 15 }]}>
-                    {t('wifeIdProofFrontBack')}
-                  </Paragraph>
-                  <View style={styles.row}>
-                    <UploadArea
-                      title={t('idProofFrontLabel')}
-                      imageUri={formData.idProofFrontWife}
-                      handlePress={() => handleImagePicker('idProofFrontWife')}
-                      handleRemove={() => removeImage('idProofFrontWife')}
-                    />
-                    <UploadArea
-                      title={t('idProofBackLabel')}
-                      imageUri={formData.idProofBackWife}
-                      handlePress={() => handleImagePicker('idProofBackWife')}
-                      handleRemove={() => removeImage('idProofBackWife')}
-                    />
-                  </View>
-                </>
-              )}
+              {['পুরুষ', 'মহিলা'].includes(formData.gender) && 
+            ['বিবাহিত', 'বিচ্ছেদপ্রাপ্ত', 'বিধবা/তালাক'].includes(formData.marriageStatus) ? (
+              <>
+                <Paragraph
+                  level="Medium"
+                  weight="Bold"
+                  style={[styles.sectionTitle, { marginTop: 15 }]}>
+                  {formData.gender === 'মহিলা' ? t('husbandIdProofFrontBack') : t('wifeIdProofFrontBack')}
+                </Paragraph>
+                <View style={styles.row}>
+                  <UploadArea
+                    title={t('idProofFrontLabel')}
+                    imageUri={formData.gender === 'মহিলা' ? formData.idProofFrontHusband : formData.idProofFrontWife}
+                    handlePress={() => handleImagePicker(formData.gender === 'মহিলা' ? 'idProofFrontHusband' : 'idProofFrontWife')}
+                    handleRemove={() => removeImage(formData.gender === 'মহিলা' ? 'idProofFrontHusband' : 'idProofFrontWife')}
+                  />
+                  <UploadArea
+                    title={t('idProofBackLabel')}
+                    imageUri={formData.gender === 'মহিলা' ? formData.idProofBackHusband : formData.idProofBackWife}
+                    handlePress={() => handleImagePicker(formData.gender === 'মহিলা' ? 'idProofBackHusband' : 'idProofBackWife')}
+                    handleRemove={() => removeImage(formData.gender === 'মহিলা' ? 'idProofBackHusband' : 'idProofBackWife')}
+                  />
+                </View>
+              </>
+            ) : formData.marriageStatus === 'অবিবাহিত' ? (
+              <>
+                <Paragraph
+                  level="Medium"
+                  weight="Bold"
+                  style={[styles.sectionTitle, { marginTop: 15 }]}>
+                  {t('fatherIdProofFrontBack')}
+                </Paragraph>
+                <View style={styles.row}>
+                  <UploadArea
+                    title={t('fatherIdFront')}
+                    imageUri={formData.idProofFrontFather}
+                    handlePress={() => handleImagePicker('idProofFrontFather')}
+                    handleRemove={() => removeImage('idProofFrontFather')}
+                  />
+                  <UploadArea
+                    title={t('fatherIdBack')}
+                    imageUri={formData.idProofBackFather}
+                    handlePress={() => handleImagePicker('idProofBackFather')}
+                    handleRemove={() => removeImage('idProofBackFather')}
+                  />
+                </View>
+              </>
+            ) : null}
 
               <AppButton
-                loading={loading}
-                disabled={loading}
                 onPress={handleSubmit}
                 text={t('submit')}
                 style={{ marginTop: 30 }}

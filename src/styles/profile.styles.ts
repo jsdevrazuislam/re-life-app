@@ -30,9 +30,7 @@ const profileStyles = ScaledSheet.create({
         justifyContent:'center',
         margin:'auto'
     },
-    paddingRight:{
-        paddingRight: 16
-    },
+    
     placeholder: {
         width: "100%",
         height: "100%",

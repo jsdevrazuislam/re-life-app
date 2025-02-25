@@ -20,6 +20,7 @@ import ApiStrings from '../lib/apis_string';
 import { showToast } from '../utils/toast';
 import { baseURLPhoto } from '../lib/api';
 import { useTranslation } from '../hooks/useTranslation';
+import ImageComponent from '../components/ui/Image';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -48,7 +49,7 @@ const DashboardScreen = () => {
   };
   const handleLogout = async () => {
     toggleMenu()
-    logout()
+    await logout()
     showToast('success', 'Logout Successfully')
     await request('get', ApiStrings.LOGOUT);
   }
@@ -80,7 +81,7 @@ const DashboardScreen = () => {
             <Paragraph level='Medium' weight='Bold' style={imamStyles.greeting}>{user?.fullName}</Paragraph>
           </View>
           <TouchableOpacity onPress={toggleMenu}>
-            {user?.profileUrl ? <Image source={{ uri: baseURLPhoto(user?.profileUrl ?? "") }} style={imamStyles.profileAvatar} /> : <EvilIcons name='user' />}
+            {user?.profileUrl ? <ImageComponent source={baseURLPhoto(user?.profileUrl ?? "")} style={imamStyles.profileAvatar} /> : <EvilIcons name='user' />}
           </TouchableOpacity>
           <Modal
             visible={isMenuVisible}

@@ -25,7 +25,7 @@ export type AppStackParamList = {
     OpeningScreen: undefined; 
     LoginScreen: undefined; 
     ImamSettingsScreen: undefined; 
-    ResetPasswordScreen: { otp: string}; 
+    ResetPasswordScreen: { otp: string, email:string}; 
     HomeScreen: undefined; 
     ProfileScreen: undefined; 
     ForgotPasswordScreen: undefined; 
@@ -47,5 +47,7 @@ export type AppStackParamList = {
     KycSuccessScreen: undefined; 
     KycScreen: undefined; 
     AddCommitteeScreen: undefined; 
-    OtpScreen: undefined; 
+    OtpScreen: {
+        email?:string
+    }; 
   };

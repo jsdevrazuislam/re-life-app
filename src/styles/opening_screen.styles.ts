@@ -4,18 +4,23 @@ import { Colors } from "../configs/colors";
 
 const openingStyles = StyleSheet.create({
     skipButton: {
-      justifyContent:'flex-end',
-      alignItems:'flex-end'
+      position: 'absolute', right: 20
     },
     container:{
-      marginTop: 10
+      justifyContent:'center',
+      alignItems:'center',
+      flex:0.65
     },
     mb:{
       marginBottom: 14
     },
     image:{
-      width: '100%',
-      height: 300,
+      margin:'auto',
+      marginBottom: 20,
+      width: 120,
+      height: 80,
+      objectFit: 'fill'
+
     },
     appTitle:{
       justifyContent:'center',

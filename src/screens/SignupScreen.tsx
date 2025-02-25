@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ScrollView, Image, Platform, Alert, Linking, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, Text, TouchableOpacity, Platform, Alert, ScrollView, Linking, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import React, { useState } from 'react';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import globalStyles from '../styles/global.style';
@@ -27,7 +27,6 @@ import { districts, professions, unions, upazilas, villages } from '../data/dump
 import SelectDropdown from '../components/ui/Select';
 import PhoneNumberInput from '../components/ui/PhoneNumberInput';
 import Paragraph from '../components/ui/Paragraph';
-import profileStyles from '../styles/profile.styles';
 import { requestAndroidPermission } from '../utils/permission';
 import * as ImagePicker from 'react-native-image-picker';
 import { formatFileData } from '../utils/file-format';
@@ -36,6 +35,7 @@ import { validateCommitteeAddress } from '../validations/add.committee';
 import { UploadArea } from './KycScreen';
 import kycScreenStyles from '../styles/kycScreen.styles';
 import LoadingOverlay from '../components/LoadingOverlay';
+
 
 
 const SignupScreen = () => {
@@ -270,7 +270,7 @@ const SignupScreen = () => {
     setTempEmail(data?.email)
     setStatus('otp_pending')
     showToast('success', message);
-    navigation.navigate('OtpScreen');
+    navigation.navigate('OtpScreen', { email: data?.email });
   };
 
   return (
@@ -280,13 +280,16 @@ const SignupScreen = () => {
         style={{ flex: 1 }}
       >
         <ScrollView
-        contentContainerStyle={{
-          paddingBottom: 30
-        }}
+          contentContainerStyle={{
+            paddingBottom: 30
+          }}
+          nestedScrollEnabled={true} 
         >
           <View style={globalStyles.container}>
-           <LoadingOverlay visible={loading} />
-            <AppLogo />
+            <LoadingOverlay visible={loading} />
+            <View style={{ justifyContent: 'center', alignItems: 'center', marginBottom: 10 }}>
+              <AppLogo />
+            </View>
             <Heading level={4} weight="Bold">
               {t('signUpTitle')}
             </Heading>
@@ -318,46 +321,52 @@ const SignupScreen = () => {
                 <Paragraph level="Small" weight="Medium">
                   {t('masjidLocationLabel')}
                 </Paragraph>
-                <ScrollView
-                  style={{ marginTop: 10 }}
-                  horizontal
-                  showsHorizontalScrollIndicator={false}>
-                  <SelectDropdown
-                    data={districts}
-                    value={formData.location.district}
-                    onChange={value => handleLocationChange('district', value)}
-                    placeholder="Select a district"
-                    style={profileStyles.paddingRight}
-                    search={true}
-                    searchPlaceholder="Search district"
-                  />
-                  <SelectDropdown
-                    data={upazilas}
-                    value={formData.location.upazila}
-                    onChange={value => handleLocationChange('upazila', value)}
-                    placeholder="Select an upazila"
-                    style={profileStyles.paddingRight}
-                    search={true}
-                    searchPlaceholder="Search upazila"
-                  />
-                  <SelectDropdown
-                    data={unions}
-                    value={formData.location.union}
-                    onChange={value => handleLocationChange('union', value)}
-                    placeholder="Select a union"
-                    style={profileStyles.paddingRight}
-                    search={true}
-                    searchPlaceholder="Search union"
-                  />
-                  <SelectDropdown
-                    data={villages}
-                    value={formData.location.village}
-                    onChange={value => handleLocationChange('village', value)}
-                    placeholder="Select a village"
-                    search={true}
-                    searchPlaceholder="Search village"
-                  />
-                </ScrollView>
+                <View style={{ width: '100%', gap:10, marginTop: 10, marginBottom: 20, flexDirection: 'row', flexWrap: 'wrap' }}>
+                  <View style={{ width: '48%' }}>
+                    <SelectDropdown
+                      data={districts}
+                      value={formData.location.district}
+                      onChange={value => handleLocationChange('district', value)}
+                      placeholder="Select a district"
+                      search={true}
+                      searchPlaceholder="Search district"
+                    />
+                  </View>
+
+                  <View style={{ width: '48%' }}>
+                    <SelectDropdown
+                      data={upazilas}
+                      value={formData.location.upazila}
+                      onChange={value => handleLocationChange('upazila', value)}
+                      placeholder="Select an upazila"
+                      search={true}
+                      searchPlaceholder="Search upazila"
+                    />
+                  </View>
+
+                  <View style={{ width: '48%' }}>
+                    <SelectDropdown
+                      data={unions}
+                      value={formData.location.union}
+                      onChange={value => handleLocationChange('union', value)}
+                      placeholder="Select a union"
+                      search={true}
+                      searchPlaceholder="Search union"
+                    />
+                  </View>
+
+                  <View style={{ width: '48%'}}>
+                    <SelectDropdown
+                      data={villages}
+                      value={formData.location.village}
+                      onChange={value => handleLocationChange('village', value)}
+                      placeholder="Select a village"
+                      search={true}
+                      searchPlaceholder="Search village"
+                    />
+                  </View>
+                </View>
+
                 <Input
                   label={t('imamNameLabel')}
                   placeholder={t('imamNamePlaceholder')}
@@ -451,8 +460,8 @@ const SignupScreen = () => {
                         setCommitteeDetails(updated);
                       }}
                       data={professions}
-                      style={styles.halfInput}
-                      inputStyles={{ backgroundColor: Colors.white }}
+                      search={true}
+                      style={{ marginBottom: 10}}
                     />
                     <PhoneNumberInput
                       label={t('committeePhoneLabel')}
