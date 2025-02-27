@@ -286,7 +286,7 @@ const SignupScreen = () => {
           nestedScrollEnabled={true} 
         >
           <View style={globalStyles.container}>
-            <LoadingOverlay visible={loading} />
+            <LoadingOverlay visible={loading} message='আপনার তথ্য প্রক্রিয়া করতে কিছু সময় লাগবে। অনুগ্রহ করে সম্পূর্ণ হওয়া পর্যন্ত অপেক্ষা করুন, অন্যথায় আপনার তথ্য হারিয়ে যেতে পারে।' />
             <View style={{ justifyContent: 'center', alignItems: 'center', marginBottom: 10 }}>
               <AppLogo />
             </View>

@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, ScrollView, TouchableOpacity, Switch, Image} from 'react-native';
+import {View, ScrollView, TouchableOpacity, Switch} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import styles from '../styles/imamSetting.styles';
 import Paragraph from '../components/ui/Paragraph';
@@ -7,7 +7,6 @@ import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import globalStyles from '../styles/global.style';
 import Heading from '../components/ui/Heading';
 import {useAuthStore} from '../store/store';
-import {baseURLPhoto} from '../lib/api';
 import {useTranslationStore} from '../hooks/useTranslationStore';
 import {Colors} from '../configs/colors';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
@@ -69,6 +68,11 @@ const SettingsScreen = () => {
           </View>
 
           <View style={styles.settingsGroup}>
+            <SettingItem
+              icon="notifications"
+              label={t('title')}
+              onPress={() => navigation.navigate('NotificationScreen')}
+            />
             <SettingItem
               icon="lock"
               label={t('changePasswordTitle')}

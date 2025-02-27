@@ -131,7 +131,7 @@ export default {
   description2: 'Upload a clear selfie to match your face with your ID photo. Make sure there is enough light and your face is fully visible.',
   title3: 'Take a photo of your Imam verification document',
   description3: 'Upload an official document or certificate that verifies you as an Imam.',
-  kycSecurityMessage: 'Your information will be encrypted and securely stored. It will only be used for identity verification and will never be shared for other purposes.',
+  kycSecurityMessage: 'Your information will securely stored. It will only be used for identity verification and will never be shared for other purposes.',
   submitVerificationButton: 'Submit for Verification',
   verificationPending: 'Your verification request is under review. Please wait.',
   verificationApproved: 'Your verification has been successfully approved!',
@@ -320,6 +320,11 @@ wifeIdBack: "Wife's ID Proof (Back)",
 emptyPeopleTitle: 'No people added yet',
 emptyPeopleDescription: 'Tap the button above to add a new person in need and offer support.',
 years: 'Years',
+  title: "Notifications",
+  all: "All",
+  unread: "Unread",
+  noNotifications: "No notifications available",
+  noUnread: "No unread notifications",
 
 
 

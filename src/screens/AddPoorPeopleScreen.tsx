@@ -315,7 +315,7 @@ const AddPeopleScreen = () => {
             paddingBottom: 40
           }}
         >
-          <LoadingOverlay visible={loading} />
+          <LoadingOverlay visible={loading} message='আপনার তথ্য প্রক্রিয়া করতে কিছু সময় লাগবে। অনুগ্রহ করে সম্পূর্ণ হওয়া পর্যন্ত অপেক্ষা করুন, অন্যথায় আপনার তথ্য হারিয়ে যেতে পারে।' />
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={globalStyles.container}>
               <Header title={t('addBegger')} />

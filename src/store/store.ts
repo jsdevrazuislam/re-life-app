@@ -22,6 +22,7 @@ const initialState = {
   committees: [],
   people: [],
   isFirstTime: false,
+  notifications: [],
 };
 
 export const useAuthStore = create<AuthState>(set => ({
@@ -45,6 +46,7 @@ export const useAuthStore = create<AuthState>(set => ({
       isAuthenticated: false,
     });
   },
+  setNotifications: (notifications) => set({ notifications }),
   setMasjids: (masjids) => set({ masjids }),
   setTotalPeople: (totalPeople) => set({ totalPeople }),
   setTotalCommittees: (totalCommittees) => set({ totalCommittees }),
@@ -71,7 +73,8 @@ export const useAuthStore = create<AuthState>(set => ({
         const { data } = await api.get(ApiStrings.ME);
         if (data?.data?.kycStatus === 'verified') {
           const { data: imamData } = await api.get(ApiStrings.GET_MASJID_DETAILS(data?.data?.masjid?._id || ''));
-          set({ committees: imamData?.data?.committees, people: imamData?.data?.poorPeople, totalPeople: imamData?.data?.totalPoorPeople, totalCommittees: imamData?.data?.totalCommittees })
+          const { data: notifications } = await api.get(ApiStrings.GET_NOTIFICATIONS(data?.data?._id || ''));
+          set({ committees: imamData?.data?.committees, people: imamData?.data?.poorPeople, totalPeople: imamData?.data?.totalPoorPeople, totalCommittees: imamData?.data?.totalCommittees, notifications: notifications?.data });
         }
 
 

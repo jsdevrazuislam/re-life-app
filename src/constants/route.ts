@@ -20,6 +20,7 @@ export const AppRoutes = {
     UPDATE_EMAIL:'UpdateEmailScreen',
     RESET_PASSWORD_SCREEN:'ResetPasswordScreen',
     BLOCK_SCREEN:'BlockScreen',
+    NOTIFICATION_SCREEN:'NotificationScreen',
 }
 
 export type AppStackParamList = {
@@ -33,6 +34,7 @@ export type AppStackParamList = {
     ChangePasswordScreen: undefined; 
     UpdateEmailScreen: undefined; 
     ImamPendingScreen: undefined; 
+    NotificationScreen: undefined; 
     KycStartedScreen: undefined; 
     BlockScreen: undefined;
     AddPoorPeopleScreen: undefined;

@@ -19,7 +19,9 @@ const ApiStrings = {
     COMMITTEE_PROFILE_DELETE: (masjidId:string, committeeId:string) => `committee/${masjidId}/committee/${committeeId}/image`,
     CREATE_COMMITTEE:'/committee/create',
     GET_MASJIDS:'/masjids',
-    UPDATE_COMMITTEE: '/committee/update'
+    UPDATE_COMMITTEE: '/committee/update',
+    GET_NOTIFICATIONS: (userId:string) => `/notifications/${userId}`,
+    READ_NOTIFICATION: (notificationId:string) => `/notifications/read/${notificationId}`,
 }
 
 export default ApiStrings

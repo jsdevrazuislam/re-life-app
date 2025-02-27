@@ -25,6 +25,7 @@ import UpdateEmailScreen from '../../screens/UpdateEmailScreen';
 import ChangePasswordScreen from '../../screens/ChangePasswordScreen';
 import ResetPasswordScreen from '../../screens/ResetPasswordScreen';
 import BlockedUserScreen from '../../screens/BlockScreen';
+import NotificationsScreen from '../../screens/NotificationScreen';
 
 
 const Tab = createBottomTabNavigator();
@@ -97,6 +98,7 @@ const AppNavigator = ({ role, status, userTempId, user , isFirstTime} : { role:s
         <Stack.Screen name={AppRoutes.UPDATE_EMAIL} component={UpdateEmailScreen} />
         <Stack.Screen name={AppRoutes.CHANGE_PASSWORD} component={ChangePasswordScreen} />
         <Stack.Screen name={AppRoutes.BLOCK_SCREEN} component={BlockedUserScreen} />
+        <Stack.Screen name={AppRoutes.NOTIFICATION_SCREEN} component={NotificationsScreen} />
       </Stack.Navigator>
     );
   }
