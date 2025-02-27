@@ -13,7 +13,7 @@ const SafeAreaWrapper: FC<SafeAreaWrapperProps> = ({
     <SafeAreaView
       style={{
         backgroundColor: bg,
-        paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+        paddingTop: Platform.OS === 'android' ? 20 : 0,
         height,
         flex
       }}

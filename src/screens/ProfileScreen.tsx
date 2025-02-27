@@ -108,10 +108,7 @@ const ProfileScreen = () => {
   };
 
   const removeImage = async () => {
-    if (formData.image?.uri) {
-      await request('post', ApiStrings.DELETE_PROFILE(user?.fileId ?? ''));
-      setFormData({ ...formData, image: null });
-    }
+    setFormData({ ...formData, image: null });
   };
 
   const handleInputChange = (name: string, value: string) => {

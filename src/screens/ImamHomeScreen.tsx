@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, Image, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, Modal } from 'react-native';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
@@ -16,7 +16,6 @@ import { NavigationProp, useNavigation, useRoute } from '@react-navigation/nativ
 import { AppStackParamList } from '../constants/route';
 import { useApi } from '../hooks/useApi';
 import { useAuthStore } from '../store/store';
-import ApiStrings from '../lib/apis_string';
 import { showToast } from '../utils/toast';
 import { baseURLPhoto } from '../lib/api';
 import { useTranslation } from '../hooks/useTranslation';
@@ -30,46 +29,31 @@ const Tab = createMaterialTopTabNavigator();
 
 const DashboardScreen = () => {
   const { t } = useTranslation()
-  const [people, setPeople] = useState<PoorPeopleResponse[]>([]);
-  const [committees, setCommittees] = useState<CommitteeResponse[]>([]);
   const [isMenuVisible, setMenuVisible] = useState(false);
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
   const route = useRoute<ImamHomeScreenRouteProp>();
   const [activeTab, setActiveTab] = useState(route.params?.activeTab || t('beggers'));
   const toggleMenu = () => setMenuVisible(!isMenuVisible);
-  const { request, loading } = useApi();
-  const { logout, user } = useAuthStore()
-  const [total, setTotal] = useState({
-    totalPeople: 0,
-    totalCommittees: 0
-  })
+  const { loading } = useApi();
+  const [hasNavigatedFromAddScreen, setHasNavigatedFromAddScreen] = useState(false);
+  const { logout, user, people, committees } = useAuthStore()
 
   const handleAddPerson = () => {
     navigation.navigate('AddPoorPeopleScreen')
   };
+
   const handleLogout = async () => {
     toggleMenu()
     await logout()
     showToast('success', 'Logout Successfully')
-    await request('get', ApiStrings.LOGOUT);
   }
 
   useEffect(() => {
-    (async () => {
-      if (user?.kycStatus === 'verified') {
-        const { data } = await request('get', ApiStrings.GET_MASJID_DETAILS(user?.masjid?._id || ''));
-        setTotal({ ...total, totalPeople: data?.totalPoorPeople, totalCommittees: data?.totalCommittees })
-        setCommittees(data?.committees)
-        setPeople(data?.poorPeople)
-      }
-    })()
-  }, [user])
-
-  useEffect(() => {
-    if (route.params?.activeTab) {
+    if (route.params?.activeTab && !hasNavigatedFromAddScreen) {
       setActiveTab(route.params.activeTab === t('beggers') ? t('beggers') : t('committees'));
+      setHasNavigatedFromAddScreen(true); 
     }
-  }, [route.params?.activeTab]);
+  }, [route.params?.activeTab, hasNavigatedFromAddScreen]);
 
 
   return (
@@ -124,7 +108,7 @@ const DashboardScreen = () => {
             <Heading level={5} weight='Bold' style={imamStyles.statValue}>{people?.length}</Heading>
           </View>
           <View style={imamStyles.statCard}>
-            <Icon name="groups" size={32} color="#4CAF50" />
+            <Icon name="groups" size={32} color={Colors.primary} />
             <Paragraph level='Small' weight='Medium' style={imamStyles.statLabel}>{t("totalCommittees")}</Paragraph>
             <Heading level={5} weight='Bold' style={imamStyles.statValue}>{committees?.length}</Heading>
           </View>

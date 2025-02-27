@@ -17,7 +17,7 @@ import Input from '../ui/AppInput';
 import Textarea from '../ui/Textarea';
 import ErrorMessage from '../ErrorMessage';
 import AppButton from '../ui/AppButton';
-import { useTranslation } from '../../hooks/useTranslation';
+import {useTranslation} from '../../hooks/useTranslation';
 import ImageComponent from '../ui/Image';
 
 const CommitteeTab: React.FC<CommitteeTabProps> = ({data, loading}) => {
@@ -28,7 +28,7 @@ const CommitteeTab: React.FC<CommitteeTabProps> = ({data, loading}) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const {request, loading: requestLoading, error} = useApi();
   const {user} = useAuthStore();
-  const { t } = useTranslation()
+  const {t} = useTranslation();
 
   const openModal = (type: 'edit' | 'delete') => {
     setModalType(type);
@@ -138,42 +138,54 @@ const CommitteeTab: React.FC<CommitteeTabProps> = ({data, loading}) => {
         </View>
       ) : (
         <ScrollView>
-          {data.map(item => (
-            <View key={item._id} style={imamStyles.infoCard}>
+          {data.map((item, index) => (
+            <View key={index} style={imamStyles.infoCard}>
               <View style={imamStyles.cardContent}>
+                {/* Profile Picture */}
                 <ImageComponent
                   source={baseURLPhoto(item?.profilePicture)}
                   style={imamStyles.infoPhoto}
-                  imageStyle={{ borderRadius: 3}}
+                  imageStyle={{borderRadius: 3}}
                 />
+
+                {/* Text Content */}
                 <View style={imamStyles.cardText}>
                   <Paragraph
                     level="Small"
                     weight="Bold"
-                    style={imamStyles.cardTitle}>
-                    {item.name}{' '}
+                    style={imamStyles.cardTitle}
+                    numberOfLines={1}
+                    ellipsizeMode="tail">
+                    {item.name}
                   </Paragraph>
                   <Paragraph
                     level="Small"
-                    weight="Medium"
-                    style={imamStyles.cardSubtitle}>
-                    Profession: {item.profession}
+                    weight="Bold"
+                    style={imamStyles.cardSubtitle}
+                    numberOfLines={1}
+                    ellipsizeMode="tail">
+                    Profession: <Paragraph level="Small" weight="Medium">{item.profession}</Paragraph>
                   </Paragraph>
+
                   <Paragraph
                     level="Small"
-                    weight="Medium"
-                    style={imamStyles.cardSubtitle}>
-                    Location: {item.address}
+                    weight="Bold"
+                    style={imamStyles.cardSubtitle}
+                    numberOfLines={1}
+                    ellipsizeMode="tail">
+                    Location: <Paragraph level="Small" weight="Medium">{item.address}</Paragraph>
                   </Paragraph>
                 </View>
-              </View>
-              <View style={imamStyles.actionButtons}>
-                <TouchableOpacity onPress={() => openModal('edit')}>
-                  <Icon name="edit" size={20} color="#4CAF50" />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => openModal('delete')}>
-                  <Icon name="delete" size={20} color="#F44336" />
-                </TouchableOpacity>
+
+                {/* Action Buttons */}
+                <View style={imamStyles.actionButtons}>
+                  <TouchableOpacity onPress={() => openModal('edit')}>
+                    <Icon name="edit" size={20} color="#4CAF50" />
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => openModal('delete')}>
+                    <Icon name="delete" size={20} color="#F44336" />
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           ))}

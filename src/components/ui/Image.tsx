@@ -15,7 +15,7 @@ const ImageComponent: React.FC<ImageComponentProps> = ({ source, style, imageSty
 
   const imageSource = isNetworkImage
     ? { uri: source }
-    : source || require('../../assets/placeholder.jpg');
+    : source ? { uri: source } : require('../../assets/placeholder.jpg');
 
   return (
     <Image

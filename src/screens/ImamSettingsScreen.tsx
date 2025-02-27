@@ -55,7 +55,7 @@ const SettingsScreen = () => {
           <View style={styles.profileSection}>
             <View style={styles.avatarContainer}>
               <ImageComponent
-                source={{uri: user?.profileUrl}}
+                source={user?.profileUrl ?? ""}
                 style={styles.avatar}
                 imageStyle={{ borderRadius: 50}}
               />

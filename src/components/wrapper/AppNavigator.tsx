@@ -44,7 +44,7 @@ const AdminStackNavigator = () => (
 );
 
 const Stack = createStackNavigator();
-const AppNavigator = ({ role, status, userTempId, user } : { role:string, user:IUser | null, status:string, userTempId:string }) => {
+const AppNavigator = ({ role, status, userTempId, user , isFirstTime} : { role:string, user:IUser | null, status:string, userTempId:string, isFirstTime:boolean }) => {
 
   if (status === 'otp_pending') {
     return (
@@ -69,11 +69,11 @@ const AppNavigator = ({ role, status, userTempId, user } : { role:string, user:I
   if (!role) {
     return (
       <Stack.Navigator screenOptions={stackNavigationOptions}>
-        <Stack.Screen name={AppRoutes.OPENING_SCREEN} component={OpeningScreen} />
+        {!isFirstTime && <Stack.Screen name={AppRoutes.OPENING_SCREEN} component={OpeningScreen} />}
+        <Stack.Screen name={AppRoutes.HOME_SCREEN} component={HomeScreen} />
         <Stack.Screen name={AppRoutes.LOGIN_SCREEN} component={LoginScreen} />
         <Stack.Screen name={AppRoutes.SIGNUP_SCREEN} component={SignupScreen} />
         <Stack.Screen name={AppRoutes.FORGOT_PASSWORD} component={ForgotPasswordScreen} />
-        <Stack.Screen name={AppRoutes.HOME_SCREEN} component={HomeScreen} />
         <Stack.Screen name={AppRoutes.HOME_VIEW_DETAILS_INFO} component={HomeViewDetailsInfoScreen} />
         <Stack.Screen name={AppRoutes.POOR_PEOPLE_VIEW} component={PoorPeopleViewScreen} />
         <Stack.Screen name={AppRoutes.OTP_SCREEN} component={OtpScreen} />

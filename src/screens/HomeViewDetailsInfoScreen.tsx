@@ -62,7 +62,7 @@ const HomeViewDetailsInfoScreen = () => {
               }}
             >
               <ImageComponent
-                source={{ uri: singleData?.masjidProfile }}
+                source={singleData?.masjidProfile}
                 style={homeViewDetailsStyles.masjidImage}
                 imageStyle={{ borderRadius: 10 }}
               />

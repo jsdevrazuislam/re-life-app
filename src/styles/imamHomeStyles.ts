@@ -107,6 +107,19 @@ export const imamStyles = ScaledSheet.create({
     marginLeft: '8@ms',
     fontWeight: 'bold',
   },
+  cardContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  cardText: {
+    flex: 1,
+    marginLeft: 10,
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    gap: 10,
+  },  
   infoCard: {
     backgroundColor: 'white',
     borderRadius: '8@ms',
@@ -116,21 +129,11 @@ export const imamStyles = ScaledSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center'
   },
-  cardContent: {
-    flexDirection: 'row',
-  },
-  cardText: {
-    marginLeft: '16@ms',
-  },
   cardTitle: {
     color: Colors.text,
   },
   cardSubtitle: {
     color: Colors.text,
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    gap: '5@ms',
   },
   overlay: {
     flex: 1,

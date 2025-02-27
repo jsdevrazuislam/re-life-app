@@ -2,9 +2,6 @@ import { View, ScrollView } from 'react-native';
 import React, { useState } from 'react';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import globalStyles from '../styles/global.style';
-import styles from '../styles/imamSetting.styles';
-import BackButton from '../components/BackButton';
-import Heading from '../components/ui/Heading';
 import loginStyles from '../styles/login.style';
 import { useTranslation } from '../hooks/useTranslation';
 import Input from '../components/ui/AppInput';
@@ -18,10 +15,11 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { AppStackParamList } from '../constants/route';
 import { showToast } from '../utils/toast';
 import Header from '../components/Header';
+import LoadingOverlay from '../components/LoadingOverlay';
 
 const ChangePasswordScreen = () => {
     const { request, loading, error } = useApi();
-    const { logout, setRole } = useAuthStore();
+    const { logout } = useAuthStore();
     const navigation = useNavigation<NavigationProp<AppStackParamList>>();
 
     const { t } = useTranslation();
@@ -44,8 +42,7 @@ const ChangePasswordScreen = () => {
 
 
         const { message } = await request('put', ApiStrings.CHANGE_PASSWORD, { oldPassword: formData.currentPassword, newPassword: formData.newPassword});
-        setRole('')
-        logout();
+        await logout();
         showToast('success', message);
         navigation.navigate('LoginScreen');
     };
@@ -53,6 +50,7 @@ const ChangePasswordScreen = () => {
     return (
         <SafeAreaWrapper>
             <ScrollView>
+                <LoadingOverlay visible={loading} />
                 <View style={globalStyles.container}>
                     <Header title={t('changePasswordTitle')} />
                     <View style={loginStyles.loginForm}>
@@ -98,7 +96,6 @@ const ChangePasswordScreen = () => {
                             text={t('changePasswordButton')}
                             onPress={handleSubmit}
                             variant="primary"
-                            loading={loading}
                             style={{ marginTop: '55%' }}
                             disabled={!formData.confirmPasword || !formData.currentPassword || !formData.newPassword || loading}
                         />

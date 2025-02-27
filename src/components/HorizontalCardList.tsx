@@ -1,4 +1,4 @@
-import { View, Text, Image, FlatList, TouchableOpacity, Modal } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Modal } from 'react-native';
 import { useState } from 'react';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import horizontalCardListStyles from '../styles/components/horizontalCardList.styles';
@@ -21,7 +21,6 @@ const HorizontalCardList: React.FC<HorizontalCardListProps> = ({
   const [selectedItem, setSelectedItem] = useState<CommitteeResponse | any>(null);
   const { t } = useTranslation();
 
-  // Prepare images for the viewer
   const images = data.map((item) => ({ url: item[imageKey] || '' })).filter((img) => img.url);
 
   const openImage = (selectedUri: string) => {
@@ -65,11 +64,11 @@ const HorizontalCardList: React.FC<HorizontalCardListProps> = ({
             {imageKey && item[imageKey] && (
               <TouchableOpacity onPress={() => openImage(item[imageKey])}>
                 <ImageComponent
-                  source={{ uri: item[imageKey] }}
+                  source={item[imageKey]}
                   style={horizontalCardListStyles.detailsProfilePicture}
                   imageStyle={{
                      borderTopLeftRadius: 10, 
-                     borderTopRightRadius: 10
+                     borderTopRightRadius: 10,
                    }}
                 />
               </TouchableOpacity>
@@ -112,7 +111,7 @@ const HorizontalCardList: React.FC<HorizontalCardListProps> = ({
               
               {selectedItem?.[imageKey] && (
                 <ImageComponent
-                  source={{ uri: selectedItem[imageKey] }}
+                  source={selectedItem[imageKey]}
                   style={horizontalCardListStyles.modalImage}
                   imageStyle={{ borderRadius: 50}}
                 />

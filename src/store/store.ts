@@ -1,31 +1,9 @@
-import {create} from 'zustand';
+import { create } from 'zustand';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { api } from '../lib/api';
 import ApiStrings from '../lib/apis_string';
 
-interface AuthState {
-  user: IUser | null;
-  tempUser: TempUser | null;
-  accessToken: string | null;
-  refreshToken: string | null;
-  role: string | null;
-  userTempId: string | null;
-  status: string | null;
-  isAuthenticated: boolean;
-  setUserInfo: (user: IUser) => void;
-  setTempUser: (user: TempUser | null) => void;
-  logout: () => void;
-  setUser: (user: IUser, accessToken: string, refreshToken: string) => void;
-  setRole: (role: string) => void;
-  setUserId: (role: string) => void;
-  setTempEmail: (email: string) => void;
-  userTempEmail:string | null,
-  setStatus: (status: string) => void;
-  loadUserFromStorage: () => Promise<void>;
-  isLoading: boolean;
-  masjids: MasjidNames[] | null,
-  setMasjids: (data: MasjidNames[]) => void
-}
+
 
 const initialState = {
   user: null,
@@ -38,7 +16,12 @@ const initialState = {
   status: '',
   userTempId: null,
   userTempEmail: "",
-  masjids: []
+  masjids: [],
+  totalPeople: 0,
+  totalCommittees: 0,
+  committees: [],
+  people: [],
+  isFirstTime: false,
 };
 
 export const useAuthStore = create<AuthState>(set => ({
@@ -63,6 +46,10 @@ export const useAuthStore = create<AuthState>(set => ({
     });
   },
   setMasjids: (masjids) => set({ masjids }),
+  setTotalPeople: (totalPeople) => set({ totalPeople }),
+  setTotalCommittees: (totalCommittees) => set({ totalCommittees }),
+  setCommittees: (committees) => set({ committees }),
+  setPeople: (people) => set({ people }),
   loadUserFromStorage: async () => {
     try {
       const role = await AsyncStorage.getItem('role');
@@ -72,16 +59,23 @@ export const useAuthStore = create<AuthState>(set => ({
       const status = await AsyncStorage.getItem('status');
       const userTempEmail = await AsyncStorage.getItem('userTempEmail');
       const user = await AsyncStorage.getItem('tempUser');
+      const isFirstTime = await AsyncStorage.getItem('hasSeenOpening');
       const tempUser = user ? JSON.parse(user) : null;
 
-      set({ status, userTempId , userTempEmail, tempUser})
+      set({ status, userTempId, userTempEmail, tempUser, isFirstTime: isFirstTime ? true : false });
 
       const { data } = await api.get(ApiStrings.GET_MASJIDS_NAME);
       set({ masjids: data?.data?.data })
 
-      if(accessToken){
-        const { data } = await api.get(ApiStrings.ME)
-        set({ userTempId, accessToken, refreshToken, isLoading: false, role, user: data?.data, isAuthenticated: true})
+      if (accessToken) {
+        const { data } = await api.get(ApiStrings.ME);
+        if (data?.data?.kycStatus === 'verified') {
+          const { data: imamData } = await api.get(ApiStrings.GET_MASJID_DETAILS(data?.data?.masjid?._id || ''));
+          set({ committees: imamData?.data?.committees, people: imamData?.data?.poorPeople, totalPeople: imamData?.data?.totalPoorPeople, totalCommittees: imamData?.data?.totalCommittees })
+        }
+
+
+        set({ userTempId, accessToken, refreshToken, isLoading: false, role, user: data?.data, isAuthenticated: true })
       }
       set({ isLoading: false });
 
@@ -99,9 +93,9 @@ export const useAuthStore = create<AuthState>(set => ({
     await AsyncStorage.setItem('userTempEmail', email);
 
   },
-  setRole:(role) => set({ role }),
+  setRole: (role) => set({ role }),
   setTempUser: async (tempUser) => {
-    set({ tempUser})
+    set({ tempUser })
     await AsyncStorage.setItem('tempUser', JSON.stringify(tempUser));
   },
   setUserId: async (userTempId) => {
@@ -113,6 +107,6 @@ export const useAuthStore = create<AuthState>(set => ({
     await AsyncStorage.setItem('accessToken', accessToken);
     await AsyncStorage.setItem('refreshToken', refreshToken);
     await AsyncStorage.setItem('role', user.role);
-    set({user, accessToken, refreshToken, isAuthenticated: true});
+    set({ user, accessToken, refreshToken, isAuthenticated: true });
   },
 }));

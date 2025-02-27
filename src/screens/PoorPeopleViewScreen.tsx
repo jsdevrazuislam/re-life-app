@@ -1,24 +1,23 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   ScrollView,
-  Text,
-  Image,
   TouchableOpacity,
   Modal,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Collapsible from 'react-native-collapsible';
 import styles from '../styles/poorPeopleView.styles';
-import {useRoute} from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import globalStyles from '../styles/global.style';
-import {baseURLPhoto} from '../lib/api';
+import { baseURLPhoto } from '../lib/api';
 import ImageView from 'react-native-image-zoom-viewer';
 import Heading from '../components/ui/Heading';
 import Paragraph from '../components/ui/Paragraph';
 import BackButton from '../components/BackButton';
-import {useTranslation} from '../hooks/useTranslation';
+import { useTranslation } from '../hooks/useTranslation';
+import ImageComponent from '../components/ui/Image';
 
 const HomeScreen = () => {
   const [collapsedSections, setCollapsedSections] = useState({
@@ -36,12 +35,13 @@ const HomeScreen = () => {
   const route = useRoute<HomeViewDetailsInfoRouteProp>();
   const singleData = route?.params?.item as PoorPeople;
   const toggleSection = (section: keyof typeof collapsedSections) => {
-    setCollapsedSections(prev => ({...prev, [section]: !prev[section]}));
+    setCollapsedSections(prev => ({ ...prev, [section]: !prev[section] }));
   };
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const documents = singleData?.idProofDocuments || [];
   const wifeIdProofDocuments = singleData?.wifeIdProofDocuments || [];
   const husbandIdProofDocuments = singleData?.husbandIdProofDocuments || [];
+  const fatherIdProofDocuments = singleData?.fatherIdProofDocuments || [];
 
   const openImage = (imageUrl: string) => {
     if (imageUrl) {
@@ -62,9 +62,10 @@ const HomeScreen = () => {
                 setSelectedImage(baseURLPhoto(singleData?.photoUrl));
                 setVisible(true);
               }}>
-              <Image
-                source={{uri: baseURLPhoto(singleData?.photoUrl)}}
+              <ImageComponent
+                source={singleData?.photoUrl}
                 style={styles.profileImage}
+                imageStyle={{ borderRadius: 50 }}
               />
             </TouchableOpacity>
             <Heading level={5} weight="Bold" style={styles.name}>
@@ -396,7 +397,7 @@ const HomeScreen = () => {
                   weight="Medium"
                   style={styles.detailText}>
                   {t('lentils')}: {singleData?.essentialsNeedsMonthly?.lentils}{' '}
-                  
+
                 </Paragraph>
               </View>
               <View style={styles.detailRow}>
@@ -529,68 +530,105 @@ const HomeScreen = () => {
                     style={styles.docImageContainer}
                     onPress={() => openImage(baseURLPhoto(doc?.value))}>
                     <Paragraph
-                      style={{marginBottom: 10}}
+                      style={{ marginBottom: 10 }}
                       level="Small"
                       weight="Bold">
                       {doc?.label}
                     </Paragraph>
-                    <Image
+                    <ImageComponent
                       style={styles.docImage}
-                      source={{uri: baseURLPhoto(doc?.value)}}
+                      source={doc?.value}
+                      imageStyle={{ borderRadius: 10 }}
                     />
                   </TouchableOpacity>
                 ))}
               </View>
-              {singleData.gender === 'পুরুষ' ? (
-                <View style={styles.docImageRow}>
-                  {wifeIdProofDocuments?.map((doc, index) => (
-                    <TouchableOpacity
-                      key={index}
-                      style={styles.docImageContainer}
-                      onPress={() => openImage(baseURLPhoto(doc?.value))}>
-                      <Paragraph
-                        style={{marginBottom: 10}}
-                        level="Small"
-                        weight="Bold">
-                        {doc?.label}
-                      </Paragraph>
-                      <Image
-                        style={styles.docImage}
-                        source={{uri: baseURLPhoto(doc?.value)}}
-                      />
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              ) : (
-                <View style={styles.docImageRow}>
-                  {husbandIdProofDocuments?.map((doc, index) => (
-                    <TouchableOpacity
-                      key={index}
-                      style={styles.docImageContainer}
-                      onPress={() => openImage(baseURLPhoto(doc?.value))}>
-                      <Paragraph
-                        style={{marginBottom: 10}}
-                        level="Small"
-                        weight="Bold">
-                        {doc?.label}
-                      </Paragraph>
-                      <Image
-                        style={styles.docImage}
-                        source={{uri: baseURLPhoto(doc?.value)}}
-                      />
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              )}
+              {
+                ['বিবাহিত', 'বিচ্ছেদপ্রাপ্ত', 'বিধবা/বিপত্নীক'].includes(singleData.marriageStatus) && (
+                  <>
+                    {
+                      singleData.gender === 'পুরুষ' ? (
+                        <View style={styles.docImageRow}>
+                          {wifeIdProofDocuments?.map((doc, index) => (
+                            <TouchableOpacity
+                              key={index}
+                              style={styles.docImageContainer}
+                              onPress={() => openImage(baseURLPhoto(doc?.value))}>
+                              <Paragraph
+                                style={{ marginBottom: 10 }}
+                                level="Small"
+                                weight="Bold">
+                                {doc?.label}
+                              </Paragraph>
+                              <ImageComponent
+                                style={styles.docImage}
+                                source={doc?.value}
+                                imageStyle={{ borderRadius: 10 }}
+                              />
+                            </TouchableOpacity>
+                          ))}
+                        </View>
+                      ) : (
+                        <View style={styles.docImageRow}>
+                          {husbandIdProofDocuments?.map((doc, index) => (
+                            <TouchableOpacity
+                              key={index}
+                              style={styles.docImageContainer}
+                              onPress={() => openImage(baseURLPhoto(doc?.value))}>
+                              <Paragraph
+                                style={{ marginBottom: 10 }}
+                                level="Small"
+                                weight="Bold">
+                                {doc?.label}
+                              </Paragraph>
+                              <ImageComponent
+                                style={styles.docImage}
+                                imageStyle={{ borderRadius: 10 }}
+                                source={doc?.value}
+                              />
+                            </TouchableOpacity>
+                          ))}
+                        </View>
+                      )
+                    }
+                  </>
+                )
+              }
+
+              {
+                ['অজানা', 'অবিবাহিত'].includes(singleData.marriageStatus) && (
+                  <View style={styles.docImageRow}>
+                    {fatherIdProofDocuments?.map((doc, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        style={styles.docImageContainer}
+                        onPress={() => openImage(baseURLPhoto(doc?.value))}>
+                        <Paragraph
+                          style={{ marginBottom: 10 }}
+                          level="Small"
+                          weight="Bold">
+                          {doc?.label}
+                        </Paragraph>
+                        <ImageComponent
+                          style={styles.docImage}
+                          imageStyle={{ borderRadius: 10 }}
+                          source={doc?.value}
+                        />
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                )
+              }
+
             </View>
           </Collapsible>
-          
+
           <Modal
             visible={visible}
             transparent={true}
             onRequestClose={() => setVisible(false)}>
             <ImageView
-              imageUrls={[{url: selectedImage}]}
+              imageUrls={[{ url: selectedImage }]}
               onCancel={() => setVisible(false)}
               enableSwipeDown
             />

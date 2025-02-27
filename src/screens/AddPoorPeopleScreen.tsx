@@ -37,7 +37,7 @@ import LoadingOverlay from '../components/LoadingOverlay';
 
 const AddPeopleScreen = () => {
   const { t } = useTranslation();
-  const { user } = useAuthStore();
+  const { user, people, totalPeople, setPeople, setTotalPeople } = useAuthStore();
   const [formData, setFormData] = useState<AddPoorPeopleScreenFormState>({
     name: '',
     age: '',
@@ -109,7 +109,9 @@ const AddPeopleScreen = () => {
       !formData.oil ||
       !formData.clothingFamily ||
       !formData.clothingSelf ||
-      !formData.financialNeeds
+      !formData.financialNeeds || 
+      !formData.idProofFront || 
+      !formData.idProofBack
     ) {
       showToast('error', 'অনুগ্রহ করে সব প্রয়োজনীয় তথ্য পূরণ করুন');
       return;
@@ -146,7 +148,7 @@ const AddPeopleScreen = () => {
           if (!child.profession || !child.income || !child.mobile) {
             showToast(
               'error',
-              `১৫ বছর বা তার বেশি বয়সী শিশু ${i + 1}-এর পেশা, আয় এবং ফোন নম্বর প্রদান করুন`
+              `১৫ বছর বা তার বেশি বয়সী সন্তানের ${i + 1}-এর পেশা, আয় এবং ফোন নম্বর প্রদান করুন`
             );
             return;
           }
@@ -158,39 +160,31 @@ const AddPeopleScreen = () => {
       ['পুরুষ', 'মহিলা'].includes(formData.gender) &&
       ['বিবাহিত', 'বিচ্ছেদপ্রাপ্ত', 'বিধবা/তালাক'].includes(formData.marriageStatus)
     ) {
-      if (
-        formData.gender === 'মহিলা' &&
-        (!formData.idProofFrontHusband || !formData.idProofBackHusband)
-      ) {
-        showToast('error', 'আপনাকে স্বামীর আইডি প্রমাণপত্র প্রদান করতে হবে');
-        return;
-      }
-
-      if (
-        formData.gender === 'মহিলা' &&
-        (!formData.husbandProfession || !formData.isHusbandDead)
-      ) {
-        showToast('error', 'আপনাকে স্বামীর প্রমাণপত্র প্রদান করতে হবে');
-        return;
+      if (formData.gender === 'মহিলা') {
+        if (!formData.idProofFrontHusband || !formData.idProofBackHusband) {
+          showToast('error', 'আপনাকে স্বামীর আইডি প্রমাণপত্র প্রদান করতে হবে');
+          return;
+        }
+    
+        if (!formData.isHusbandDead && !formData.husbandProfession) {
+          showToast('error', 'আপনাকে স্বামীর পেশা প্রদান করতে হবে (যদি স্বামী জীবিত থাকে)');
+          return;
+        }
       }
     
-      if (
-        formData.gender === 'পুরুষ' &&
-        (!formData.idProofFrontWife || !formData.idProofBackWife)
-      ) {
-        showToast('error', 'আপনাকে স্ত্রীর আইডি প্রমাণপত্র প্রদান করতে হবে');
-        return;
-      }
-      if (
-        formData.gender === 'পুরুষ' &&
-        (!formData.wifeProfession || !formData.isWifeDead)
-      ) {
-        showToast('error', 'আপনাকে স্ত্রীর প্রমাণপত্র প্রদান করতে হবে');
-        return;
+      if (formData.gender === 'পুরুষ') {
+        if (!formData.idProofFrontWife || !formData.idProofBackWife) {
+          showToast('error', 'আপনাকে স্ত্রীর আইডি প্রমাণপত্র প্রদান করতে হবে');
+          return;
+        }
+    
+        if (!formData.isWifeDead && !formData.wifeProfession) {
+          showToast('error', 'আপনাকে স্ত্রীর পেশা প্রদান করতে হবে (যদি স্ত্রী জীবিত থাকে)');
+          return;
+        }
       }
     }
   
-    // Validate ID Proof for Unmarried people (Father's ID)
     if (formData.marriageStatus === 'অবিবাহিত') {
       if (!formData.idProofFrontFather || !formData.idProofBackFather) {
         showToast('error', 'আপনাকে পিতার আইডি প্রমাণপত্র প্রদান করতে হবে');
@@ -235,13 +229,17 @@ const AddPeopleScreen = () => {
     formDataPayload.append('idProofFrontWife', formatFileData(formData.idProofFrontWife));
     formDataPayload.append('idProofBackWife', formatFileData(formData.idProofBackWife));
     formDataPayload.append('idProofFrontFather', formatFileData(formData.idProofFrontFather));
-    formDataPayload.append('idProofFrontFather', formatFileData(formData.idProofFrontFather));
+    formDataPayload.append('idProofBackFather', formatFileData(formData.idProofBackFather));
 
-    const { message } = await request(
+
+    const { message, data } = await request(
       'post',
       ApiStrings.CREATE_PEOPLE(user?.masjid?._id || ''),
       formDataPayload
     );
+    const newPeople = [...people, data];
+    setPeople(newPeople);
+    setTotalPeople(totalPeople + 1);
     showToast('success', message);
     navigation.navigate('ImamHomeScreen', { activeTab: t('beggers')});
   };
@@ -354,6 +352,7 @@ const AddPeopleScreen = () => {
                 value={formData.gender}
                 onChange={value => setFormData({ ...formData, gender: value })}
                 data={genders}
+                rootStyle={{ marginTop: -2, marginBottom: 10 }}
               />
 
               {/* Marriage Status Section */}
@@ -365,6 +364,7 @@ const AddPeopleScreen = () => {
                   setFormData({ ...formData, marriageStatus: value })
                 }
                 data={marriages}
+                rootStyle={{ marginBottom: 10 }}
               />
 
               {['বিবাহিত', 'বিচ্ছেদপ্রাপ্ত', 'বিধবা/বিপত্নীক'].includes(formData.marriageStatus) && (
@@ -385,10 +385,11 @@ const AddPeopleScreen = () => {
                       })
                     }
                     data={yesNoOptions}
-                    placeholder={formData.gender === 'পুরুষ' ? t('wifeProfessionPlaceholder') : t('husbandProfessionPlaceholder')}
+                    placeholder={formData.gender === 'পুরুষ' ? t('isWifeDead') : t('isHusbandDead')}
+                    rootStyle={{ marginBottom: 10 }}
                   />
 
-                  {formData.isWifeDead === 'না' && (
+                  {(formData.isWifeDead || formData.isHusbandDead) === 'না' && (
                     <SelectDropdown
                       label={formData.gender === 'পুরুষ' ? t('wifeProfession') : t('husbandProfession')}
                       value={
@@ -408,6 +409,7 @@ const AddPeopleScreen = () => {
                       search={true}
                       searchPlaceholder="Enter your search"
                       placeholder={formData.gender === 'পুরুষ' ? t('wifeProfessionPlaceholder') : t('husbandProfessionPlaceholder')}
+                      rootStyle={{ marginBottom: 10 }}
                     />
                   )}
 
@@ -417,6 +419,7 @@ const AddPeopleScreen = () => {
                     onChange={value => setFormData({ ...formData, hasChildren: value })}
                     data={yesNoOptions}
                     placeholder={t('selectPlaceholder')}
+                    rootStyle={{ marginBottom: 10 }}
                   />
                 </>
               )}
@@ -462,7 +465,10 @@ const AddPeopleScreen = () => {
                           setChildrenDetails(updated);
                         }}
                       />
-                      <PhoneNumberInput
+                      {
+                        Number(child.age) >= 15 && (
+                          <>
+                          <PhoneNumberInput
                         label={t('childNumber')}
                         placeholder={t('childNumber')}
                         value={child.mobile}
@@ -481,7 +487,7 @@ const AddPeopleScreen = () => {
                           setChildrenDetails(updated);
                         }}
                         data={professions}
-                        style={styles.halfInput}
+                        rootStyle={[styles.halfInput, { marginTop: -3, marginBottom: 12}]}
                         search={true}
                         searchPlaceholder="Enter your search"
                         placeholder={t('selectPlaceholder')}
@@ -510,9 +516,12 @@ const AddPeopleScreen = () => {
                             setChildrenDetails(updated);
                           }}
                           data={frequencyOptions}
-                          style={{ flex: 1 }}
+                          rootStyle={{ flex: 1, marginTop: -8 }}
                         />
                       </View>
+                          </>
+                        )
+                      }
                     </View>
                   ))}
                 </>
@@ -527,6 +536,7 @@ const AddPeopleScreen = () => {
                 }
                 data={yesNoOptions}
                 placeholder={t('selectPlaceholder')}
+                rootStyle={{ marginBottom: 10 }}
               />
 
               {formData.receivingAssistance === 'হ্যাঁ' && (
@@ -547,6 +557,7 @@ const AddPeopleScreen = () => {
                     onChange={value => setFormData({ ...formData, frequency: value })}
                     data={frequencyOptions}
                     placeholder={t('selectPlaceholder')}
+                    rootStyle={{ marginBottom: 10}}
                   />
                   <Input
                     label={t('assistanceLocation')}
@@ -590,14 +601,14 @@ const AddPeopleScreen = () => {
                   label={t('ricePerMonth')}
                   data={riceNeeds}
                   placeholder={t('selectPlaceholder')}
-                  style={styles.halfInput}
+                  rootStyle={styles.halfInput}
                 />
                 <SelectDropdown
                   value={formData.lentils}
                   onChange={text => setFormData({ ...formData, lentils: text })}
                   label={t('lentilsPerMonth')}
                   data={riceNeeds}
-                  style={styles.halfInput}
+                  rootStyle={styles.halfInput}
                   placeholder={t('selectPlaceholder')}
                 />
               </View>
@@ -608,7 +619,7 @@ const AddPeopleScreen = () => {
                   label={t('oilPerMonth')}
                   data={oliNeeds}
                   placeholder={t('selectPlaceholder')}
-                  style={styles.halfInput}
+                  rootStyle={styles.halfInput}
                 />
                 <SelectDropdown
                   value={formData.clothingFamily}
@@ -617,7 +628,7 @@ const AddPeopleScreen = () => {
                   }
                   label={t('familyClothing')}
                   data={clothNeeds}
-                  style={styles.halfInput}
+                  rootStyle={styles.halfInput}
                   placeholder={t('selectPlaceholder')}
                 />
               </View>
@@ -626,7 +637,7 @@ const AddPeopleScreen = () => {
                 onChange={text => setFormData({ ...formData, clothingSelf: text })}
                 label={t('selfClothing')}
                 data={clothNeeds}
-                style={styles.halfInput}
+                rootStyle={[styles.halfInput, { marginBottom: 10 }]}
                 placeholder={t('selectPlaceholder')}
               />
               <Input

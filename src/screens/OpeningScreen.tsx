@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import openingStyles from '../styles/opening_screen.styles';
@@ -9,11 +9,20 @@ import AppButton from '../components/ui/AppButton';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { AppStackParamList } from '../constants/route';
 import { useTranslation } from '../hooks/useTranslation';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const OpeningScreen = () => {
 
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
   const { t } = useTranslation();
+
+  useEffect(() => {
+    const checkFirstTime = async () => {
+      await AsyncStorage.setItem('hasSeenOpening', 'true');
+    };
+    checkFirstTime();
+  }, []);
+
 
 
   return (

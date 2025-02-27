@@ -93,7 +93,6 @@ const styles = ScaledSheet.create({
     },
     sectionDescription: {
         color: '#666',
-        marginBottom: '15@vs',
     },
     uploadField: {
         borderWidth: 2,

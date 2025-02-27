@@ -13,7 +13,6 @@ import * as ImagePicker from 'react-native-image-picker';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import { Colors } from '../configs/colors';
 import globalStyles from '../styles/global.style';
-import BackButton from '../components/BackButton';
 import committeeStyles from '../styles/committee.styles';
 import Input from '../components/ui/AppInput';
 import { useTranslation } from '../hooks/useTranslation';
@@ -22,7 +21,6 @@ import { professions } from '../data/dump';
 import SelectDropdown from '../components/ui/Select';
 import AppButton from '../components/ui/AppButton';
 import Icon from "react-native-vector-icons/Ionicons";
-import Heading from '../components/ui/Heading';
 import { requestAndroidPermission } from '../utils/permission';
 import { showToast } from '../utils/toast';
 import { AppStackParamList } from '../constants/route';
@@ -31,7 +29,6 @@ import ApiStrings from '../lib/apis_string';
 import PhoneNumberInput from '../components/ui/PhoneNumberInput';
 import { useAuthStore } from '../store/store';
 import { formatFileData } from '../utils/file-format';
-import { baseURLPhoto } from '../lib/api';
 import Header from '../components/Header';
 import LoadingOverlay from '../components/LoadingOverlay';
 
@@ -55,23 +52,20 @@ const AddCommitteeScreen = () => {
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
   const { request, loading } = useApi()
   const { t } = useTranslation()
-  const { user } = useAuthStore()
+  const { user, committees, setCommittees, setTotalCommittees, totalCommittees} = useAuthStore()
   const nameError = validateCommitteeName(formData.name);
   const addressError = validateCommitteeAddress(formData.address);
   const professionError = validateCommitteeProfession(formData.profession);
   const numberError = validateCommitteeNumber(formData.contactNumber);
-  const profileError = validateCommitteeProfile(formData.image?.uri ?? "");
 
   const isFormInvalid =
     typeof addressError === 'string' ||
     typeof professionError === 'string' ||
     typeof nameError === 'string' ||
     typeof numberError === 'string' ||
-    typeof profileError === 'string' ||
     !formData.name ||
     !formData.address ||
     !formData.contactNumber ||
-    !formData.image ||
     !formData.profession;
 
   const handleImagePicker = async () => {
@@ -125,9 +119,12 @@ const AddCommitteeScreen = () => {
     apiFormData.append('mobile', formData.contactNumber);
     apiFormData.append('profilePicture', formatFileData(formData.image));
 
-    const { message } = await request('post', ApiStrings.CREATE_COMMITTEE, apiFormData);
+    const { message, data } = await request('post', ApiStrings.CREATE_COMMITTEE, apiFormData);
+    const newCommittees = [...committees, data];
+    setCommittees(newCommittees);
+    setTotalCommittees(totalCommittees + 1);
     showToast('success', message)
-    navigation.navigate('ImamHomeScreen', { activeTab: 'Committee' })
+    navigation.navigate('ImamHomeScreen', { activeTab: t('committees') })
   };
 
   return (
@@ -169,6 +166,8 @@ const AddCommitteeScreen = () => {
               data={professions}
               value={formData.profession}
               onChange={item => handleInputChange('profession', item)}
+              rootStyle={{ marginTop: -6, marginBottom: 10 }}
+              search={true}
             />
 
             <PhoneNumberInput
@@ -182,7 +181,7 @@ const AddCommitteeScreen = () => {
           <AppButton
             text={t('submit')}
             onPress={handleSubmit}
-            disabled={isFormInvalid || loading}
+            disabled={isFormInvalid}
             variant="primary"
           />
         </View>

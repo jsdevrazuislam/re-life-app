@@ -2,9 +2,6 @@ import { View, ScrollView } from 'react-native';
 import React, { useState } from 'react';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import globalStyles from '../styles/global.style';
-import styles from '../styles/imamSetting.styles';
-import BackButton from '../components/BackButton';
-import Heading from '../components/ui/Heading';
 import loginStyles from '../styles/login.style';
 import { useTranslation } from '../hooks/useTranslation';
 import Input from '../components/ui/AppInput';
@@ -22,7 +19,7 @@ import Header from '../components/Header';
 const UpdateEmailScreen = () => {
 
     const { request, loading, error } = useApi();
-    const { logout, setRole } = useAuthStore();
+    const { logout } = useAuthStore();
     const navigation = useNavigation<NavigationProp<AppStackParamList>>();
     const [email, setEmail] = useState<string>('');
     const { t } = useTranslation();
@@ -30,7 +27,6 @@ const UpdateEmailScreen = () => {
 
     const handleSubmit = async () => {
         const { message } = await request('put', ApiStrings.UPDATE_EMAIL, { email });
-        setRole('')
         await logout();
         showToast('success', message);
         navigation.navigate('LoginScreen');

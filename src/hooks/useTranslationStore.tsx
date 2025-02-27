@@ -1,5 +1,4 @@
 import {create} from 'zustand';
-import {Language, TranslationStore} from '../types/store';
 import bn from '../i18n/bn';
 import en from '../i18n/en';
 import AsyncStorage from '@react-native-async-storage/async-storage';

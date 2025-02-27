@@ -23,6 +23,7 @@ interface SelectDropdownProps {
   search?: boolean;
   searchPlaceholder?: string;
   style?: StyleProp<ViewStyle>;
+  rootStyle?: StyleProp<ViewStyle>;
   disabled?: boolean;
 }
 
@@ -34,6 +35,7 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
   search = false,
   searchPlaceholder = 'Search...',
   style,
+  rootStyle,
   label,
   disabled = false,
 }) => {
@@ -57,7 +59,7 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
   );
 
   return (
-    <View style={{ marginTop: 10 }}>
+    <View style={[{ marginTop: 10 }, rootStyle]}>
       {label && <Text style={styles.label}>{label}</Text>}
       <TouchableOpacity
         onPress={() => !disabled && modalRef.current?.open()}

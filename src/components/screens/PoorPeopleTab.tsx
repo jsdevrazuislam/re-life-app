@@ -129,8 +129,8 @@ const PeopleTab: React.FC<PeopleTabProps> = ({data, onAdd, loading}) => {
         </View>
       ) : (
         <ScrollView>
-          {data.map(item => (
-            <View key={item?._id} style={imamStyles.infoCard}>
+          {data.map((item, index) => (
+            <View key={index} style={imamStyles.infoCard}>
               <View style={imamStyles.cardContent}>
                 <ImageComponent
                   source={baseURLPhoto(item?.photoUrl || '')}
@@ -146,15 +146,15 @@ const PeopleTab: React.FC<PeopleTabProps> = ({data, onAdd, loading}) => {
                   </Paragraph>
                   <Paragraph
                     level="Small"
-                    weight="Medium"
+                    weight='Bold'
                     style={imamStyles.cardSubtitle}>
-                    Age: {item.age}
+                    Age: <Paragraph level="Small" weight="Medium">{item.age}</Paragraph>
                   </Paragraph>
                   <Paragraph
                     level="Small"
-                    weight="Medium"
+                    weight="Bold"
                     style={imamStyles.cardSubtitle}>
-                    Location: {item.address}
+                    Location: <Paragraph level="Small" weight="Medium">{item.address}</Paragraph>
                   </Paragraph>
                 </View>
               </View>

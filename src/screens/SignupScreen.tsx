@@ -462,6 +462,7 @@ const SignupScreen = () => {
                       data={professions}
                       search={true}
                       style={{ marginBottom: 10}}
+                      rootStyle={{ marginTop: -6}}
                     />
                     <PhoneNumberInput
                       label={t('committeePhoneLabel')}

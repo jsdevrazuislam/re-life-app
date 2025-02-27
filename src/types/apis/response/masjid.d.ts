@@ -71,6 +71,7 @@ interface ImamDetails {
   idProofDocuments?: (IdProofDocuments)[] | null;
   wifeIdProofDocuments?: (IdProofDocuments)[] | null;
   husbandIdProofDocuments?: (IdProofDocuments)[] | null;
+  fatherIdProofDocuments?: (IdProofDocuments)[] | null;
   _id: string;
 }
  interface EssentialsNeedsMonthly {
