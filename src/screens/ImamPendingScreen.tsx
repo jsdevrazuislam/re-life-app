@@ -1,5 +1,5 @@
-import { View } from 'react-native'
-import React from 'react'
+import { View, Animated, Easing } from 'react-native'
+import React, { useEffect, useRef } from 'react'
 import { imamStyles } from '../styles/imamHomeStyles';
 import Heading from '../components/ui/Heading';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
@@ -18,8 +18,26 @@ const ImamPendingScreen = () => {
     const { user, logout } = useAuthStore()
     const { t } = useTranslation();
     const navigation = useNavigation<NavigationProp<AppStackParamList>>();
+    const rotateAnim = useRef(new Animated.Value(0)).current;
 
-    const tryAgain = async () =>{
+    useEffect(() => {
+        Animated.loop(
+            Animated.timing(rotateAnim, {
+                toValue: 1,
+                duration: 2000,
+                useNativeDriver: true,
+                easing: Easing.linear,
+            })
+        ).start();
+    }, []);
+
+    const rotation = rotateAnim.interpolate({
+        inputRange: [0, 1],
+        outputRange: ["0deg", "360deg"],
+    });
+
+
+    const tryAgain = async () => {
         await logout()
         navigation.navigate('KycStartedScreen')
     }
@@ -28,24 +46,26 @@ const ImamPendingScreen = () => {
     return (
         <SafeAreaWrapper bg={'#DDEBFE'}>
             <View style={imamStyles.kycContainer}>
-                <Icon
-                    name={user?.kycStatus === 'pending' ? 'hourglass-empty' : 'error-outline'}
-                    size={60}
-                    color={user?.kycStatus === 'pending' ? Colors.secondary : Colors.danger}
-                />
+                <Animated.View style={{ transform: [{ rotate: rotation }] }}>
+                    <Icon
+                        name={user?.kycStatus === "pending" ? "hourglass-empty" : "error-outline"}
+                        size={60}
+                        color={user?.kycStatus === "pending" ? Colors.secondary : Colors.danger}
+                    />
+                </Animated.View>
                 <Heading level={5} weight='Bold' style={imamStyles.kycTitle}>
                     {user?.kycStatus === 'pending' ? t("kycPendingTitle") : t('kycRejectedTitle')}
                 </Heading>
                 <Paragraph level='Small' weight='SemiBold' style={imamStyles.kycDescription}>
                     {user?.kycStatus === 'pending'
                         ? t('kycPendingMessage')
-                        : user?.rejectionReason ||  t('kycRejectedMessage')}
+                        : user?.rejectionReason || t('kycRejectedMessage')}
                 </Paragraph>
 
                 {user?.kycStatus === 'rejected' && (
                     <>
-                    <AppButton style={{ marginTop: 20, marginBottom: 10}} text={t('contractSupportTitle')} />
-                    <AppButton onPress={tryAgain} text={t('tryAgain')} variant='outline' />
+                        <AppButton style={{ marginTop: 20, marginBottom: 10 }} text={t('contractSupportTitle')} />
+                        <AppButton onPress={tryAgain} text={t('tryAgain')} variant='outline' />
                     </>
                 )}
             </View>

@@ -143,7 +143,7 @@ const CommitteeTab: React.FC<CommitteeTabProps> = ({data, loading}) => {
               <View style={imamStyles.cardContent}>
                 {/* Profile Picture */}
                 <ImageComponent
-                  source={baseURLPhoto(item?.profilePicture)}
+                  source={item?.profilePicture}
                   style={imamStyles.infoPhoto}
                   imageStyle={{borderRadius: 3}}
                 />

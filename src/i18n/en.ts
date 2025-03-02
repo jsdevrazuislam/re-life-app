@@ -1,7 +1,7 @@
 export default {
   welcome: 'Welcome!',
   introTitle: 'Building a Beggar-Free Bangladesh',
-  introDescription: 'Your donation can make a difference. Join us in creating a positive impact on society.',
+  introDescription: 'With your support, we can build a self-respecting nation.',
   donateNow: 'Donate Now',
   exploreCauses: 'Explore Causes',
   impactTitle: 'Where Does Your Help Go?',
