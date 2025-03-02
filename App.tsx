@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import AppEntryPoint from './src/AppEntryPoint';
 import 'react-native-gesture-handler';
 import { useAuthStore } from './src/store/store';
@@ -7,6 +7,7 @@ import SplashScreenComponent from './src/screens/SplashScreen';
 import io from "socket.io-client";
 import { SERVER_URL } from './src/lib/api';
 import notifee, { AndroidImportance, AuthorizationStatus, EventType } from '@notifee/react-native';
+import messaging from '@react-native-firebase/messaging';
 
 async function setupNotificationChannel() {
   await notifee.createChannel({
@@ -29,14 +30,12 @@ const showForegroundNotification = async (title: string, message: string) => {
   });
 };
 
-
 const App = () => {
   const { loadUserFromStorage, accessToken, isFirstTime, isLoading, role, userTempId, user, status } = useAuthStore();
   const socketRef = useRef<any>(null);
 
   async function requestPermissions() {
     const settings = await notifee.requestPermission();
-  
     if (settings.authorizationStatus === AuthorizationStatus.DENIED) {
       console.log('User denied notifications');
     } else {
@@ -55,10 +54,33 @@ const App = () => {
           break;
       }
     });
-  
+
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => {
+    messaging()
+      .getInitialNotification()
+      .then((remoteMessage) => {
+        if (remoteMessage) {
+          console.log("remoteMessage", remoteMessage)
+        }
+      })
+    messaging()
+      .setBackgroundMessageHandler(async (remoteMessage) => {
+        if (remoteMessage) {
+          console.log("remoteMessage setBackgroundMessageHandler", remoteMessage)
+        }
+      })
+
+    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+      console.log("remoteMessage unsubscribe", remoteMessage)
+    })
+
+    return () => {
+      unsubscribe()
+    }
+  }, [])
 
   useEffect(() => {
     requestPermissions();
@@ -89,7 +111,6 @@ const App = () => {
       socketRef.current = null;
     };
   }, [accessToken, user]);
-
 
   useEffect(() => {
     if (!isLoading) {

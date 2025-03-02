@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "491236101270",
+    "project_id": "relife-app-abcb5",
+    "storage_bucket": "relife-app-abcb5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:491236101270:android:15ed9b9849a06bb1fe86b7",
+        "android_client_info": {
+          "package_name": "com.yournewpackage"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBx7FAfLi5cJ2mFFwcBAys7amEDQQxcuk8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
