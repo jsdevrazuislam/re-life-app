@@ -8,6 +8,7 @@ import { Colors } from '../../configs/colors';
 import { ScaledSheet } from 'react-native-size-matters';
 import Input from './AppInput';
 import { useTranslation } from '../../hooks/useTranslation';
+import ErrorMessage from '../ErrorMessage';
 
 interface DropdownItem {
   label: string;
@@ -25,6 +26,7 @@ interface SelectDropdownProps {
   style?: StyleProp<ViewStyle>;
   rootStyle?: StyleProp<ViewStyle>;
   disabled?: boolean;
+  error?:string
 }
 
 const SelectDropdown: React.FC<SelectDropdownProps> = ({
@@ -38,6 +40,7 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
   rootStyle,
   label,
   disabled = false,
+  error
 }) => {
   const modalRef = useRef<Modalize>(null);
   const [searchText, setSearchText] = useState('');
@@ -64,19 +67,19 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
       <TouchableOpacity
         onPress={() => !disabled && modalRef.current?.open()}
         style={[
-          styles.dropdownButton,
+         error ? styles.dropdownButtonError : styles.dropdownButton,
           style,
           disabled && styles.disabledDropdown,
         ]}
         disabled={disabled}
       >
         <Paragraph
-          style={[{ color: Colors.placeholder }, disabled && styles.disabledText]}
+          style={[{ color: error ? Colors.danger : Colors.placeholder }, disabled && styles.disabledText]}
           level='Small'
         >
           {value || placeholder}
         </Paragraph>
-        <Icon name='chevron-down' size={16} color={disabled ? Colors.lightGray : Colors.text} />
+        <Icon name='chevron-down' size={16} color={error ? Colors.danger : disabled ? Colors.lightGray : Colors.text} />
       </TouchableOpacity>
 
       <Portal>
@@ -119,6 +122,7 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
           </KeyboardAvoidingView>
         </Modalize>
       </Portal>
+      {error && <ErrorMessage error={error} />}
     </View>
   );
 };
@@ -140,6 +144,17 @@ const styles = ScaledSheet.create({
     paddingHorizontal: 10,
     borderWidth: 1,
     borderColor: '#ccc',
+    borderRadius: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: Colors.white
+  },
+  dropdownButtonError: {
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: Colors.danger,
     borderRadius: 5,
     flexDirection: 'row',
     alignItems: 'center',

@@ -24,7 +24,6 @@ import {
 } from '../validations/add.committee';
 import Input from '../components/ui/AppInput';
 import SelectDropdown from '../components/ui/Select';
-import { validateEmail } from '../validations/signup';
 import AppButton from '../components/ui/AppButton';
 import { districts, unions, upazilas, villages } from '../data/dump';
 import Paragraph from '../components/ui/Paragraph';
@@ -222,7 +221,6 @@ const ProfileScreen = () => {
                   placeholder={t('masjidNamePlaceholder')}
                   value={formData.name}
                   onChangeText={text => handleInputChange('name', text)}
-                  validation={validateCommitteeName}
                   disabled
                 />
                 <Paragraph level="Small" weight="Medium">
@@ -285,14 +283,12 @@ const ProfileScreen = () => {
                   placeholder={t('imamNamePlaceholder')}
                   value={formData.fullName}
                   onChangeText={text => handleInputChange('fullName', text)}
-                  validation={validateCommitteeName}
                 />
                 <Input
                   label={t('currentAddressLabel')}
                   placeholder={t('currentAddressPlaceholder')}
                   value={formData.address}
                   onChangeText={text => handleInputChange('address', text)}
-                  validation={validateCommitteeAddress}
                 />
 
                 <Input
@@ -300,7 +296,6 @@ const ProfileScreen = () => {
                   placeholder={t('imamEmailPlaceholder')}
                   value={formData.email}
                   onChangeText={text => handleInputChange('email', text)}
-                  validation={validateEmail}
                   keyboardType="phone-pad"
                   disabled
                 />

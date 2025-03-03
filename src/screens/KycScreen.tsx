@@ -25,7 +25,6 @@ import {
   validateCommitteeName,
   validateCommitteeNumber,
 } from '../validations/add.committee';
-import { validateEmail, validatePinCode } from '../validations/signup';
 import { useApi } from '../hooks/useApi';
 import * as ImagePicker from 'react-native-image-picker';
 import { showToast } from '../utils/toast';
@@ -37,6 +36,7 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { formatFileData } from '../utils/file-format';
 import PhoneNumberInput from '../components/ui/PhoneNumberInput';
 import LoadingOverlay from '../components/LoadingOverlay';
+import ErrorMessage from '../components/ErrorMessage';
 
 interface FormState {
   name: string,
@@ -67,16 +67,12 @@ const KycScreen = () => {
 
   const nameError = validateCommitteeName(formData.name);
   const mobileError = validateCommitteeNumber(formData.mobile);
-  const emailError = validateEmail(formData.email);
-  const pinCodeError = validatePinCode(formData.pincode);
   const { request, loading, error } = useApi();
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
 
   const documentTypes = ['smart card', 'passport', 'driving license'];
 
   const isFormInvalid =
-    typeof emailError === 'string' ||
-    typeof pinCodeError === 'string' ||
     typeof nameError === 'string' ||
     typeof mobileError === 'string' ||
     !formData.name ||
@@ -163,9 +159,9 @@ const KycScreen = () => {
     <SafeAreaWrapper bg={Colors.light}>
       <LoadingOverlay visible={loading} />
       <ScrollView
-      contentContainerStyle={{
-        paddingBottom: 30,
-      }}
+        contentContainerStyle={{
+          paddingBottom: 30,
+        }}
       >
         {showError ? <View style={[globalStyles.container, { marginTop: '45%' }]}>
           <View style={[{ justifyContent: 'center', alignItems: 'center' }]}>
@@ -204,7 +200,6 @@ const KycScreen = () => {
                 onChangeText={text => setFormData({ ...formData, name: text })}
                 placeholder={t('imamNamePlaceholder')}
                 inputStyles={styles.appInput}
-                validation={validateCommitteeName}
               />
               <PhoneNumberInput
                 label={t('imamPhoneLabel')}
@@ -220,7 +215,6 @@ const KycScreen = () => {
                 onChangeText={text => setFormData({ ...formData, email: text })}
                 placeholder={t('imamEmailPlaceholder')}
                 inputStyles={styles.appInput}
-                validation={validateEmail}
               />
               <Input
                 label={t('pincode')}
@@ -229,7 +223,6 @@ const KycScreen = () => {
                 onChangeText={text => setFormData({ ...formData, pincode: text })}
                 placeholder={t('pincodePlaceholder')}
                 inputStyles={styles.appInput}
-                validation={validatePinCode}
               />
 
               <AppButton
@@ -332,12 +325,14 @@ export const UploadArea = ({
   imageUri,
   handleRemove,
   style,
+  error
 }: {
   title: string;
   style?: StyleProp<ViewStyle>
   imageUri: any;
   handlePress: () => void;
   handleRemove: () => void;
+  error?:string
 }) =>
   imageUri?.uri ? (
     <View style={[styles.uploadArea, style]}>
@@ -347,12 +342,12 @@ export const UploadArea = ({
       </TouchableOpacity>
     </View>
   ) : (
-    <TouchableOpacity style={styles.uploadArea} onPress={handlePress}>
-      <Icon name="camera-alt" size={30} color={Colors.primary} />
-      <Paragraph level="Small" weight="SemiBold" style={styles.uploadAreaText}>
-        {title}
-      </Paragraph>
-    </TouchableOpacity>
+      <TouchableOpacity style={[error ? styles.uploadAreaError : styles.uploadArea]} onPress={handlePress}>
+        <Icon name="camera-alt" size={30} color={error ? Colors.danger : Colors.primary} />
+        <Paragraph level="Small" weight="SemiBold" style={[error ? styles.uploadAreaTextError : styles.uploadAreaText]}>
+          {title}
+        </Paragraph>
+      </TouchableOpacity>
   );
 
 export default KycScreen;

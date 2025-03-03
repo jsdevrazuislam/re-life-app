@@ -10,7 +10,6 @@ import React, {useState} from 'react';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import {AppStackParamList} from '../constants/route';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
-import {validateEmail, validatePassword} from '../validations/signup';
 import globalStyles from '../styles/global.style';
 import AppLogo from '../components/ui/AppLogo';
 import {useTranslation} from '../hooks/useTranslation';
@@ -39,8 +38,6 @@ const LoginScreen = () => {
     setCommittees,
     setPeople,
   } = useAuthStore();
-  const emailError = validateEmail(email);
-  const passwordError = validatePassword(password);
 
   const handleSubmit = async () => {
     const {data, message} = await request('post', ApiStrings.LOGIN, {
@@ -97,7 +94,6 @@ const LoginScreen = () => {
                 placeholder={t('emailPlaceholder')}
                 value={email}
                 onChangeText={setEmail}
-                validation={validateEmail}
                 keyboardType="email-address"
               />
               <Input
@@ -105,7 +101,6 @@ const LoginScreen = () => {
                 placeholder={t('passwordPlaceholder')}
                 value={password}
                 onChangeText={setPassword}
-                validation={validatePassword}
                 secureTextEntry
               />
               {error && (
@@ -125,12 +120,6 @@ const LoginScreen = () => {
                 text={t('signInButton')}
                 onPress={handleSubmit}
                 variant="primary"
-                disabled={
-                  (emailError && true) ||
-                  (passwordError && true) ||
-                  !email ||
-                  !password
-                }
               />
               <View style={loginStyles.bottom}>
                 <View style={loginStyles.lineContainer}>

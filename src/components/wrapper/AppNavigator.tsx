@@ -5,8 +5,6 @@ import { stackNavigationOptions } from '../../configs/navigation';
 import HomeScreen from '../../screens/HomeScreen';
 import ProfileScreen from '../../screens/ProfileScreen';
 import LoginScreen from '../../screens/LoginScreen';
-import AdminPanelScreen from '../../screens/AdminPanelScreen';
-import AdminSettingsScreen from '../../screens/AdminSettingsScreen';
 import OpeningScreen from '../../screens/OpeningScreen';
 import { AppRoutes } from '../../constants/route';
 import SignupScreen from '../../screens/SignupScreen';
@@ -29,20 +27,7 @@ import NotificationsScreen from '../../screens/NotificationScreen';
 
 
 const Tab = createBottomTabNavigator();
-const TabNavigator = () => (
-  <Tab.Navigator>
-    <Tab.Screen name="Home" component={HomeScreen} />
-    <Tab.Screen name="Admin" component={AdminStackNavigator} />
-  </Tab.Navigator>
-);
 
-const AdminStack = createStackNavigator();
-const AdminStackNavigator = () => (
-  <AdminStack.Navigator initialRouteName="AdminPanel">
-    <AdminStack.Screen name="AdminPanel" component={AdminPanelScreen} />
-    <AdminStack.Screen name="AdminSettings" component={AdminSettingsScreen} />
-  </AdminStack.Navigator>
-);
 
 const Stack = createStackNavigator();
 const AppNavigator = ({ role, status, userTempId, user , isFirstTime} : { role:string, user:IUser | null, status:string, userTempId:string, isFirstTime:boolean }) => {
@@ -102,12 +87,6 @@ const AppNavigator = ({ role, status, userTempId, user , isFirstTime} : { role:s
       </Stack.Navigator>
     );
   }
-
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Main" component={TabNavigator} />
-    </Stack.Navigator>
-  );
 };
 
 export default AppNavigator;

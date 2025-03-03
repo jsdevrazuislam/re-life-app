@@ -57,3 +57,40 @@
     title:string,
     message:string
   }
+
+   interface SignupPayload {
+    address: string;
+    committeeDetails?: (CommitteeDetailsEntity)[] | null;
+    email: string;
+    isChecked: boolean;
+    location: Location;
+    masjidProfile: MasjidProfileOrProfileUrl;
+    mobile: string;
+    name: string;
+    numberOfCommittee: string;
+    password: string;
+    profileUrl: MasjidProfileOrProfileUrl;
+    username: string;
+  }
+   interface CommitteeDetailsEntity {
+    address: string;
+    mobile: string;
+    name: string;
+    profession: string;
+    profilePicture: MasjidProfileOrProfileUrl;
+  }
+   interface Location {
+    district: string;
+    union: string;
+    upazila: string;
+    village: string;
+  }
+   interface MasjidProfileOrProfileUrl {
+    fileName: string;
+    fileSize: number;
+    height: number;
+    type: string;
+    uri: string;
+    width: number;
+  }
+  

@@ -5,7 +5,6 @@ import globalStyles from '../styles/global.style';
 import loginStyles from '../styles/login.style';
 import { useTranslation } from '../hooks/useTranslation';
 import Input from '../components/ui/AppInput';
-import { validateEmail } from '../validations/signup';
 import Paragraph from '../components/ui/Paragraph';
 import { useApi } from '../hooks/useApi';
 import AppButton from '../components/ui/AppButton';
@@ -43,7 +42,6 @@ const UpdateEmailScreen = () => {
                             placeholder={t('imamEmailPlaceholder')}
                             value={email}
                             onChangeText={setEmail}
-                            validation={validateEmail}
                             keyboardType="email-address"
                         />
 
