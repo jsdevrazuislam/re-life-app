@@ -92,7 +92,9 @@ const AddCommitteeScreen = () => {
     apiFormData.append('profession', formData.profession);
     apiFormData.append('masjidId', user?.masjid?._id);
     apiFormData.append('mobile', formData.phone);
-    apiFormData.append('profilePicture', formatFileData(formData.profilePicture));
+    if (formData.profilePicture && Object.keys(formData.profilePicture).length > 0) {
+      apiFormData.append('profilePicture', formatFileData(formData.profilePicture));
+  }
 
     const { message, data } = await request('post', ApiStrings.CREATE_COMMITTEE, apiFormData);
     const newCommittees = [...committees, data];

@@ -62,7 +62,7 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
   );
 
   return (
-    <View style={[{ marginTop: 10 }, rootStyle]}>
+    <View style={[{ marginBottom: 16 }, rootStyle]}>
       {label && <Text style={styles.label}>{label}</Text>}
       <TouchableOpacity
         onPress={() => !disabled && modalRef.current?.open()}

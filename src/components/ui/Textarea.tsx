@@ -2,6 +2,8 @@ import React from 'react';
 import { View, TextInput, StyleProp, ViewStyle, TextStyle } from 'react-native';
 import { moderateScale, ScaledSheet } from 'react-native-size-matters';
 import Paragraph from './Paragraph';
+import ErrorMessage from '../ErrorMessage';
+import { Colors } from '../../configs/colors';
 
 interface TextareaProps {
   label?: string;
@@ -12,6 +14,7 @@ interface TextareaProps {
   inputStyle?: StyleProp<TextStyle>;
   maxLength?: number;
   numberOfLines?: number;
+  error?:string
 }
 
 const Textarea: React.FC<TextareaProps> = ({
@@ -23,6 +26,7 @@ const Textarea: React.FC<TextareaProps> = ({
   inputStyle,
   maxLength = 500,
   numberOfLines = 4,
+  error
 }) => {
   return (
     <View style={[styles.container, style]}>
@@ -31,17 +35,18 @@ const Textarea: React.FC<TextareaProps> = ({
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
-        placeholderTextColor="#999"
+        placeholderTextColor={error ? Colors.danger :"#999"}
         multiline
         numberOfLines={numberOfLines}
         maxLength={maxLength}
         style={[
           styles.textarea,
+          error && { borderColor: Colors.danger},
           { height: moderateScale(numberOfLines * 20) },
           inputStyle,
         ]}
       />
-      <Paragraph level='XSmall' weight='Medium' style={styles.charCount}>{`${value.length}/${maxLength}`}</Paragraph>
+      <Paragraph level='XSmall' weight='Medium' style={styles.charCount}>{`${value?.length}/${maxLength}`}</Paragraph>
     </View>
   );
 };

@@ -209,13 +209,17 @@ export default {
   assistanceType1: 'সহায়তার ধরন',
   assistanceFrequency: 'সহায়তার পরিমাণ নির্বাচন করুন',
   assistanceFrequency1: 'সহায়তার পরিমাণ',
-  selectPlaceholder: "নির্বাচন করুন",
+  selectPlaceholder: "নির্বাচন",
   assistanceLocation: 'সহায়তার অবস্থান লিখুন',
   assistanceLocation1: 'সহায়তার অবস্থান',
 
   // Contact & Address
   currentAddress: 'বর্তমান ঠিকানা',
   currentAddressPlaceholder1: 'বর্তমান ঠিকানা লিখুন',
+  permanentAddress: 'স্থায়ী ঠিকানা',
+  permanentAddressPlaceholder: 'স্থায়ী ঠিকানা লিখুন',
+  overview: 'কেন ভিক্ষা করছে তার বিবরণ দিন',
+  childrenProveDocument: 'সন্তানের জন্ম সনদ',
   phoneNumberPlaceholder1: 'ফোন নম্বর লিখুন',
   phoneNumberPlaceholder2: 'ফোন নম্বর',
   phoneNumber: 'ফোন নম্বর',
