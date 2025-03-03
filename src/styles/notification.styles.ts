@@ -94,14 +94,12 @@ export const styles = ScaledSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: ms(50),
       },
       
       emptyImage: {
-        width: ms(120),
-        height: ms(120),
-        marginBottom: ms(20),
-        resizeMode: 'contain',
+        width: ms(200),
+        height: ms(200),
+        resizeMode: 'cover',
       },
       
       emptyText: {

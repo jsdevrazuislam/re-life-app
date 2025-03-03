@@ -1,11 +1,8 @@
 import * as yup from "yup";
-import { fileSchema } from "./signup";
 
 const bangladeshPhoneRegex = /^(013|014|015|016|017|018|019)\d{8}$/;
 
-
-export const validationSchemaKyc = yup.object().shape({
-  name: yup.string().required("Name is required"),
+export const loginValidationSchema = yup.object().shape({
   emailOrPhone: yup
     .string()
     .test("email-or-phone", "ইমেল বা সঠিক ফোন নম্বর দিন", (value) => {
@@ -15,13 +12,8 @@ export const validationSchemaKyc = yup.object().shape({
       return isEmail || isPhone;
     })
     .required("ইমেল বা ফোন নম্বর দেওয়া আবশ্যক"),
-  pinCode: yup
+  password: yup
     .string()
-    .length(4, "Pin code must be exactly 4 digits")
-    .matches(/^\d{4}$/, "Pin code must be numbers only")
-    .required("Pin code is required"),
-  documentType: yup.string().required("Document type is required"),
-  idProofFront: fileSchema,
-  idProofBack: fileSchema,
-  imamDocument: fileSchema,
+    .min(6, "পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে")
+    .required("পাসওয়ার্ড দেওয়া আবশ্যক"),
 });

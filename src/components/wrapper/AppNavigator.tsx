@@ -84,6 +84,9 @@ const AppNavigator = ({ role, status, userTempId, user , isFirstTime} : { role:s
         <Stack.Screen name={AppRoutes.CHANGE_PASSWORD} component={ChangePasswordScreen} />
         <Stack.Screen name={AppRoutes.BLOCK_SCREEN} component={BlockedUserScreen} />
         <Stack.Screen name={AppRoutes.NOTIFICATION_SCREEN} component={NotificationsScreen} />
+        <Stack.Screen name={AppRoutes.OTP_SCREEN} component={OtpScreen} />
+        <Stack.Screen name={AppRoutes.KYC_VERIFY_SCREEN} component={KYCVerifyScreen} />
+        <Stack.Screen name={AppRoutes.KYC_SCREEN} component={KycScreen} />
       </Stack.Navigator>
     );
   }

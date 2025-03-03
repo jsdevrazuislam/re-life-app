@@ -112,7 +112,6 @@ const NotificationsScreen = () => {
           </TouchableOpacity>
         </View>
 
-        {/* Show message when no notifications */}
         {filteredNotifications.length === 0 ? (
           <View style={styles.emptyContainer}>
             <Image

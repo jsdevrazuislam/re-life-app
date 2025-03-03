@@ -3,13 +3,13 @@ import { Colors } from "../configs/colors";
 
 const styles = ScaledSheet.create({
     uploadPhotoContainer: {
-        margin:'auto'
+        margin: 'auto'
     },
-    profileSection:{
-        justifyContent:'center',
-        alignItems:'center'
+    profileSection: {
+        justifyContent: 'center',
+        alignItems: 'center'
     },
-    avatarContainer:{
+    avatarContainer: {
         position: 'relative',
     },
     editIcon: {
@@ -19,32 +19,32 @@ const styles = ScaledSheet.create({
         backgroundColor: Colors.primary,
         borderRadius: '15@ms',
         padding: '4@ms',
-      },
+    },
     avatar: {
         width: '100@ms',
         height: '100@ms',
         borderRadius: '50@ms',
         backgroundColor: Colors.lightGray
-      },
-    income:{
-            flexDirection:'row',
-            gap:'10@ms',
-            alignItems:'center'
     },
-    image:{
+    income: {
+        flexDirection: 'row',
+        gap: '10@ms',
+        alignItems: 'center'
+    },
+    image: {
         width: '100%',
-         height: '100%',
-          objectFit: 'cover'
-      },
-      deleteButton:{
+        height: '100%',
+        objectFit: 'cover'
+    },
+    deleteButton: {
         width: '30@ms',
-        height:'30@ms',
+        height: '30@ms',
         backgroundColor: Colors.danger,
         borderRadius: '50@ms',
-        justifyContent:'center',
-        alignItems:'center',
-        position:'absolute'
-      },
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'absolute'
+    },
     uploadButton: {
         alignItems: 'center',
         borderWidth: 2,
@@ -81,7 +81,7 @@ const styles = ScaledSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         gap: '10@s',
-        alignItems:'center',
+        alignItems: 'center',
         marginTop: '10@vs'
     },
     halfInput: {
@@ -130,6 +130,30 @@ const styles = ScaledSheet.create({
         marginBottom: '15@vs',
         color: '#333',
     },
+    tabContainer: {
+        flexDirection: "row",
+        backgroundColor: "#F1F5F9",
+        borderRadius: "8@s",
+        marginTop: '15@vs'
+    },
+    tab: {
+        flex: 1,
+        paddingVertical: "10@s",
+        alignItems: "center",
+        borderRadius: "8@s",
+    },
+    activeTab: {
+        backgroundColor: Colors.primary,
+    },
+    tabText: {
+        fontSize: "14@s",
+        fontWeight: "bold",
+        color: "#6B7280",
+    },
+    activeTabText: {
+        color: "white",
+    },
+
 });
 
 export default styles;

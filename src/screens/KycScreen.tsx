@@ -21,77 +21,47 @@ import { useTranslation } from '../hooks/useTranslation';
 import Paragraph from '../components/ui/Paragraph';
 import styles from '../styles/kycScreen.styles';
 import { useAuthStore } from '../store/store';
-import {
-  validateCommitteeName,
-  validateCommitteeNumber,
-} from '../validations/add.committee';
 import { useApi } from '../hooks/useApi';
 import * as ImagePicker from 'react-native-image-picker';
 import { showToast } from '../utils/toast';
 import { requestAndroidPermission } from '../utils/permission';
-import validateForm from '../validations/kyc';
+import { yupResolver } from '@hookform/resolvers/yup';
 import ApiStrings from '../lib/apis_string';
 import { AppStackParamList } from '../constants/route';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { formatFileData } from '../utils/file-format';
-import PhoneNumberInput from '../components/ui/PhoneNumberInput';
 import LoadingOverlay from '../components/LoadingOverlay';
+import { validationSchemaKyc } from '../validations/kyc';
+import { useForm, Controller } from 'react-hook-form';
 import ErrorMessage from '../components/ErrorMessage';
 
-interface FormState {
-  name: string,
-  mobile: string,
-  pincode: string,
-  email: string,
-  documentType: string,
-  idProofFront: IFile | null,
-  idProofBack: IFile | null,
-  imamDocument: IFile | null
-}
 
 const KycScreen = () => {
   const { setUserId, userTempId, setUser, setRole, setStatus, tempUser, setTempUser } = useAuthStore();
-  const [currentStep, setCurrentStep] = useState(1);
+  const { control, handleSubmit, setValue, watch, formState: { errors } } = useForm({
+    resolver: yupResolver(validationSchemaKyc),
+    mode: 'onBlur',
+    defaultValues:{
+      name: tempUser?.name,
+      emailOrPhone: tempUser?.email || tempUser?.phoneNumber
+    }
+  });
+  console.log("tempUser", tempUser)
   const { t } = useTranslation();
   const [showError, setShowError] = useState(false)
-  const [formData, setFormData] = useState<FormState>({
-    name: tempUser?.name ?? '',
-    mobile: tempUser?.phoneNumber ?? '',
-    email: tempUser?.email ?? '',
-    pincode: '',
-    documentType: '',
-    idProofFront: null,
-    idProofBack: null,
-    imamDocument: null,
-  });
-
-  const nameError = validateCommitteeName(formData.name);
-  const mobileError = validateCommitteeNumber(formData.mobile);
+  const selectedDocType = watch("documentType");
   const { request, loading, error } = useApi();
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
 
   const documentTypes = ['smart card', 'passport', 'driving license'];
 
-  const isFormInvalid =
-    typeof nameError === 'string' ||
-    typeof mobileError === 'string' ||
-    !formData.name ||
-    !formData.email ||
-    !formData.mobile ||
-    !formData.pincode;
-
-  const handleSubmit = async () => {
-    const errors = validateForm(formData);
-    if (Object.keys(errors).length > 0) {
-      showToast('error', 'Please fill all required fields before submitting.');
-      return;
-    }
+  const handleSubmitForm = async (formData: any) => {
     setRole('imam')
     const formDataPayload = new FormData();
     formDataPayload.append('userId', userTempId);
     formDataPayload.append('name', formData.name);
-    formDataPayload.append('mobileOrEmail', formData.email);
-    formDataPayload.append('pincode', formData.pincode);
+    formDataPayload.append('mobileOrEmail', formData.emailOrPhone);
+    formDataPayload.append('pincode', formData.pinCode);
     formDataPayload.append('documentType', formData.documentType);
     formDataPayload.append("idProofFront", formatFileData(formData?.idProofFront));
     formDataPayload.append("idProofBack", formatFileData(formData?.idProofBack));
@@ -104,10 +74,6 @@ const KycScreen = () => {
     setStatus('')
     navigation.navigate('ImamPendingScreen')
   };
-
-  function handleStep() {
-    setCurrentStep(2);
-  }
 
   const handleImagePicker = async (
     field: 'idProofFront' | 'idProofBack' | 'imamDocument',
@@ -139,7 +105,7 @@ const KycScreen = () => {
           return;
         }
         if (response.assets && response.assets.length > 0) {
-          setFormData({ ...formData, [field]: response.assets[0] });
+          setValue(field, response.assets[0] as IFile, { shouldValidate: true });
         }
       },
     );
@@ -148,7 +114,7 @@ const KycScreen = () => {
   const removeImage = (
     field: 'idProofFront' | 'idProofBack' | 'imamDocument',
   ) => {
-    setFormData({ ...formData, [field]: '' });
+    setValue(field, null, { shouldValidate: true });
   };
 
   useEffect(() => {
@@ -181,138 +147,143 @@ const KycScreen = () => {
               {t('kycUploadTitle')}
             </Heading>
           </View>
-
-          {/* Stepper */}
-          <View style={styles.stepperContainer}>
-            <View
-              style={[styles.step, currentStep >= 1 && styles.activeStep]}
+          <View style={styles.firstStep}>
+            <Controller
+              name='name'
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <Input
+                  label={t('imamNameLabel')}
+                  placeholder={t('imamNamePlaceholder')}
+                  value={value}
+                  onChangeText={onChange}
+                  error={errors?.name?.message}
+                  inputStyles={styles.appInput}
+                  keyboardType="email-address"
+                />
+              )}
             />
-            <View
-              style={[styles.step, currentStep >= 2 && styles.activeStep]}
+            <Controller
+              name='emailOrPhone'
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <Input
+                  label={t('emailLabel')}
+                  placeholder={t('emailPlaceholder')}
+                  value={value}
+                  onChangeText={onChange}
+                  error={errors?.emailOrPhone?.message}
+                  keyboardType="email-address"
+                  inputStyles={styles.appInput}
+                />
+              )}
             />
-          </View>
 
-          {currentStep === 1 ? (
-            <View style={styles.firstStep}>
-              <Input
-                label={t('imamNameLabel')}
-                value={formData.name}
-                onChangeText={text => setFormData({ ...formData, name: text })}
-                placeholder={t('imamNamePlaceholder')}
-                inputStyles={styles.appInput}
-              />
-              <PhoneNumberInput
-                label={t('imamPhoneLabel')}
-                value={formData.mobile}
-                onChangeText={text => setFormData({ ...formData, mobile: text })}
-                placeholder={t('imamPhonePlaceholder')}
-                inputStyles={styles.appInput}
-              />
-              <Input
-                label={t('imamEmailLabel')}
-                value={formData.email}
-                keyboardType="email-address"
-                onChangeText={text => setFormData({ ...formData, email: text })}
-                placeholder={t('imamEmailPlaceholder')}
-                inputStyles={styles.appInput}
-              />
-              <Input
-                label={t('pincode')}
-                value={formData.pincode}
-                keyboardType="numeric"
-                onChangeText={text => setFormData({ ...formData, pincode: text })}
-                placeholder={t('pincodePlaceholder')}
-                inputStyles={styles.appInput}
-              />
+            <Controller
+              name='pinCode'
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <Input
+                  label={t('pincode')}
+                  placeholder={t('pincodePlaceholder')}
+                  value={value}
+                  onChangeText={onChange}
+                  error={errors?.pinCode?.message}
+                  inputStyles={styles.appInput}
+                  keyboardType="numeric"
+                />
+              )}
+            />
 
-              <AppButton
-                disabled={isFormInvalid}
-                onPress={handleStep}
-                text={t('nextStepButton')}
-                style={{ marginTop: '30%' }}
-              />
+            <Heading level={6} weight="Bold" style={styles.sectionTitle}>
+              {t('documentTypeLabel')}
+            </Heading>
+            <View style={styles.docTypeContainer}>
+              {documentTypes.map((type) => (
+                <TouchableOpacity
+                  key={type}
+                  style={[
+                    styles.docTypeButton,
+                    selectedDocType === type && styles.selectedDocType,
+                  ]}
+                  onPress={() => setValue("documentType", type, { shouldValidate: true })}
+                >
+                  <Paragraph
+                    level="Small"
+                    weight="Medium"
+                    style={[
+                      styles.docTypeText,
+                      selectedDocType === type && styles.selectedDocTypeText,
+                    ]}
+                  >
+                    {type}
+                  </Paragraph>
+                </TouchableOpacity>
+              ))}
             </View>
-          ) : (
-            /* Step 2 Content */
-            <View style={styles.formContainer}>
+              {
+                errors?.documentType?.message && <ErrorMessage error={errors?.documentType?.message} />
+              }
+            <View style={styles.uploadSection}>
               <Heading level={6} weight="Bold" style={styles.sectionTitle}>
                 {t('documentTypeLabel')}
               </Heading>
-              <View style={styles.docTypeContainer}>
-                {documentTypes.map(type => (
-                  <TouchableOpacity
-                    key={type}
-                    style={[
-                      styles.docTypeButton,
-                      formData.documentType === type && styles.selectedDocType,
-                    ]}
-                    onPress={() =>
-                      setFormData({ ...formData, documentType: type })
-                    }>
-                    <Paragraph
-                      level="Small"
-                      weight="Medium"
-                      style={[
-                        styles.docTypeText,
-                        formData.documentType === type &&
-                        styles.selectedDocTypeText,
-                      ]}>
-                      {type}
-                    </Paragraph>
-                  </TouchableOpacity>
-                ))}
-              </View>
+              <Paragraph
+                level="Small"
+                weight="Medium"
+                style={styles.uploadDescription}>
+                {t('documentTypePlaceholder')}
+              </Paragraph>
 
-              <View style={styles.uploadSection}>
-                <Heading level={6} weight="Bold" style={styles.sectionTitle}>
-                  {t('documentTypeLabel')}
-                </Heading>
-                <Paragraph
-                  level="Small"
-                  weight="Medium"
-                  style={styles.uploadDescription}>
-                  {t('documentTypePlaceholder')}
-                </Paragraph>
-
-                <View style={styles.uploadRow}>
-                  <UploadArea
-                    title={t('idProofFrontLabel')}
-                    imageUri={formData.idProofFront}
-                    handlePress={() => handleImagePicker('idProofFront')}
-                    handleRemove={() => removeImage('idProofFront')}
-                  />
-                  <UploadArea
-                    title={t('idProofBackLabel')}
-                    imageUri={formData.idProofBack}
-                    handlePress={() => handleImagePicker('idProofBack')}
-                    handleRemove={() => removeImage('idProofBack')}
-                  />
-                </View>
-                <UploadArea
-                  title={t('imamDocumentLabel')}
-                  imageUri={formData.imamDocument}
-                  handlePress={() => handleImagePicker('imamDocument')}
-                  handleRemove={() => removeImage('imamDocument')}
+              <View style={styles.uploadRow}>
+                <Controller
+                  name="idProofFront"
+                  control={control}
+                  render={({ field: { value } }) => (
+                    <UploadArea
+                      title={t('idProofFrontLabel')}
+                      imageUri={value}
+                      handlePress={() => handleImagePicker('idProofFront')}
+                      handleRemove={() => removeImage('idProofFront')}
+                      error={errors.idProofFront?.message}
+                    />
+                  )}
+                />
+                <Controller
+                  name="idProofBack"
+                  control={control}
+                  render={({ field: { value } }) => (
+                    <UploadArea
+                      title={t('idProofBackLabel')}
+                      imageUri={value}
+                      handlePress={() => handleImagePicker('idProofBack')}
+                      handleRemove={() => removeImage('idProofBack')}
+                      error={errors.idProofBack?.message}
+                    />
+                  )}
                 />
               </View>
-            </View>
-          )}
-          {currentStep === 2 && (
-            <View style={styles.row}>
-              <AppButton
-                disabled={loading}
-                variant="outline"
-                text={t('prevStep')}
-                onPress={() => setCurrentStep(1)}
-                style={{ width: '48%' }}
+              <Controller
+                name="imamDocument"
+                control={control}
+                render={({ field: { value } }) => (
+                  <UploadArea
+                    title={t('imamDocumentLabel')}
+                    imageUri={value}
+                    handlePress={() => handleImagePicker('imamDocument')}
+                    handleRemove={() => removeImage('imamDocument')}
+                    error={errors.imamDocument?.message}
+                  />
+                )}
               />
-              <AppButton
-                text={t('submitKyc')}
-                onPress={handleSubmit}
-                style={{ width: '48%' }}
-              />
+
             </View>
-          )}
+          </View>
+          <AppButton
+            text={t('submitKyc')}
+            onPress={handleSubmit(handleSubmitForm)}
+            style={{ marginTop: 30 }}
+          />
         </View>}
       </ScrollView>
     </SafeAreaWrapper>
@@ -332,7 +303,7 @@ export const UploadArea = ({
   imageUri: any;
   handlePress: () => void;
   handleRemove: () => void;
-  error?:string
+  error?: string
 }) =>
   imageUri?.uri ? (
     <View style={[styles.uploadArea, style]}>
@@ -342,12 +313,12 @@ export const UploadArea = ({
       </TouchableOpacity>
     </View>
   ) : (
-      <TouchableOpacity style={[error ? styles.uploadAreaError : styles.uploadArea]} onPress={handlePress}>
-        <Icon name="camera-alt" size={30} color={error ? Colors.danger : Colors.primary} />
-        <Paragraph level="Small" weight="SemiBold" style={[error ? styles.uploadAreaTextError : styles.uploadAreaText]}>
-          {title}
-        </Paragraph>
-      </TouchableOpacity>
+    <TouchableOpacity style={[error ? styles.uploadAreaError : styles.uploadArea]} onPress={handlePress}>
+      <Icon name="camera-alt" size={30} color={error ? Colors.danger : Colors.primary} />
+      <Paragraph level="Small" weight="SemiBold" style={[error ? styles.uploadAreaTextError : styles.uploadAreaText]}>
+        {title}
+      </Paragraph>
+    </TouchableOpacity>
   );
 
 export default KycScreen;

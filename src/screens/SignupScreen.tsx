@@ -36,7 +36,7 @@ import { validationSchema } from '../validations/signup';
 
 const SignupScreen = () => {
   const { t } = useTranslation();
-  const { control, handleSubmit, setValue, watch, getValues, formState: { errors, isDirty, isValid } } = useForm({
+  const { control, handleSubmit, setValue, watch, getValues, formState: { errors } } = useForm({
     resolver: yupResolver(validationSchema),
     mode: 'onBlur'
   });
@@ -51,17 +51,8 @@ const SignupScreen = () => {
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
   const { request, loading, error } = useApi();
   const { setUserId, setStatus, setTempEmail } = useAuthStore();
-  const [formData, setFormData] = useState<StateForm>({
-    profileUrl: null,
-    masjidProfile: null,
-    address: '',
-    location: {
-      district: '',
-      upazila: '',
-      union: '',
-      village: '',
-    },
-  });
+  const [selectedTab, setSelectedTab] = useState<"email" | "phone">("email");
+
 
   const handleCommittee = (count: number) => {
     const currentCount = fields.length;
@@ -81,19 +72,6 @@ const SignupScreen = () => {
         remove(i - 1);
       }
     }
-  };
-
-  const handleLocationChange = (
-    field: keyof ILocation['location'],
-    value: string,
-  ) => {
-    setFormData(prevState => ({
-      ...prevState,
-      location: {
-        ...prevState.location,
-        [field]: value,
-      },
-    }));
   };
 
 
@@ -184,7 +162,7 @@ const SignupScreen = () => {
     setValue(field, null, { shouldValidate: true });
   };
 
-  const handleFormSubmit = async (formData:any) => {
+  const handleFormSubmit = async (formData: any) => {
     const payload = formData as SignupPayload;
 
     const formDataPayload = new FormData();
@@ -218,11 +196,18 @@ const SignupScreen = () => {
       formDataPayload,
     );
     setUserId(data?.id);
-    setTempEmail(data?.email)
+    setTempEmail(selectedTab === 'email' ? data?.email : data?.mobile)
     setStatus('otp_pending')
     showToast('success', message);
-    navigation.navigate('OtpScreen', { email: data?.email });
+    navigation.navigate('OtpScreen', { email: selectedTab === 'email' ? data?.email : data?.phone });
   }
+
+  const handleTabChange = (tab: "email" | "phone") => {
+    setSelectedTab(tab);
+    setValue("selectedTab", tab);
+    setValue("email", "");
+    setValue("mobile", "");
+  };
 
 
   return (
@@ -247,6 +232,26 @@ const SignupScreen = () => {
             </Heading>
             <Paragraph level='Small'>{t('signUpDescription')}</Paragraph>
 
+            <View style={styles.tabContainer}>
+              <TouchableOpacity
+                style={[styles.tab, selectedTab === "email" && styles.activeTab]}
+                onPress={() => handleTabChange("email")}
+              >
+                <Text style={[styles.tabText, selectedTab === "email" && styles.activeTabText]}>
+                  Email
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.tab, selectedTab === "phone" && styles.activeTab]}
+                onPress={() => handleTabChange("phone")}
+              >
+                <Text style={[styles.tabText, selectedTab === "phone" && styles.activeTabText]}>
+                  Phone
+                </Text>
+              </TouchableOpacity>
+            </View>
+
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
               <View style={signupStyles.form}>
                 <View style={[kycScreenStyles.uploadRow, { marginTop: 20 }]}>
@@ -266,7 +271,7 @@ const SignupScreen = () => {
                   <Controller
                     name="masjidProfile"
                     control={control}
-                    render={({ field: { value, onChange } }) => (
+                    render={({ field: { value } }) => (
                       <UploadArea
                         title={t('masjidPhotoLabel')}
                         imageUri={value}
@@ -293,7 +298,7 @@ const SignupScreen = () => {
                 <Paragraph level="Small" weight="Medium">
                   {t('masjidLocationLabel')}
                 </Paragraph>
-                <View style={{ width: '100%', gap: 10, marginTop: 10, marginBottom: 20, flexDirection: 'row', flexWrap: 'wrap' }}>
+                <View style={{ width: '100%', gap: 10, marginBottom: 20, flexDirection: 'row', flexWrap: 'wrap' }}>
                   <View style={{ width: '48%' }}>
                     <Controller
                       name="location.district"
@@ -379,33 +384,35 @@ const SignupScreen = () => {
                     />
                   )}
                 />
-                <Controller
-                  name="email"
-                  control={control}
-                  render={({ field: { value, onChange } }) => (
-                    <Input
-                      label={t('imamEmailLabel')}
-                      placeholder={t('imamEmailPlaceholder')}
-                      keyboardType="email-address"
-                      value={value}
-                      onChangeText={onChange}
-                      error={errors.email?.message}
-                    />
-                  )}
-                />
-                <Controller
-                  name='mobile'
-                  control={control}
-                  render={({ field: { value, onChange } }) => (
-                    <PhoneNumberInput
-                      label={t('imamPhoneLabel')}
-                      placeholder={t('imamPhonePlaceholder')}
-                      value={value}
-                      onChangeText={onChange}
-                      error={errors.email?.message}
-                    />
-                  )}
-                />
+                {
+                  selectedTab === 'email' ? <Controller
+                    name="email"
+                    control={control}
+                    render={({ field: { value, onChange } }) => (
+                      <Input
+                        label={t('imamEmailLabel')}
+                        placeholder={t('imamEmailPlaceholder')}
+                        keyboardType="email-address"
+                        value={value ?? ''}
+                        onChangeText={onChange}
+                        error={errors.email?.message}
+                      />
+                    )}
+                  /> : <Controller
+                      name='mobile'
+                      control={control}
+                      render={({ field: { value, onChange } }) => (
+                        <PhoneNumberInput
+                          label={t('imamPhoneLabel')}
+                          placeholder={t('imamPhonePlaceholder')}
+                          value={value ?? ''}
+                          onChangeText={onChange}
+                          error={errors.email?.message}
+                        />
+                      )}
+                  />
+                }
+
                 <Controller
                   name='password'
                   control={control}
@@ -547,13 +554,13 @@ const SignupScreen = () => {
                   )}
                 />
                 {errors?.isChecked?.message && <ErrorMessage error={errors?.isChecked?.message ?? ''} />}
+                {error && <ErrorMessage error={error} />}
 
                 <AppButton
                   style={{ marginTop: 20 }}
                   text={t('signUpButton')}
                   onPress={handleSubmit(handleFormSubmit)}
                   variant="primary"
-                  disabled={!isDirty || !isValid}
                 />
                 <View style={signupStyles.bottomCenter}>
                   <Text style={signupStyles.bottomTextFirst}>

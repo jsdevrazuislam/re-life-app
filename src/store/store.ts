@@ -72,10 +72,16 @@ export const useAuthStore = create<AuthState>(set => ({
 
       if (accessToken) {
         const { data } = await api.get(ApiStrings.ME);
-        if(!data?.data?.fcmToken){
+        messaging().onTokenRefresh(async (newToken) => {
+          if(data?.data?.fcmToken !== newToken){
+            console.log("New FCM Token:", newToken);
+            await api.post(ApiStrings.SAVE_FCM_TOKEN, { userId: data?.data?._id, fcmToken: newToken })
+          }
+        });
+        if (!data?.data?.fcmToken) {
           await messaging().requestPermission();
           const token = await messaging().getToken();
-          await api.post(ApiStrings.SAVE_FCM_TOKEN, { userId: data?.data?._id, fcmToken: token})
+          await api.post(ApiStrings.SAVE_FCM_TOKEN, { userId: data?.data?._id, fcmToken: token })
           console.log("FCM Token:", token);
         }
         if (data?.data?.kycStatus === 'verified') {

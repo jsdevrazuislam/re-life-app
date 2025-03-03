@@ -69,7 +69,7 @@ const ForgotPasswordScreen = () => {
                 <AppButton
                   text={t('resetPasswordButton')}
                   onPress={handleSubmit}
-                  disabled={!email || loading}
+                  disabled={!email}
                   variant="primary"
                 />
               </View>

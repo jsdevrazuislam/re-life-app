@@ -114,7 +114,7 @@ const PeopleTab: React.FC<PeopleTabProps> = ({data, onAdd, loading}) => {
             </SkeletonPlaceholder>
           ))}
         </ScrollView>
-      ) : data.length === 0 ? (
+      ) : data?.length === 0 ? (
         <View style={imamStyles.emptyContainer}>
           <Icon name="people-outline" size={60} color="#888" />
           <Heading level={6} weight="Bold" style={imamStyles.emptyTitle}>
@@ -129,7 +129,7 @@ const PeopleTab: React.FC<PeopleTabProps> = ({data, onAdd, loading}) => {
         </View>
       ) : (
         <ScrollView>
-          {data.map((item, index) => (
+          {data?.map((item, index) => (
             <View key={index} style={imamStyles.infoCard}>
               <View style={imamStyles.cardContent}>
                 <ImageComponent

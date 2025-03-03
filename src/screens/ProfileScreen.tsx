@@ -44,7 +44,6 @@ interface ProfileForm {
   fullName: string;
   address: string;
   email: string;
-  phoneNumber: string;
   location: {
     district: string;
     upazila: string;
@@ -62,7 +61,6 @@ const ProfileScreen = () => {
     name: '',
     address: '',
     fullName: '',
-    phoneNumber: '',
     email: '',
     location: {
       district: '',
@@ -131,8 +129,6 @@ const ProfileScreen = () => {
     const apiFormData = new FormData();
     apiFormData.append('fullName', formData.fullName);
     apiFormData.append('address', formData.address);
-    apiFormData.append('phoneNumber', formData.phoneNumber);
-    console.log("formData.image", formatFileData(formData.image))
     if (!formData.image?.isUpdate) {
       apiFormData.append('profilePicture', formatFileData(formData.image));
     }
@@ -152,8 +148,7 @@ const ProfileScreen = () => {
         name: user.masjid?.name || '',
         fullName: user?.fullName,
         address: user.address || '',
-        email: user.email || '',
-        phoneNumber: user?.phoneNumber,
+        email: user.email || user?.phoneNumber,
         location: {
           district: user.masjid?.location?.district || '',
           upazila: user.masjid?.location?.upazila || '',
@@ -298,12 +293,6 @@ const ProfileScreen = () => {
                   onChangeText={text => handleInputChange('email', text)}
                   keyboardType="phone-pad"
                   disabled
-                />
-                <PhoneNumberInput
-                  label={t('imamPhoneLabel')}
-                  placeholder={t('imamPhonePlaceholder')}
-                  value={formData.phoneNumber}
-                  onChangeText={text => handleInputChange('email', text)}
                 />
               </View>
             </TouchableWithoutFeedback>

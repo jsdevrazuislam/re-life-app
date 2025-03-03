@@ -6,30 +6,35 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
-import React, {useState} from 'react';
+import React from 'react';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
-import {AppStackParamList} from '../constants/route';
-import {NavigationProp, useNavigation} from '@react-navigation/native';
+import { AppStackParamList } from '../constants/route';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import globalStyles from '../styles/global.style';
 import AppLogo from '../components/ui/AppLogo';
-import {useTranslation} from '../hooks/useTranslation';
+import { useTranslation } from '../hooks/useTranslation';
 import Heading from '../components/ui/Heading';
 import loginStyles from '../styles/login.style';
 import Input from '../components/ui/AppInput';
 import AppButton from '../components/ui/AppButton';
 import Paragraph from '../components/ui/Paragraph';
-import {useApi} from '../hooks/useApi';
+import { useApi } from '../hooks/useApi';
 import ApiStrings from '../lib/apis_string';
-import {showToast} from '../utils/toast';
-import {useAuthStore} from '../store/store';
+import { showToast } from '../utils/toast';
+import { useAuthStore } from '../store/store';
 import LoadingOverlay from '../components/LoadingOverlay';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { loginValidationSchema } from '../validations/login';
 
 const LoginScreen = () => {
-  const {t} = useTranslation();
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+  const { t } = useTranslation();
+  const { control, handleSubmit, formState: { errors } } = useForm({
+    resolver: yupResolver(loginValidationSchema),
+    mode: 'onBlur'
+  });
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
-  const {request, loading, error} = useApi();
+  const { request, loading, error } = useApi();
   const {
     setUser,
     setRole,
@@ -37,15 +42,16 @@ const LoginScreen = () => {
     setTotalCommittees,
     setCommittees,
     setPeople,
+    setTempEmail
   } = useAuthStore();
 
-  const handleSubmit = async () => {
-    const {data, message} = await request('post', ApiStrings.LOGIN, {
-      password,
-      emailOrPhone: email?.toLowerCase(),
+  const handleFormSubmit = async (formData:any) => {
+    const { data, message } = await request('post', ApiStrings.LOGIN, {
+      password: formData?.password,
+      emailOrPhone: formData?.emailOrPhone,
     });
     const user = data?.user;
-    const {data: imamData} = await request(
+    const { data: imamData } = await request(
       'get',
       ApiStrings.GET_MASJID_DETAILS(user?.masjid?._id || ''),
     );
@@ -56,7 +62,10 @@ const LoginScreen = () => {
     await setUser(user, data?.accessToken, data?.refreshToken);
     setRole(user?.role);
     showToast('success', message);
-    if (user?.kycStatus === 'pending' || 'rejected') {
+    if(user?.signupStep === 'otp_pending'){
+      setTempEmail(formData?.emailOrPhone)
+      navigation.navigate('OtpScreen', { email: formData?.emailOrPhone})
+    } else if (user?.kycStatus === 'pending' || 'rejected') {
       navigation.navigate('ImamPendingScreen');
     } else if (user?.isBlocked) {
       navigation.navigate('BlockScreen');
@@ -69,40 +78,54 @@ const LoginScreen = () => {
     <SafeAreaWrapper>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{flex: 1}}>
+        style={{ flex: 1 }}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View
             style={[
               globalStyles.container,
-              {justifyContent: 'center', alignItems: 'center'},
+              { justifyContent: 'center', alignItems: 'center' },
             ]}>
             <LoadingOverlay visible={loading} />
 
-            <View style={{width: '100%', alignItems: 'center'}}>
+            <View style={{ width: '100%', alignItems: 'center' }}>
               <AppLogo />
               <Heading
-                style={{textAlign: 'center', marginTop: 10}}
+                style={{ textAlign: 'center', marginTop: 10 }}
                 level={4}
                 weight="Bold">
                 {t('signInTitle')}
               </Heading>
             </View>
 
-            <View style={[loginStyles.loginForm, {width: '100%'}]}>
-              <Input
-                label={t('emailLabel')}
-                placeholder={t('emailPlaceholder')}
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-              />
-              <Input
-                label={t('passwordLabel')}
-                placeholder={t('passwordPlaceholder')}
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-              />
+            <View style={[loginStyles.loginForm, { width: '100%' }]}>
+              <Controller
+                  name='emailOrPhone'
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <Input
+                      label={t('emailLabel')}
+                      placeholder={t('emailPlaceholder')}
+                      value={value}
+                      onChangeText={onChange}
+                      error={errors?.emailOrPhone?.message}
+                      keyboardType="email-address"
+                    />
+                  )}
+                />
+              <Controller
+                  name='password'
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <Input
+                      label={t('passwordLabel')}
+                      placeholder={t('confirmPasswordLabel')}
+                      value={value}
+                      onChangeText={onChange}
+                      error={errors?.password?.message}
+                      secureTextEntry
+                    />
+                  )}
+                />
               {error && (
                 <Paragraph
                   style={loginStyles.errorMessage}
@@ -118,7 +141,7 @@ const LoginScreen = () => {
               </TouchableOpacity>
               <AppButton
                 text={t('signInButton')}
-                onPress={handleSubmit}
+                onPress={handleSubmit(handleFormSubmit)}
                 variant="primary"
               />
               <View style={loginStyles.bottom}>

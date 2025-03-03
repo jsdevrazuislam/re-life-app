@@ -25,7 +25,7 @@ const OtpScreen = () => {
     const [isVerifyDisabled, setIsVerifyDisabled] = useState(true);
     const { t } = useTranslation();
     const { request, loading, error } = useApi();
-    const { userTempId, setStatus, userTempEmail, setUserId, setTempEmail, setTempUser } =
+    const { userTempId, setStatus, userTempEmail, setUserId, setTempEmail, setTempUser, accessToken } =
         useAuthStore();
     const navigation = useNavigation<NavigationProp<AppStackParamList>>();
     const inputRefs = useRef<Array<TextInput | null>>([]);
@@ -77,7 +77,7 @@ const OtpScreen = () => {
             );
             setStatus(data);
             showToast('success', message);
-            navigation.navigate('ResetPasswordScreen', { otp: otp.join(''), email: userTempEmail || email  });
+            navigation.navigate('ResetPasswordScreen', { otp: otp.join(''), email: userTempEmail || email });
         }
     };
 
@@ -112,7 +112,11 @@ const OtpScreen = () => {
                     <View style={globalStyles.container}>
                         <LoadingOverlay visible={loading} />
                         <View style={otpStyles.headerNavigation}>
-                            <BackButton />
+                            {
+                                !accessToken &&
+                                <BackButton />
+
+                            }
                             <AppLogo />
                         </View>
                         <Heading level={3} weight="Bold">
@@ -149,7 +153,7 @@ const OtpScreen = () => {
                         />
                         <TouchableOpacity
                             style={otpStyles.resendButton}
-                            onPress={handleResendCode}
+                            onPress={timer > 0 ? () => { } : handleResendCode}
                             disabled={isResendDisabled || loading}>
                             {timer > 0 ? (
                                 <Paragraph
