@@ -59,7 +59,7 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
           onBlur={handleBlur}
           keyboardType="phone-pad"
           maxLength={11} 
-          placeholderTextColor={Colors.placeholder}
+          placeholderTextColor={error ? Colors.danger : Colors.placeholder}
           
         />
       </View>

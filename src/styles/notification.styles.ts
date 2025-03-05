@@ -14,6 +14,15 @@ export const styles = ScaledSheet.create({
         fontWeight: '600',
         color: '#1A1A1A',
     },
+    deleteButton:{
+        width: '40@ms',
+        height: '40@ms',
+        backgroundColor: Colors.danger,
+        justifyContent:'center',
+        alignItems:'center',
+        borderRadius:'2@ms',
+        marginTop: '30@ms'
+    },
     segmentContainer: {
         flexDirection: 'row',
         marginVertical: '15@vs',

@@ -25,6 +25,7 @@
     phoneNumber:string;
     email:string,
     status:string
+    emailOrPhone:string
   }
 
    interface KycDocuments {

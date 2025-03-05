@@ -2,7 +2,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuthStore } from "../store/store";
 
-export const SERVER_URL = "https://light-cloths-watch.loca.lt";
+export const SERVER_URL = "https://fair-women-find.loca.lt";
 const baseURL = `${SERVER_URL}/api/v1`;
 export const baseURLPhoto = (url:string) : string => {
   return url
@@ -24,6 +24,9 @@ api.interceptors.request.use(async (config) => {
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
+    if(error?.response?.data?.message === 'User is blocked'){
+      useAuthStore.getState().logout();
+    }
     const originalRequest = error.config;
     if (
       error.response?.status === 401 &&

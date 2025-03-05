@@ -7,10 +7,10 @@ export const validationSchemaAddCommittee = yup.object().shape({
     name: yup.string().required("Name is required"),
     phone: yup
         .string()
-        .required("Phone number is required")
-        .matches(/^\d+$/, "Only numbers are allowed")
-        .length(11, "Phone number must be exactly 11 digits")
-        .matches(bangladeshPhoneRegex, "Invalid Bangladeshi phone number format"),
+        .required("ফোন নম্বর দেওয়া আবশ্যক")
+        .matches(/^\d+$/, "শুধুমাত্র সংখ্যা ব্যবহার করুন")
+        .length(11, "ফোন নম্বরটি ১১ ডিজিট হতে হবে")
+        .matches(bangladeshPhoneRegex, "বাংলাদেশি ফোন নম্বরের ফরম্যাট ভুল"),
     profession: yup
         .string()
         .required("Professionis required"),

@@ -103,8 +103,8 @@ const LoginScreen = () => {
                   control={control}
                   render={({ field: { value, onChange } }) => (
                     <Input
-                      label={t('emailLabel')}
-                      placeholder={t('emailPlaceholder')}
+                      label={t('emailOrPhoneLabel')}
+                      placeholder={t('emailOrPhonePlaceholder')}
                       value={value}
                       onChangeText={onChange}
                       error={errors?.emailOrPhone?.message}

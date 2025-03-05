@@ -82,7 +82,7 @@ const Input: React.FC<InputProps> = ({
           keyboardType={isNumber ? 'numeric' : keyboardType}
           secureTextEntry={secureTextEntry && !isPasswordVisible}
           editable={!disabled} 
-          placeholderTextColor={Colors.placeholder}
+          placeholderTextColor={error ? Colors.danger : Colors.placeholder}
         />
         {secureTextEntry && !disabled && (
           <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)} style={styles.iconWrapper}>

@@ -100,6 +100,7 @@ export default {
   forgotPasswordDescription: 'আপনার ইমেইল বা ফোন নম্বর প্রদান করুন, আমরা আপনাকে একটি ৪ সংখ্যার কোড পাঠাব।',
   emailOrPhoneLabel: 'ইমেইল বা ফোন নম্বর',
   emailOrPhonePlaceholder: 'আপনার ইমেইল বা ফোন নম্বর লিখুন',
+  messageLoading: 'আমরা আপনার তথ্যটি অনুসন্ধান করছি, দয়া করে কিছু সময় অপেক্ষা করুন।',
   resetPasswordButton: 'পাসওয়ার্ড রিসেট করুন',
   backToSignIn: 'লগইনে ফিরে যান',
   resetLinkSent: 'পুনরুদ্ধার লিঙ্ক পাঠানো হয়েছে!',
@@ -210,6 +211,8 @@ export default {
   assistanceFrequency: 'সহায়তার পরিমাণ নির্বাচন করুন',
   assistanceFrequency1: 'সহায়তার পরিমাণ',
   selectPlaceholder: "নির্বাচন",
+  fatherDead: 'পিতা কি জীবিত?',
+  motherDead: 'মাতা কি জীবিত?',
   assistanceLocation: 'সহায়তার অবস্থান লিখুন',
   assistanceLocation1: 'সহায়তার অবস্থান',
 
@@ -256,8 +259,8 @@ export default {
   notes: 'অতিরিক্ত তথ্য বা মন্তব্য',
 
   // ID Proofs
-  idProofFrontBack: 'ভিক্ষুকের আইডি (সামনে ও পিছনে আপলোড করুন)',
-  fatherIdProofFrontBack: 'ভিক্ষুকের পিতার আইডি (সামনে ও পিছনে আপলোড করুন)',
+  idProofFrontBack: 'আইডি (সামনে ও পিছনে আপলোড করুন)',
+  fatherIdProofFrontBack: 'পিতার এবং মাতার আইডি (সামনে ও পিছনে আপলোড করুন)',
   wifeIdProofFrontBack: 'স্ত্রীর আইডি (সামনে ও পিছনে আপলোড করুন)',
   husbandIdProofFrontBack: 'স্বামীর আইডি (সামনে ও পিছনে আপলোড করুন)',
 
@@ -326,6 +329,8 @@ export default {
   wifeIdFront: 'স্ত্রীর পরিচয়পত্র (সামনের অংশ)',
   fatherIdFront: 'বাবা পরিচয়পত্র (সামনের অংশ)',
   fatherIdBack: 'বাবা পরিচয়পত্র (সামনের অংশ)',
+  motherIdFront: 'মাতার পরিচয়পত্র (সামনের অংশ)',
+  motherIdBack: 'মাতার পরিচয়পত্র (সামনের অংশ)',
   wifeIdBack: 'স্ত্রীর পরিচয়পত্র (পেছনের অংশ)',
   emptyPeopleTitle: 'এখনো কোনো লোক যোগ করা হয়নি',
   emptyPeopleDescription: 'নতুন সাহায্যপ্রার্থী যোগ করতে উপরে বাটনে ট্যাপ করুন।',
@@ -335,4 +340,5 @@ export default {
   unread: "অপঠিত",
   noNotifications: "কোনো নোটিফিকেশন নেই",
   noUnread: "কোনো অপঠিত নোটিফিকেশন নেই",
+  
 };

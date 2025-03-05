@@ -22,7 +22,6 @@ import ImamPendingScreen from '../../screens/ImamPendingScreen';
 import UpdateEmailScreen from '../../screens/UpdateEmailScreen';
 import ChangePasswordScreen from '../../screens/ChangePasswordScreen';
 import ResetPasswordScreen from '../../screens/ResetPasswordScreen';
-import BlockedUserScreen from '../../screens/BlockScreen';
 import NotificationsScreen from '../../screens/NotificationScreen';
 
 
@@ -71,7 +70,7 @@ const AppNavigator = ({ role, status, userTempId, user , isFirstTime} : { role:s
     );
   }
 
-  if (role === 'imam') {
+  if (['imam', 'moderator'].includes(role)) {
     return (
       <Stack.Navigator screenOptions={stackNavigationOptions}>
         {["pending", "rejected"].includes(user?.kycStatus ?? '') &&  <Stack.Screen name={AppRoutes.IMAM_PENDING_SCREEN} component={ImamPendingScreen} />}
@@ -82,7 +81,6 @@ const AppNavigator = ({ role, status, userTempId, user , isFirstTime} : { role:s
         <Stack.Screen name={AppRoutes.ADD_POOR_PEOPLE_SCREEN} component={AddPeopleScreen} />
         <Stack.Screen name={AppRoutes.UPDATE_EMAIL} component={UpdateEmailScreen} />
         <Stack.Screen name={AppRoutes.CHANGE_PASSWORD} component={ChangePasswordScreen} />
-        <Stack.Screen name={AppRoutes.BLOCK_SCREEN} component={BlockedUserScreen} />
         <Stack.Screen name={AppRoutes.NOTIFICATION_SCREEN} component={NotificationsScreen} />
         <Stack.Screen name={AppRoutes.OTP_SCREEN} component={OtpScreen} />
         <Stack.Screen name={AppRoutes.KYC_VERIFY_SCREEN} component={KYCVerifyScreen} />

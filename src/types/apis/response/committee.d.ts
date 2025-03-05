@@ -19,6 +19,8 @@ interface PoorPeopleResponse {
     wifeProfession: string;
     numberOfChildren: number;
     contactNumber: string;
+    presentAddress: string;
+    permanentAddress: string;
     address: string;
     receivingAssistance: string;
     assistanceType: string;

@@ -38,8 +38,8 @@ const UpdateEmailScreen = () => {
                     <Header title={t('updateEmailTitle')} />
                     <View style={loginStyles.loginForm}>
                         <Input
-                            label={t('imamEmailLabel')}
-                            placeholder={t('imamEmailPlaceholder')}
+                            label={t('emailOrPhoneLabel')}
+                            placeholder={t('emailOrPhonePlaceholder')}
                             value={email}
                             onChangeText={setEmail}
                             keyboardType="email-address"

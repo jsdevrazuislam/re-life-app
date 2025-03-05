@@ -33,6 +33,7 @@ import LoadingOverlay from '../components/LoadingOverlay';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { validationSchemaAddCommittee } from '../validations/add.committee';
+import ErrorMessage from '../components/ErrorMessage';
 
 const AddCommitteeScreen = () => {
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
@@ -186,6 +187,8 @@ const AddCommitteeScreen = () => {
               )}
             />
           </View>
+
+          {error && <ErrorMessage error={error} />}
 
           <AppButton
             text={t('submit')}

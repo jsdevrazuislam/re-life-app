@@ -10,6 +10,7 @@ import Heading from '../components/ui/Heading';
 import Paragraph from '../components/ui/Paragraph';
 import AppButton from '../components/ui/AppButton';
 import {
+  amountOfAssistance,
   assistanceTypes,
   clothNeeds,
   frequencyOptions,
@@ -42,7 +43,7 @@ import poorPeopleSchema from '../validations/poor.people';
 const AddPeopleScreen = () => {
   const { t } = useTranslation();
   const { user, people, totalPeople, setPeople, setTotalPeople } = useAuthStore();
-  const { control, handleSubmit, setValue, watch, trigger, getValues, formState: { errors } } = useForm({
+  const { control, handleSubmit, setValue, watch, trigger, formState: { errors } } = useForm({
     resolver: yupResolver(poorPeopleSchema),
     mode: 'onBlur'
   });
@@ -50,6 +51,8 @@ const AddPeopleScreen = () => {
   const childrenDetails = watch('childrenDetails');
   const receivingAssistance = watch('receivingAssistance');
   const marriageStatus = watch('marriageStatus')
+  const isFatherDead = watch('isFatherDead')
+  const isMotherDead = watch('isMotherDead')
   const hasChildren = watch('hasChildren')
   const gender = watch('gender')
   const isHusbandDead = watch('isHusbandDead')
@@ -85,62 +88,109 @@ const AddPeopleScreen = () => {
   };
 
 
-  const handleSubmitFormSubmit = async (formData: any) => {
 
-    console.log(formData)
+const handleSubmitFormSubmit = async (formData: any) => {
+  Alert.alert(
+    'Confirm Submission',
+    'Are you sure all the information is correct?',
+    [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Submit',
+        onPress: async () => {
+          const formDataPayload = new FormData();
 
-    return
-    const formDataPayload = new FormData();
-    formDataPayload.append('name', formData.name);
-    formDataPayload.append('age', formData.age);
-    formDataPayload.append('gender', formData.gender);
-    formDataPayload.append('marriageStatus', formData.marriageStatus);
-    formDataPayload.append('profileUrl', formatFileData(formData.photoUrl));
-    formDataPayload.append('isWifeDead', formData.isWifeDead);
-    formDataPayload.append('wifeProfession', formData.wifeProfession);
-    formDataPayload.append('husbandProfession', formData.husbandProfession);
-    formDataPayload.append('numberOfChildren', formData.numberOfChildren);
-    formDataPayload.append('childrenDetails', JSON.stringify(formData?.childrenDetails));
-    formDataPayload.append('contactNumber', formData.contactNumber);
-    formDataPayload.append('address', formData.address);
-    formDataPayload.append('assistanceType', formData.assistanceType);
-    formDataPayload.append('frequency', formData.frequency);
-    formDataPayload.append('receivingAssistance', formData.receivingAssistance);
-    formDataPayload.append('assistanceLocation', formData.assistanceLocation);
-    formDataPayload.append('notes', formData.notes);
-    formDataPayload.append(
-      'essentialsNeedsMonthly',
-      JSON.stringify({
-        rice: formData.rice,
-        lentils: formData.lentils,
-        oil: formData.oil,
-        otherFoodItems: formData.otherFood || '',
-        clothingForSelf: formData.clothingSelf,
-        clothingForFamily: formData.clothingFamily,
-        monthlyMedicineCost: formData.medicineCost || '',
-        ongoingTreatmentsDetails: formData.treatments || '',
-        financialNeeds: formData.financialNeeds,
-      })
-    );
-    formDataPayload.append('idProofFront', formatFileData(formData.idProofFront));
-    formDataPayload.append('idProofBack', formatFileData(formData.idProofBack));
-    formDataPayload.append('idProofFrontWife', formatFileData(formData.idProofFrontWife));
-    formDataPayload.append('idProofBackWife', formatFileData(formData.idProofBackWife));
-    formDataPayload.append('idProofFrontFather', formatFileData(formData.idProofFrontFather));
-    formDataPayload.append('idProofBackFather', formatFileData(formData.idProofBackFather));
+          const appendIfExists = (key: string, value: any) => {
+            if (value !== undefined && value !== null && value !== '') {
+              formDataPayload.append(key, value);
+            }
+          };
 
+          appendIfExists('name', formData.name);
+          appendIfExists('age', formData.age);
+          appendIfExists('gender', formData.gender);
+          appendIfExists('marriageStatus', formData.marriageStatus);
+          appendIfExists('profileUrl', formatFileData(formData.photoUrl));
+          appendIfExists('isWifeDead', formData.isWifeDead);
+          appendIfExists('wifeProfession', formData.wifeProfession);
+          appendIfExists('husbandProfession', formData.husbandProfession);
+          appendIfExists('isFatherDead', formData.isFatherDead);
+          appendIfExists('isMotherDead', formData.isMotherDead);
+          appendIfExists('overview', formData.overview);
+          appendIfExists('permanentAddress', formData.permanentAddress);
+          appendIfExists('presentAddress', formData.presentAddress);
+          appendIfExists('numberOfChildren', formData.numberOfChildren);
+          appendIfExists('contactNumber', formData.contactNumber);
+          appendIfExists('address', formData.address);
+          appendIfExists('assistanceType', formData.assistanceType);
+          appendIfExists('frequency', formData.frequency);
+          appendIfExists('receivingAssistance', formData.receivingAssistance);
+          appendIfExists('assistanceLocation', formData.assistanceLocation);
+          appendIfExists('notes', formData.notes);
 
-    const { message, data } = await request(
-      'post',
-      ApiStrings.CREATE_PEOPLE(user?.masjid?._id || ''),
-      formDataPayload
-    );
-    const newPeople = [...people, data];
-    setPeople(newPeople);
-    setTotalPeople(totalPeople + 1);
-    showToast('success', message);
-    navigation.navigate('ImamHomeScreen', { activeTab: t('beggers') });
-  };
+          if (formData?.childrenDetails?.length > 0) {
+            appendIfExists('childrenDetails', JSON.stringify(formData.childrenDetails));
+          }
+
+          appendIfExists(
+            'essentialsNeedsMonthly',
+            JSON.stringify({
+              rice: formData.rice,
+              lentils: formData.lentils,
+              oil: formData.oil,
+              otherFoodItems: formData.otherFood || '',
+              clothingForSelf: formData.clothingSelf,
+              clothingForFamily: formData.clothingFamily,
+              monthlyMedicineCost: formData.medicineCost || '',
+              ongoingTreatmentsDetails: formData.treatments || '',
+              financialNeeds: formData.financialNeeds,
+            })
+          );
+
+          const appendFileIfExists = (key: string, file: any) => {
+            if (file && file.uri) {
+              formDataPayload.append(key, formatFileData(file));
+            }
+          };
+
+          appendFileIfExists('idProofFront', formData.idProofFront);
+          appendFileIfExists('idProofBack', formData.idProofBack);
+          appendFileIfExists('idProofFrontWife', formData.idProofFrontWife);
+          appendFileIfExists('idProofBackWife', formData.idProofBackWife);
+          appendFileIfExists('idProofFrontFather', formData.idProofFrontFather);
+          appendFileIfExists('idProofBackFather', formData.idProofBackFather);
+          appendFileIfExists('idProofFrontMother', formData.idProofFrontMother);
+          appendFileIfExists('idProofBackMother', formData.idProofBackMother);
+
+          formData?.childrenDetails?.forEach((children: any) => {
+            if (children.childrenProveDocument?.uri) {
+              formDataPayload.append(`childrenProveDocument`, {
+                uri: children.childrenProveDocument.uri,
+                name: children.childrenProveDocument.fileName,
+                type: children.childrenProveDocument.type,
+              });
+            }
+          });
+
+          const { message, data } = await request(
+            'post',
+            ApiStrings.CREATE_PEOPLE(user?.masjid?._id || ''),
+            formDataPayload
+          );
+
+          const newPeople = [...people, data];
+          setPeople(newPeople);
+          setTotalPeople(totalPeople + 1);
+          showToast('success', message);
+          navigation.navigate('ImamHomeScreen', { activeTab: t('beggers') });
+        },
+      },
+    ]
+  );
+};
 
   const handleImagePicker = async (
     field:
@@ -153,6 +203,8 @@ const AddPeopleScreen = () => {
       | 'idProofBackHusband'
       | 'idProofFrontFather'
       | 'idProofBackFather'
+      | 'idProofFrontMother'
+      | 'idProofBackMother'
   ) => {
     if (Platform.OS === 'android') {
       const hasPermission = await requestAndroidPermission();
@@ -198,51 +250,49 @@ const AddPeopleScreen = () => {
       | 'idProofBackHusband'
       | 'idProofFrontFather'
       | 'idProofBackFather'
+      | 'idProofFrontMother'
+      | 'idProofBackMother'
   ) => {
     setValue(field, '');
   };
 
   const handleChildrenImagePicker = async (index: number) => {
-      if (Platform.OS === 'android') {
-        const hasPermission = await requestAndroidPermission();
-        if (!hasPermission) {
-          Alert.alert(
-            'Permission Denied',
-            'Please enable photo access in Settings to continue.',
-            [
-              { text: 'Cancel', style: 'cancel' },
-              { text: 'Open Settings', onPress: () => Linking.openSettings() },
-            ],
-          );
+    if (Platform.OS === 'android') {
+      const hasPermission = await requestAndroidPermission();
+      if (!hasPermission) {
+        Alert.alert(
+          'Permission Denied',
+          'Please enable photo access in Settings to continue.',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Open Settings', onPress: () => Linking.openSettings() },
+          ],
+        );
+        return;
+      }
+    }
+
+    ImagePicker.launchImageLibrary(
+      { mediaType: 'photo', quality: 0.8 },
+      response => {
+        if (response.didCancel) return;
+        if (response.errorMessage) {
+          showToast('error', response.errorMessage);
           return;
         }
-      }
-  
-      ImagePicker.launchImageLibrary(
-        { mediaType: 'photo', quality: 0.8 },
-        response => {
-          if (response.didCancel) return;
-          if (response.errorMessage) {
-            showToast('error', response.errorMessage);
-            return;
-          }
-          if (response.assets && response.assets.length > 0) {
-            setValue(`childrenDetails.${index}.childrenProveDocument`, response.assets[0] as IFile, { shouldValidate: true });
-            trigger(`childrenDetails.${index}.childrenProveDocument`); 
-          }
-        },
-      );
-    };
-  
-  
-    const removeChildrenImage = (index: number) => {
-      setValue(`childrenDetails.${index}.childrenProveDocument`, null, { shouldValidate: true });
-      trigger(`childrenDetails.${index}.childrenProveDocument`);
-    };
+        if (response.assets && response.assets.length > 0) {
+          console.log(response.assets[0])
+          setValue(`childrenDetails.${index}.childrenProveDocument`, response.assets[0] as IFile, { shouldValidate: true });
+        }
+      },
+    );
+  };
 
 
-  console.log("errors", errors)
-  
+  const removeChildrenImage = (index: number) => {
+    setValue(`childrenDetails.${index}.childrenProveDocument`, null, { shouldValidate: true });
+  };
+
 
   return (
     <SafeAreaWrapper>
@@ -259,12 +309,11 @@ const AddPeopleScreen = () => {
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={globalStyles.container}>
               <Header title={t('addBegger')} />
-              {/* Photo Upload */}
               <View style={{ marginTop: 20 }}>
                 <Controller
                   name='photoUrl'
                   control={control}
-                  render={({ field: { value, onChange } }) => (
+                  render={({ field: { value } }) => (
                     <UploadArea
                       title={t('beggerPhoto')}
                       imageUri={value}
@@ -276,7 +325,6 @@ const AddPeopleScreen = () => {
                 />
               </View>
 
-              {/* Basic Information */}
               <Controller
                 name='name'
                 control={control}
@@ -302,6 +350,7 @@ const AddPeopleScreen = () => {
                     onChangeText={onChange}
                     keyboardType="numeric"
                     isNumber={true}
+                    error={errors?.age?.message}
                   />
                 )}
               />
@@ -390,6 +439,41 @@ const AddPeopleScreen = () => {
 
                 </>
               )}
+              {['অবিবাহিত'].includes(marriageStatus) && (
+                <>
+
+                  <Controller
+                    name={'isFatherDead'}
+                    control={control}
+                    render={({ field: { value, onChange } }) => (
+                      <SelectDropdown
+                        label={t('fatherDead')}
+                        placeholder={t('fatherDead')}
+                        value={value ?? ''}
+                        onChange={onChange}
+                        data={yesNoOptions}
+                        error={errors?.isFatherDead?.message}
+                      />
+                    )}
+                  />
+
+                  <Controller
+                    name={'isMotherDead'}
+                    control={control}
+                    render={({ field: { value, onChange } }) => (
+                      <SelectDropdown
+                        label={t('motherDead')}
+                        placeholder={t('motherDead')}
+                        value={value ?? ''}
+                        onChange={onChange}
+                        data={yesNoOptions}
+                        error={errors?.isMotherDead?.message}
+                      />
+                    )}
+                  />
+
+                </>
+              )}
 
               {hasChildren === 'হ্যাঁ' && (
                 <>
@@ -453,11 +537,11 @@ const AddPeopleScreen = () => {
                         render={({ field: { value, onChange } }) => (
                           <UploadArea
                             title={t('childrenProveDocument')}
-                            imageUri={value} 
+                            imageUri={value}
                             handlePress={() => handleChildrenImagePicker(index)}
                             handleRemove={() => {
                               removeChildrenImage(index);
-                              onChange(null); 
+                              onChange(null);
                             }}
                             error={errors.childrenDetails?.[index]?.childrenProveDocument?.message}
                           />
@@ -475,7 +559,7 @@ const AddPeopleScreen = () => {
                                   label={t('childNumber')}
                                   placeholder={t('childNumber')}
                                   value={value ?? ''}
-                                  style={{ marginTop: 16}}
+                                  style={{ marginTop: 16 }}
                                   onChangeText={onChange}
                                   error={errors.childrenDetails?.[index]?.mobile?.message}
                                 />
@@ -544,7 +628,6 @@ const AddPeopleScreen = () => {
                 </>
               )}
 
-              {/* Assistance Section */}
               <Controller
                 name={'receivingAssistance'}
                 control={control}
@@ -586,7 +669,7 @@ const AddPeopleScreen = () => {
                         label={t('assistanceFrequency')}
                         value={value ?? ''}
                         onChange={onChange}
-                        data={frequencyOptions}
+                        data={amountOfAssistance}
                         placeholder={t('selectPlaceholder')}
                         error={errors?.frequency?.message}
                       />
@@ -803,7 +886,7 @@ const AddPeopleScreen = () => {
                     maxLength={300}
                     numberOfLines={5}
                     error={errors?.overview?.message}
-                    
+
                   />
                 )}
               />
@@ -911,7 +994,7 @@ const AddPeopleScreen = () => {
 
                   </View>
                 </>
-              ) : marriageStatus === 'অবিবাহিত' ? (
+              ) : marriageStatus === 'অবিবাহিত' && isFatherDead === 'হ্যাঁ' || isMotherDead === 'হ্যাঁ' ? (
                 <>
                   <Paragraph
                     level="Medium"
@@ -919,35 +1002,65 @@ const AddPeopleScreen = () => {
                     style={[styles.sectionTitle, { marginTop: 15 }]}>
                     {t('fatherIdProofFrontBack')}
                   </Paragraph>
-                  <View style={styles.row}>
+                  {
+                    isFatherDead === 'হ্যাঁ' && <View style={styles.row}>
+                      <Controller
+                        name={'idProofFrontFather'}
+                        control={control}
+                        render={({ field: { value } }) => (
+                          <UploadArea
+                            title={t('fatherIdFront')}
+                            imageUri={value}
+                            handlePress={() => handleImagePicker('idProofFrontFather')}
+                            handleRemove={() => removeImage('idProofFrontFather')}
+                            error={errors?.idProofFrontFather?.message}
+                          />
+                        )}
+                      />
+                      <Controller
+                        name={'idProofBackFather'}
+                        control={control}
+                        render={({ field: { value } }) => (
+                          <UploadArea
+                            title={t('fatherIdBack')}
+                            imageUri={value}
+                            handlePress={() => handleImagePicker('idProofBackFather')}
+                            handleRemove={() => removeImage('idProofBackFather')}
+                            error={errors?.idProofBackFather?.message}
+                          />
+                        )}
+                      />
+                    </View>
+                  }
+                  {isMotherDead === 'হ্যাঁ' && <View style={styles.row}>
                     <Controller
-                      name={'idProofFrontFather'}
+                      name='idProofFrontMother'
                       control={control}
                       render={({ field: { value } }) => (
                         <UploadArea
-                          title={t('fatherIdFront')}
+                          title={t('motherIdFront')}
                           imageUri={value}
-                          handlePress={() => handleImagePicker('idProofFrontFather')}
-                          handleRemove={() => removeImage('idProofFrontFather')}
-                          error={errors?.idProofFrontFather?.message}
+                          handlePress={() => handleImagePicker('idProofFrontMother')}
+                          handleRemove={() => removeImage('idProofFrontMother')}
+                          error={errors?.idProofFrontMother?.message}
                         />
                       )}
                     />
                     <Controller
-                      name={'idProofBackFather'}
+                      name='idProofBackMother'
                       control={control}
                       render={({ field: { value } }) => (
                         <UploadArea
-                          title={t('fatherIdBack')}
+                          title={t('motherIdBack')}
                           imageUri={value}
-                          handlePress={() => handleImagePicker('idProofBackFather')}
-                          handleRemove={() => removeImage('idProofBackFather')}
-                          error={errors?.idProofBackFather?.message}
+                          handlePress={() => handleImagePicker('idProofBackMother')}
+                          handleRemove={() => removeImage('idProofBackMother')}
+                          error={errors?.idProofBackMother?.message}
                         />
                       )}
                     />
 
-                  </View>
+                  </View>}
                 </>
               ) : null}
 

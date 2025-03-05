@@ -22,7 +22,8 @@ const ApiStrings = {
     UPDATE_COMMITTEE: '/committee/update',
     GET_NOTIFICATIONS: (userId:string) => `/notifications/${userId}`,
     READ_NOTIFICATION: (notificationId:string) => `/notifications/read/${notificationId}`,
-    SAVE_FCM_TOKEN: `/users/save-token`
+    SAVE_FCM_TOKEN: `/users/save-token`,
+    DELETE_NOTIFICATION:(id:string) => `/notifications/${id}`,
 }
 
 export default ApiStrings

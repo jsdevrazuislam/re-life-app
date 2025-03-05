@@ -8,7 +8,7 @@ interface LoadingOverlayProps {
   message?: string;
 }
 
-const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ visible, message = "Processing, please wait..." }) => {
+const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ visible, message = "আমরা আপনার তথ্যটি অনুসন্ধান করছি, দয়া করে কিছু সময় অপেক্ষা করুন।" }) => {
   if (!visible) return null;
 
   return (

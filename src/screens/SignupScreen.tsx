@@ -38,7 +38,10 @@ const SignupScreen = () => {
   const { t } = useTranslation();
   const { control, handleSubmit, setValue, watch, getValues, formState: { errors } } = useForm({
     resolver: yupResolver(validationSchema),
-    mode: 'onBlur'
+    mode: 'onBlur',
+    defaultValues:{
+      selectedTab: 'email'
+    }
   });
 
   const committeeDetails = watch("committeeDetails");
@@ -51,7 +54,7 @@ const SignupScreen = () => {
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
   const { request, loading, error } = useApi();
   const { setUserId, setStatus, setTempEmail } = useAuthStore();
-  const [selectedTab, setSelectedTab] = useState<"email" | "phone">("email");
+  const [selectedTab, setSelectedTab] = useState<"email" | "mobile">("email");
 
 
   const handleCommittee = (count: number) => {
@@ -167,7 +170,7 @@ const SignupScreen = () => {
 
     const formDataPayload = new FormData();
 
-    formDataPayload.append('emailOrPhone', payload.email);
+    formDataPayload.append('emailOrPhone', selectedTab === 'email' ? payload.email : payload.mobile);
     formDataPayload.append('masjidName', payload.name);
     formDataPayload.append('password', payload.password);
     formDataPayload.append('fullName', payload.username);
@@ -177,7 +180,6 @@ const SignupScreen = () => {
     );
     formDataPayload.append("masjidProfile", formatFileData(payload.masjidProfile))
     formDataPayload.append('location', JSON.stringify(payload.location));
-    formDataPayload.append('phoneNumber', payload.mobile);
     formDataPayload.append('address', payload.address);
     formDataPayload.append('profileUrl', formatFileData(payload.profileUrl));
     payload?.committeeDetails?.forEach((member) => {
@@ -196,13 +198,13 @@ const SignupScreen = () => {
       formDataPayload,
     );
     setUserId(data?.id);
-    setTempEmail(selectedTab === 'email' ? data?.email : data?.mobile)
+    setTempEmail(data?.emailOrPhone)
     setStatus('otp_pending')
     showToast('success', message);
-    navigation.navigate('OtpScreen', { email: selectedTab === 'email' ? data?.email : data?.phone });
+    navigation.navigate('OtpScreen', { email: data?.emailOrPhone });
   }
 
-  const handleTabChange = (tab: "email" | "phone") => {
+  const handleTabChange = (tab: "email" | "mobile") => {
     setSelectedTab(tab);
     setValue("selectedTab", tab);
     setValue("email", "");
@@ -243,10 +245,10 @@ const SignupScreen = () => {
               </TouchableOpacity>
 
               <TouchableOpacity
-                style={[styles.tab, selectedTab === "phone" && styles.activeTab]}
-                onPress={() => handleTabChange("phone")}
+                style={[styles.tab, selectedTab === "mobile" && styles.activeTab]}
+                onPress={() => handleTabChange("mobile")}
               >
-                <Text style={[styles.tabText, selectedTab === "phone" && styles.activeTabText]}>
+                <Text style={[styles.tabText, selectedTab === "mobile" && styles.activeTabText]}>
                   Phone
                 </Text>
               </TouchableOpacity>
@@ -258,7 +260,7 @@ const SignupScreen = () => {
                   <Controller
                     name="profileUrl"
                     control={control}
-                    render={({ field: { value, onChange } }) => (
+                    render={({ field: { value } }) => (
                       <UploadArea
                         title={t('imamPhotoLabel')}
                         imageUri={value}
@@ -312,6 +314,7 @@ const SignupScreen = () => {
                           search={true}
                           searchPlaceholder="Search district"
                           error={errors?.location?.district?.message}
+                          rootStyle={{ marginTop: 10}}
                         />
                       )}
                     />
@@ -330,6 +333,7 @@ const SignupScreen = () => {
                           search={true}
                           searchPlaceholder="Search upazila"
                           error={errors?.location?.upazila?.message}
+                          rootStyle={{ marginTop: 10}}
                         />
                       )}
                     />
@@ -348,6 +352,7 @@ const SignupScreen = () => {
                           search={true}
                           searchPlaceholder="Search union"
                           error={errors?.location?.union?.message}
+                          rootStyle={{ marginTop: -10}}
                         />
                       )}
                     />
@@ -366,6 +371,7 @@ const SignupScreen = () => {
                           search={true}
                           searchPlaceholder="Search village"
                           error={errors?.location?.village?.message}
+                          rootStyle={{ marginTop: -10}}
                         />
                       )}
                     />
@@ -381,6 +387,7 @@ const SignupScreen = () => {
                       value={value}
                       onChangeText={onChange}
                       error={errors.username?.message}
+                      style={{ marginTop: -14}}
                     />
                   )}
                 />
@@ -407,7 +414,7 @@ const SignupScreen = () => {
                           placeholder={t('imamPhonePlaceholder')}
                           value={value ?? ''}
                           onChangeText={onChange}
-                          error={errors.email?.message}
+                          error={errors.mobile?.message}
                         />
                       )}
                   />

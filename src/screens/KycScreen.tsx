@@ -43,7 +43,7 @@ const KycScreen = () => {
     mode: 'onBlur',
     defaultValues:{
       name: tempUser?.name,
-      emailOrPhone: tempUser?.email || tempUser?.phoneNumber
+      emailOrPhone: tempUser?.emailOrPhone
     }
   });
   console.log("tempUser", tempUser)
@@ -168,8 +168,8 @@ const KycScreen = () => {
               control={control}
               render={({ field: { value, onChange } }) => (
                 <Input
-                  label={t('emailLabel')}
-                  placeholder={t('emailPlaceholder')}
+                  label={t('emailOrPhoneLabel')}
+                  placeholder={t('emailOrPhonePlaceholder')}
                   value={value}
                   onChangeText={onChange}
                   error={errors?.emailOrPhone?.message}
