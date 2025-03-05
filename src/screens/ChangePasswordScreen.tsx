@@ -5,7 +5,6 @@ import globalStyles from '../styles/global.style';
 import loginStyles from '../styles/login.style';
 import { useTranslation } from '../hooks/useTranslation';
 import Input from '../components/ui/AppInput';
-import { validatePassword } from '../validations/signup';
 import Paragraph from '../components/ui/Paragraph';
 import { useApi } from '../hooks/useApi';
 import AppButton from '../components/ui/AppButton';
@@ -61,7 +60,6 @@ const ChangePasswordScreen = () => {
                             onChangeText={text =>
                                 setFormData({ ...formData, currentPassword: text })
                             }
-                            validation={validatePassword}
                             secureTextEntry
                         />
                         <Input
@@ -71,7 +69,6 @@ const ChangePasswordScreen = () => {
                             onChangeText={text =>
                                 setFormData({ ...formData, newPassword: text })
                             }
-                            validation={validatePassword}
                             secureTextEntry
                         />
                         <Input
@@ -81,7 +78,6 @@ const ChangePasswordScreen = () => {
                             onChangeText={text =>
                                 setFormData({ ...formData, confirmPasword: text })
                             }
-                            validation={validatePassword}
                             secureTextEntry
                         />
                         {error && (

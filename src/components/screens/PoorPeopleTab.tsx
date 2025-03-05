@@ -114,7 +114,7 @@ const PeopleTab: React.FC<PeopleTabProps> = ({data, onAdd, loading}) => {
             </SkeletonPlaceholder>
           ))}
         </ScrollView>
-      ) : data.length === 0 ? (
+      ) : data?.length === 0 ? (
         <View style={imamStyles.emptyContainer}>
           <Icon name="people-outline" size={60} color="#888" />
           <Heading level={6} weight="Bold" style={imamStyles.emptyTitle}>
@@ -129,7 +129,7 @@ const PeopleTab: React.FC<PeopleTabProps> = ({data, onAdd, loading}) => {
         </View>
       ) : (
         <ScrollView>
-          {data.map((item, index) => (
+          {data?.map((item, index) => (
             <View key={index} style={imamStyles.infoCard}>
               <View style={imamStyles.cardContent}>
                 <ImageComponent
@@ -154,11 +154,12 @@ const PeopleTab: React.FC<PeopleTabProps> = ({data, onAdd, loading}) => {
                     level="Small"
                     weight="Bold"
                     style={imamStyles.cardSubtitle}>
-                    Location: <Paragraph level="Small" weight="Medium">{item.address}</Paragraph>
+                    Location: <Paragraph level="Small" weight="Medium">{item.presentAddress ?? item.permanentAddress}</Paragraph>
                   </Paragraph>
                 </View>
               </View>
-              <View style={imamStyles.actionButtons}>
+              {
+                user?.role === 'imam' && <View style={imamStyles.actionButtons}>
                 <TouchableOpacity onPress={() => openModal(item, 'edit')}>
                   <Icon name="edit" size={20} color="#4CAF50" />
                 </TouchableOpacity>
@@ -166,6 +167,7 @@ const PeopleTab: React.FC<PeopleTabProps> = ({data, onAdd, loading}) => {
                   <Icon name="delete" size={20} color="#F44336" />
                 </TouchableOpacity>
               </View>
+              }
             </View>
           ))}
         </ScrollView>

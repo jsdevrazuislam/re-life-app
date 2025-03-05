@@ -1,16 +1,16 @@
 import React from 'react';
-import {View, ScrollView, TouchableOpacity, Switch} from 'react-native';
+import { View, ScrollView, TouchableOpacity, Switch } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import styles from '../styles/imamSetting.styles';
 import Paragraph from '../components/ui/Paragraph';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import globalStyles from '../styles/global.style';
 import Heading from '../components/ui/Heading';
-import {useAuthStore} from '../store/store';
-import {useTranslationStore} from '../hooks/useTranslationStore';
-import {Colors} from '../configs/colors';
-import {NavigationProp, useNavigation} from '@react-navigation/native';
-import {AppStackParamList} from '../constants/route';
+import { useAuthStore } from '../store/store';
+import { useTranslationStore } from '../hooks/useTranslationStore';
+import { Colors } from '../configs/colors';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { AppStackParamList } from '../constants/route';
 import Header from '../components/Header';
 import { useTranslation } from '../hooks/useTranslation';
 import ImageComponent from '../components/ui/Image';
@@ -40,9 +40,9 @@ const SettingItem: React.FC<SettingItemProps> = ({
 );
 
 const SettingsScreen = () => {
-  const {language, setLanguage} = useTranslationStore();
+  const { language, setLanguage } = useTranslationStore();
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
-  const {user} = useAuthStore();
+  const { user } = useAuthStore();
   const { t } = useTranslation()
 
   return (
@@ -56,7 +56,7 @@ const SettingsScreen = () => {
               <ImageComponent
                 source={user?.profileUrl ?? ""}
                 style={styles.avatar}
-                imageStyle={{ borderRadius: 50}}
+                imageStyle={{ borderRadius: 50 }}
               />
             </View>
             <Heading level={6} weight="Bold" style={styles.userName}>
@@ -73,24 +73,29 @@ const SettingsScreen = () => {
               label={t('title')}
               onPress={() => navigation.navigate('NotificationScreen')}
             />
-            <SettingItem
-              icon="lock"
-              label={t('changePasswordTitle')}
-              onPress={() => navigation.navigate('ChangePasswordScreen')}
-            />
-            <SettingItem
-              icon="email"
-              label={t('updateEmailTitle')}
-              onPress={() => navigation.navigate('UpdateEmailScreen')}
-            />
+            {
+              user?.role === 'imam' &&
+              <>
+                <SettingItem
+                  icon="lock"
+                  label={t('changePasswordTitle')}
+                  onPress={() => navigation.navigate('ChangePasswordScreen')}
+                />
+                <SettingItem
+                  icon="email"
+                  label={t('updateEmailTitle')}
+                  onPress={() => navigation.navigate('UpdateEmailScreen')}
+                />
+              </>
+            }
             <SettingItem
               icon="language"
-              label={`${t('switchLanguageTitle')} ${language}`}
+              label={`${t('switchLanguageTitle')}`}
               rightComponent={
                 <Switch
                   value={language === 'bn'}
                   onValueChange={val => setLanguage(val ? 'bn' : 'en')}
-                  trackColor={{false: '#767577', true: Colors.primary}}
+                  trackColor={{ false: '#767577', true: Colors.primary }}
                   thumbColor={language === 'bn' ? Colors.primary : '#f4f3f4'}
                 />
               }

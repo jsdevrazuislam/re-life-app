@@ -12,6 +12,7 @@ import { ScaledSheet } from 'react-native-size-matters';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useTranslation } from '../../hooks/useTranslation';
 import { Colors } from '../../configs/colors';
+import ErrorMessage from '../ErrorMessage';
 
 interface InputProps {
   label?: string;
@@ -21,12 +22,12 @@ interface InputProps {
   onBlur?: () => void;
   keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad';
   secureTextEntry?: boolean;
-  validation?: (value: string) => string | null;
   style?: object;
   inputStyles?: StyleProp<TextStyle>;
   inputWrapper?: StyleProp<ViewStyle>;
   isNumber?: boolean;
   disabled?: boolean;  
+  error?:string
 }
 
 const Input: React.FC<InputProps> = ({
@@ -37,24 +38,18 @@ const Input: React.FC<InputProps> = ({
   onBlur,
   keyboardType = 'default',
   secureTextEntry = false,
-  validation,
   inputStyles,
   style,
   inputWrapper,
   isNumber = false,
   disabled = false,  
+  error
 }) => {
-  const [error, setError] = useState<string | null>(null);
-  const [touched, setTouched] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const { t } = useTranslation();
 
   const handleBlur = () => {
     if (disabled) return; 
-    setTouched(true);
-    if (validation) {
-      setError(validation(value));
-    }
     if (onBlur) onBlur();
   };
 
@@ -67,9 +62,7 @@ const Input: React.FC<InputProps> = ({
       onChangeText(text);
     }
     
-    if (touched && validation) {
-      setError(validation(text));
-    }
+   
   };
 
   return (
@@ -89,7 +82,7 @@ const Input: React.FC<InputProps> = ({
           keyboardType={isNumber ? 'numeric' : keyboardType}
           secureTextEntry={secureTextEntry && !isPasswordVisible}
           editable={!disabled} 
-          placeholderTextColor={Colors.placeholder}
+          placeholderTextColor={error ? Colors.danger : Colors.placeholder}
         />
         {secureTextEntry && !disabled && (
           <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)} style={styles.iconWrapper}>
@@ -97,7 +90,7 @@ const Input: React.FC<InputProps> = ({
           </TouchableOpacity>
         )}
       </View>
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error && <ErrorMessage error={error} />}
     </View>
   );
 };

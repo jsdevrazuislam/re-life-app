@@ -20,7 +20,6 @@ const loginStyles = ScaledSheet.create({
     },
     errorMessage:{
         color:Colors.danger,
-        marginBottom:10
     },
     lineContainer:{
         flexDirection:'row',

@@ -4,7 +4,6 @@ import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import { useTranslation } from '../hooks/useTranslation';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { AppStackParamList } from '../constants/route';
-import { validateEmail } from '../validations/signup';
 import globalStyles from '../styles/global.style';
 import AppLogo from '../components/ui/AppLogo';
 import forgotPasswordStyles from '../styles/forgotPassword.style';
@@ -64,14 +63,13 @@ const ForgotPasswordScreen = () => {
                   placeholder={t('emailOrPhonePlaceholder')}
                   value={email}
                   onChangeText={setEmail}
-                  validation={validateEmail}
                   keyboardType="email-address"
                 />
                 {error && <ErrorMessage error={error} />}
                 <AppButton
                   text={t('resetPasswordButton')}
                   onPress={handleSubmit}
-                  disabled={!email || loading}
+                  disabled={!email}
                   variant="primary"
                 />
               </View>

@@ -70,12 +70,13 @@ export const useAuthStore = create<AuthState>(set => ({
       const { data } = await api.get(ApiStrings.GET_MASJIDS_NAME);
       set({ masjids: data?.data?.data })
 
+      await messaging().requestPermission();
+      const token = await messaging().getToken();
+
       if (accessToken) {
         const { data } = await api.get(ApiStrings.ME);
-        if(!data?.data?.fcmToken){
-          await messaging().requestPermission();
-          const token = await messaging().getToken();
-          await api.post(ApiStrings.SAVE_FCM_TOKEN, { userId: data?.data?._id, fcmToken: token})
+        if (!data?.data?.fcmToken || data?.data?.fcmToken !== token) {
+          await api.post(ApiStrings.SAVE_FCM_TOKEN, { userId: data?.data?._id, fcmToken: token })
           console.log("FCM Token:", token);
         }
         if (data?.data?.kycStatus === 'verified') {

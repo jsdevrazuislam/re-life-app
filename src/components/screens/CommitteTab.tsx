@@ -123,7 +123,7 @@ const CommitteeTab: React.FC<CommitteeTabProps> = ({data, loading}) => {
             </SkeletonPlaceholder>
           ))}
         </ScrollView>
-      ) : data.length === 0 ? (
+      ) : data?.length === 0 ? (
         <View style={imamStyles.emptyContainer}>
           <Icon name="people-outline" size={60} color="#888" />
           <Heading level={6} weight="Bold" style={imamStyles.emptyTitle}>
@@ -138,7 +138,7 @@ const CommitteeTab: React.FC<CommitteeTabProps> = ({data, loading}) => {
         </View>
       ) : (
         <ScrollView>
-          {data.map((item, index) => (
+          {data?.map((item, index) => (
             <View key={index} style={imamStyles.infoCard}>
               <View style={imamStyles.cardContent}>
                 {/* Profile Picture */}

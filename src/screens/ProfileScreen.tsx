@@ -24,7 +24,6 @@ import {
 } from '../validations/add.committee';
 import Input from '../components/ui/AppInput';
 import SelectDropdown from '../components/ui/Select';
-import { validateEmail } from '../validations/signup';
 import AppButton from '../components/ui/AppButton';
 import { districts, unions, upazilas, villages } from '../data/dump';
 import Paragraph from '../components/ui/Paragraph';
@@ -45,7 +44,6 @@ interface ProfileForm {
   fullName: string;
   address: string;
   email: string;
-  phoneNumber: string;
   location: {
     district: string;
     upazila: string;
@@ -63,7 +61,6 @@ const ProfileScreen = () => {
     name: '',
     address: '',
     fullName: '',
-    phoneNumber: '',
     email: '',
     location: {
       district: '',
@@ -132,8 +129,6 @@ const ProfileScreen = () => {
     const apiFormData = new FormData();
     apiFormData.append('fullName', formData.fullName);
     apiFormData.append('address', formData.address);
-    apiFormData.append('phoneNumber', formData.phoneNumber);
-    console.log("formData.image", formatFileData(formData.image))
     if (!formData.image?.isUpdate) {
       apiFormData.append('profilePicture', formatFileData(formData.image));
     }
@@ -153,8 +148,7 @@ const ProfileScreen = () => {
         name: user.masjid?.name || '',
         fullName: user?.fullName,
         address: user.address || '',
-        email: user.email || '',
-        phoneNumber: user?.phoneNumber,
+        email: user.email || user?.phoneNumber,
         location: {
           district: user.masjid?.location?.district || '',
           upazila: user.masjid?.location?.upazila || '',
@@ -222,7 +216,6 @@ const ProfileScreen = () => {
                   placeholder={t('masjidNamePlaceholder')}
                   value={formData.name}
                   onChangeText={text => handleInputChange('name', text)}
-                  validation={validateCommitteeName}
                   disabled
                 />
                 <Paragraph level="Small" weight="Medium">
@@ -285,14 +278,12 @@ const ProfileScreen = () => {
                   placeholder={t('imamNamePlaceholder')}
                   value={formData.fullName}
                   onChangeText={text => handleInputChange('fullName', text)}
-                  validation={validateCommitteeName}
                 />
                 <Input
                   label={t('currentAddressLabel')}
                   placeholder={t('currentAddressPlaceholder')}
                   value={formData.address}
                   onChangeText={text => handleInputChange('address', text)}
-                  validation={validateCommitteeAddress}
                 />
 
                 <Input
@@ -300,15 +291,8 @@ const ProfileScreen = () => {
                   placeholder={t('imamEmailPlaceholder')}
                   value={formData.email}
                   onChangeText={text => handleInputChange('email', text)}
-                  validation={validateEmail}
                   keyboardType="phone-pad"
                   disabled
-                />
-                <PhoneNumberInput
-                  label={t('imamPhoneLabel')}
-                  placeholder={t('imamPhonePlaceholder')}
-                  value={formData.phoneNumber}
-                  onChangeText={text => handleInputChange('email', text)}
                 />
               </View>
             </TouchableWithoutFeedback>

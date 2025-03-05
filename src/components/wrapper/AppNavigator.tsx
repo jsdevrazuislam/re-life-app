@@ -5,8 +5,6 @@ import { stackNavigationOptions } from '../../configs/navigation';
 import HomeScreen from '../../screens/HomeScreen';
 import ProfileScreen from '../../screens/ProfileScreen';
 import LoginScreen from '../../screens/LoginScreen';
-import AdminPanelScreen from '../../screens/AdminPanelScreen';
-import AdminSettingsScreen from '../../screens/AdminSettingsScreen';
 import OpeningScreen from '../../screens/OpeningScreen';
 import { AppRoutes } from '../../constants/route';
 import SignupScreen from '../../screens/SignupScreen';
@@ -24,25 +22,11 @@ import ImamPendingScreen from '../../screens/ImamPendingScreen';
 import UpdateEmailScreen from '../../screens/UpdateEmailScreen';
 import ChangePasswordScreen from '../../screens/ChangePasswordScreen';
 import ResetPasswordScreen from '../../screens/ResetPasswordScreen';
-import BlockedUserScreen from '../../screens/BlockScreen';
 import NotificationsScreen from '../../screens/NotificationScreen';
 
 
 const Tab = createBottomTabNavigator();
-const TabNavigator = () => (
-  <Tab.Navigator>
-    <Tab.Screen name="Home" component={HomeScreen} />
-    <Tab.Screen name="Admin" component={AdminStackNavigator} />
-  </Tab.Navigator>
-);
 
-const AdminStack = createStackNavigator();
-const AdminStackNavigator = () => (
-  <AdminStack.Navigator initialRouteName="AdminPanel">
-    <AdminStack.Screen name="AdminPanel" component={AdminPanelScreen} />
-    <AdminStack.Screen name="AdminSettings" component={AdminSettingsScreen} />
-  </AdminStack.Navigator>
-);
 
 const Stack = createStackNavigator();
 const AppNavigator = ({ role, status, userTempId, user , isFirstTime} : { role:string, user:IUser | null, status:string, userTempId:string, isFirstTime:boolean }) => {
@@ -86,7 +70,7 @@ const AppNavigator = ({ role, status, userTempId, user , isFirstTime} : { role:s
     );
   }
 
-  if (role === 'imam') {
+  if (['imam', 'moderator'].includes(role)) {
     return (
       <Stack.Navigator screenOptions={stackNavigationOptions}>
         {["pending", "rejected"].includes(user?.kycStatus ?? '') &&  <Stack.Screen name={AppRoutes.IMAM_PENDING_SCREEN} component={ImamPendingScreen} />}
@@ -97,17 +81,13 @@ const AppNavigator = ({ role, status, userTempId, user , isFirstTime} : { role:s
         <Stack.Screen name={AppRoutes.ADD_POOR_PEOPLE_SCREEN} component={AddPeopleScreen} />
         <Stack.Screen name={AppRoutes.UPDATE_EMAIL} component={UpdateEmailScreen} />
         <Stack.Screen name={AppRoutes.CHANGE_PASSWORD} component={ChangePasswordScreen} />
-        <Stack.Screen name={AppRoutes.BLOCK_SCREEN} component={BlockedUserScreen} />
         <Stack.Screen name={AppRoutes.NOTIFICATION_SCREEN} component={NotificationsScreen} />
+        <Stack.Screen name={AppRoutes.OTP_SCREEN} component={OtpScreen} />
+        <Stack.Screen name={AppRoutes.KYC_VERIFY_SCREEN} component={KYCVerifyScreen} />
+        <Stack.Screen name={AppRoutes.KYC_SCREEN} component={KycScreen} />
       </Stack.Navigator>
     );
   }
-
-  return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Main" component={TabNavigator} />
-    </Stack.Navigator>
-  );
 };
 
 export default AppNavigator;

@@ -75,13 +75,15 @@ const DashboardScreen = () => {
           >
             <TouchableOpacity style={imamStyles.overlay} onPress={toggleMenu} />
             <View style={imamStyles.menu}>
-              <TouchableOpacity style={imamStyles.menuItem} onPress={() => {
-                toggleMenu()
-                navigation.navigate('ProfileScreen')
-              }}>
-                <Feather name="user" size={20} color="#333" />
-                <Text style={imamStyles.menuText}>{t('profileTitle')}</Text>
-              </TouchableOpacity>
+              {
+                user?.role === 'imam' && <TouchableOpacity style={imamStyles.menuItem} onPress={() => {
+                  toggleMenu()
+                  navigation.navigate('ProfileScreen')
+                }}>
+                  <Feather name="user" size={20} color="#333" />
+                  <Text style={imamStyles.menuText}>{t('profileTitle')}</Text>
+                </TouchableOpacity>
+              }
 
               <TouchableOpacity style={imamStyles.menuItem} onPress={() => {
                 toggleMenu()
@@ -107,11 +109,13 @@ const DashboardScreen = () => {
             <Paragraph level='Small' weight='Medium' style={imamStyles.statLabel}>{t("totalBeggers")}</Paragraph>
             <Heading level={5} weight='Bold' style={imamStyles.statValue}>{people?.length}</Heading>
           </View>
-          <View style={imamStyles.statCard}>
+          {
+            user?.role === 'imam' && <View style={imamStyles.statCard}>
             <Icon name="groups" size={32} color={Colors.primary} />
             <Paragraph level='Small' weight='Medium' style={imamStyles.statLabel}>{t("totalCommittees")}</Paragraph>
             <Heading level={5} weight='Bold' style={imamStyles.statValue}>{committees?.length}</Heading>
           </View>
+          }
         </View>
 
         <Tab.Navigator
@@ -124,9 +128,11 @@ const DashboardScreen = () => {
           <Tab.Screen name={t('beggers')}>
             {() => <PeopleTab loading={loading} data={people} onAdd={handleAddPerson} />}
           </Tab.Screen>
-          <Tab.Screen name={t('committees')}>
+          {
+            user?.role === 'imam' && <Tab.Screen name={t('committees')}>
             {() => <CommitteeTab loading={loading} data={committees} />}
           </Tab.Screen>
+          }
         </Tab.Navigator>
       </View>
     </SafeAreaWrapper>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   TouchableOpacity,
@@ -16,7 +16,6 @@ import globalStyles from '../styles/global.style';
 import committeeStyles from '../styles/committee.styles';
 import Input from '../components/ui/AppInput';
 import { useTranslation } from '../hooks/useTranslation';
-import { validateCommitteeAddress, validateCommitteeName, validateCommitteeNumber, validateCommitteeProfession, validateCommitteeProfile } from '../validations/add.committee';
 import { professions } from '../data/dump';
 import SelectDropdown from '../components/ui/Select';
 import AppButton from '../components/ui/AppButton';
@@ -31,42 +30,22 @@ import { useAuthStore } from '../store/store';
 import { formatFileData } from '../utils/file-format';
 import Header from '../components/Header';
 import LoadingOverlay from '../components/LoadingOverlay';
-
-
-interface CommitteeForm {
-  name: string;
-  address: string;
-  profession: string;
-  contactNumber: string;
-  image: IFile | null | undefined;
-}
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { validationSchemaAddCommittee } from '../validations/add.committee';
+import ErrorMessage from '../components/ErrorMessage';
 
 const AddCommitteeScreen = () => {
-  const [formData, setFormData] = useState<CommitteeForm>({
-    name: '',
-    address: '',
-    profession: '',
-    contactNumber: '',
-    image: null,
-  });
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
-  const { request, loading } = useApi()
+  const { request, loading, error } = useApi()
   const { t } = useTranslation()
-  const { user, committees, setCommittees, setTotalCommittees, totalCommittees} = useAuthStore()
-  const nameError = validateCommitteeName(formData.name);
-  const addressError = validateCommitteeAddress(formData.address);
-  const professionError = validateCommitteeProfession(formData.profession);
-  const numberError = validateCommitteeNumber(formData.contactNumber);
+  const { user, committees, setCommittees, setTotalCommittees, totalCommittees } = useAuthStore();
+  const { control, handleSubmit, watch, setValue, formState: { errors } } = useForm({
+    resolver: yupResolver(validationSchemaAddCommittee),
+    mode: 'onBlur'
+  });
 
-  const isFormInvalid =
-    typeof addressError === 'string' ||
-    typeof professionError === 'string' ||
-    typeof nameError === 'string' ||
-    typeof numberError === 'string' ||
-    !formData.name ||
-    !formData.address ||
-    !formData.contactNumber ||
-    !formData.profession;
+  const profilePicture = watch('profilePicture')
 
   const handleImagePicker = async () => {
     if (Platform.OS === "android") {
@@ -95,7 +74,7 @@ const AddCommitteeScreen = () => {
         } else if (response.errorMessage) {
           console.log("ImagePicker Error: ", response.errorMessage);
         } else if (response.assets && response.assets.length > 0) {
-          setFormData({ ...formData, image: response.assets[0] as IFile });
+          setValue('profilePicture', response.assets[0] as IFile);
         }
       }
     );
@@ -103,21 +82,20 @@ const AddCommitteeScreen = () => {
 
 
   const removeImage = async () => {
-    setFormData({ ...formData, image: null })
+    setValue('profilePicture', null, { shouldValidate: true });
   };
 
-  const handleInputChange = (name: string, value: string) => {
-    setFormData({ ...formData, [name]: value });
-  };
 
-  const handleSubmit = async () => {
+  const handleSubmitForm = async (formData: any) => {
     const apiFormData = new FormData();
     apiFormData.append('name', formData.name);
     apiFormData.append('address', formData.address);
     apiFormData.append('profession', formData.profession);
     apiFormData.append('masjidId', user?.masjid?._id);
-    apiFormData.append('mobile', formData.contactNumber);
-    apiFormData.append('profilePicture', formatFileData(formData.image));
+    apiFormData.append('mobile', formData.phone);
+    if (formData.profilePicture && Object.keys(formData.profilePicture).length > 0) {
+      apiFormData.append('profilePicture', formatFileData(formData.profilePicture));
+  }
 
     const { message, data } = await request('post', ApiStrings.CREATE_COMMITTEE, apiFormData);
     const newCommittees = [...committees, data];
@@ -136,53 +114,87 @@ const AddCommitteeScreen = () => {
           <View style={committeeStyles.form}>
             <View style={committeeStyles.relative}>
               <View style={committeeStyles.imageWrapper}>
-                {formData.image?.uri ? (
-                  <Image source={{ uri: formData.image?.uri }} style={committeeStyles.image} />
+                {profilePicture ? (
+                  <Image source={{ uri: profilePicture?.uri ?? '' }} style={committeeStyles.image} />
                 ) : (
                   <View style={committeeStyles.placeholder} />
                 )}
               </View>
-              <TouchableOpacity onPress={formData.image?.uri ? removeImage : handleImagePicker} style={[committeeStyles.iconWrapper, { backgroundColor: formData.image?.uri ? Colors.danger : Colors.primary }]}>
-                {formData.image?.uri ? <Icon name="trash" size={20} color="white" /> : <Icon name="camera" size={20} color="white" />}
+              <TouchableOpacity onPress={profilePicture?.uri ? removeImage : handleImagePicker} style={[committeeStyles.iconWrapper, { backgroundColor: profilePicture?.uri ? Colors.danger : Colors.primary }]}>
+                {profilePicture?.uri ? <Icon name="trash" size={20} color="white" /> : <Icon name="camera" size={20} color="white" />}
               </TouchableOpacity>
             </View>
-            <Input
-              label={t('committeeNameLabel')}
-              placeholder={t('committeeNamePlaceholder')}
-              value={formData.name}
-              onChangeText={text => handleInputChange('name', text)}
-              validation={validateCommitteeName}
+
+
+
+            <Controller
+              name='name'
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <Input
+                  label={t('committeeNameLabel')}
+                  placeholder={t('committeeNamePlaceholder')}
+                  value={value}
+                  onChangeText={onChange}
+                  error={errors?.name?.message}
+                />
+
+              )}
             />
-            <Input
-              label={t('committeeAddressLabel')}
-              placeholder={t('committeeAddressPlaceholder')}
-              value={formData.address}
-              onChangeText={text => handleInputChange('address', text)}
-              validation={validateCommitteeAddress}
-            />
-            <SelectDropdown
-              label={t('committeeProfessionLabel')}
-              placeholder={t('committeeProfessionPlaceholder')}
-              data={professions}
-              value={formData.profession}
-              onChange={item => handleInputChange('profession', item)}
-              rootStyle={{ marginTop: -6, marginBottom: 10 }}
-              search={true}
+            <Controller
+              name='address'
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <Input
+                  label={t('committeeAddressLabel')}
+                  placeholder={t('committeeAddressPlaceholder')}
+                  value={value}
+                  onChangeText={onChange}
+                  error={errors?.address?.message}
+                />
+
+              )}
             />
 
-            <PhoneNumberInput
-              label={t('committeePhoneLabel')}
-              placeholder={t('committeePhonePlaceholder')}
-              value={formData.contactNumber}
-              onChangeText={text => handleInputChange('contactNumber', text)}
+            <Controller
+              name='profession'
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <SelectDropdown
+                  label={t('committeeProfessionLabel')}
+                  placeholder={t('committeeProfessionPlaceholder')}
+                  data={professions}
+                  value={value}
+                  onChange={onChange}
+                  rootStyle={{ marginTop: -6, marginBottom: 10 }}
+                  search={true}
+                  error={errors?.profession?.message}
+                />
+
+              )}
+            />
+            <Controller
+              name='phone'
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <PhoneNumberInput
+                  label={t('committeePhoneLabel')}
+                  placeholder={t('committeePhonePlaceholder')}
+                  value={value}
+                  onChangeText={onChange}
+                  error={errors?.phone?.message}
+                />
+              )}
             />
           </View>
 
+          {error && <ErrorMessage error={error} />}
+
           <AppButton
             text={t('submit')}
-            onPress={handleSubmit}
-            disabled={isFormInvalid}
+            onPress={handleSubmit(handleSubmitForm)}
             variant="primary"
+            style={{ marginTop: '1%' }}
           />
         </View>
       </ScrollView>

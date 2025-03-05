@@ -14,6 +14,15 @@ export const styles = ScaledSheet.create({
         fontWeight: '600',
         color: '#1A1A1A',
     },
+    deleteButton:{
+        width: '40@ms',
+        height: '40@ms',
+        backgroundColor: Colors.danger,
+        justifyContent:'center',
+        alignItems:'center',
+        borderRadius:'2@ms',
+        marginTop: '30@ms'
+    },
     segmentContainer: {
         flexDirection: 'row',
         marginVertical: '15@vs',
@@ -94,14 +103,12 @@ export const styles = ScaledSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: ms(50),
       },
       
       emptyImage: {
-        width: ms(120),
-        height: ms(120),
-        marginBottom: ms(20),
-        resizeMode: 'contain',
+        width: ms(200),
+        height: ms(200),
+        resizeMode: 'cover',
       },
       
       emptyText: {

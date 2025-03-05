@@ -64,7 +64,7 @@ const KYCVerifyScreen = () => {
       </ScrollView>
 
       <View style={kycStartedStyles.footer}>
-        <AppButton text='Get Started' onPress={() => navigation.navigate('KycScreen')} />
+        <AppButton text={t('getStarted')} onPress={() => navigation.navigate('KycScreen')} />
       </View>
     </SafeAreaWrapper>
   );

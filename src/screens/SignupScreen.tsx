@@ -6,12 +6,6 @@ import signupStyles from '../styles/signup.style';
 import Heading from '../components/ui/Heading';
 import Input from '../components/ui/AppInput';
 import AppButton from '../components/ui/AppButton';
-import {
-  validateEmail,
-  validateName,
-  validatePassword,
-  validateUsername,
-} from '../validations/signup';
 import Checkbox from '../components/ui/Checkout';
 import { AppStackParamList } from '../constants/route';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
@@ -31,67 +25,56 @@ import { requestAndroidPermission } from '../utils/permission';
 import * as ImagePicker from 'react-native-image-picker';
 import { formatFileData } from '../utils/file-format';
 import { Colors } from '../configs/colors';
-import { validateCommitteeAddress } from '../validations/add.committee';
 import { UploadArea } from './KycScreen';
 import kycScreenStyles from '../styles/kycScreen.styles';
 import LoadingOverlay from '../components/LoadingOverlay';
+import { useForm, Controller, useFieldArray } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { validationSchema } from '../validations/signup';
 
 
 
 const SignupScreen = () => {
   const { t } = useTranslation();
-  const [name, setName] = useState<string>('');
-  const [username, setUsername] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
-  const [mobile, setMobile] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [numberOfCommittee, setNumberOfCommittee] = useState<string>('');
-  const [isChecked, setIsChecked] = useState(false);
-  const navigation = useNavigation<NavigationProp<AppStackParamList>>();
-  const nameError = validateName(email);
-  const usernameError = validateUsername(username);
-  const emailError = validateEmail(email);
-  const passwordError = validatePassword(password);
-  const { request, loading, error } = useApi();
-  const { setUserId, setStatus, setTempEmail } = useAuthStore();
-  const [committeeDetails, setCommitteeDetails] = useState<CommitteeDetails[]>(
-    [],
-  );
-  const [formData, setFormData] = useState<StateForm>({
-    profileUrl: null,
-    masjidProfile: null,
-    address: '',
-    location: {
-      district: '',
-      upazila: '',
-      union: '',
-      village: '',
-    },
+  const { control, handleSubmit, setValue, watch, getValues, formState: { errors } } = useForm({
+    resolver: yupResolver(validationSchema),
+    mode: 'onBlur',
+    defaultValues:{
+      selectedTab: 'email'
+    }
   });
 
-  const handleCommittee = (count: number) => {
-    const numCommittee = Math.max(0, count);
-    const updatedCommittee = Array.from({ length: numCommittee }, (_, index) => ({
-      name: committeeDetails[index]?.name || '',
-      address: committeeDetails[index]?.address || '',
-      profession: committeeDetails[index]?.profession || '',
-      mobile: committeeDetails[index]?.mobile || '',
-      profilePicture: formatFileData(committeeDetails[index]?.profilePicture),
-    }));
-    setCommitteeDetails(updatedCommittee);
-  };
+  const committeeDetails = watch("committeeDetails");
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'committeeDetails',
+  });
 
-  const handleLocationChange = (
-    field: keyof ILocation['location'],
-    value: string,
-  ) => {
-    setFormData(prevState => ({
-      ...prevState,
-      location: {
-        ...prevState.location,
-        [field]: value,
-      },
-    }));
+
+  const navigation = useNavigation<NavigationProp<AppStackParamList>>();
+  const { request, loading, error } = useApi();
+  const { setUserId, setStatus, setTempEmail } = useAuthStore();
+  const [selectedTab, setSelectedTab] = useState<"email" | "mobile">("email");
+
+
+  const handleCommittee = (count: number) => {
+    const currentCount = fields.length;
+
+    if (count > currentCount) {
+      for (let i = currentCount; i < count; i++) {
+        append({
+          name: '',
+          address: '',
+          profession: '',
+          mobile: '',
+          profilePicture: null,
+        });
+      }
+    } else if (count < currentCount) {
+      for (let i = currentCount; i > count; i--) {
+        remove(i - 1);
+      }
+    }
   };
 
 
@@ -125,7 +108,7 @@ const SignupScreen = () => {
           return;
         }
         if (response.assets && response.assets.length > 0) {
-          setFormData({ ...formData, [field]: response.assets[0] as IFile });
+          setValue(field, response.assets[0] as IFile, { shouldValidate: true });
         }
       },
     );
@@ -156,106 +139,54 @@ const SignupScreen = () => {
           return;
         }
         if (response.assets && response.assets.length > 0) {
-          const updated = [...committeeDetails];
-          updated[index].profilePicture = formatFileData(response.assets[0]) as FileData;
-          setCommitteeDetails(updated);
+          const committeeList = getValues("committeeDetails") || [];
+          committeeList[index] = {
+            ...committeeList[index],
+            profilePicture: response.assets[0] as IFile,
+          };
+          setValue("committeeDetails", committeeList, { shouldValidate: true });
         }
       },
     );
   };
+
 
   const removeCommitteeImage = (index: number) => {
-    const updated = [...committeeDetails];
-    updated[index].profilePicture = null;
-    setCommitteeDetails(updated);
+    const updatedCommittee = getValues("committeeDetails") || [];
+    updatedCommittee[index] = {
+      ...updatedCommittee[index],
+      profilePicture: null,
+    };
+    setValue("committeeDetails", updatedCommittee, { shouldValidate: true });
   };
 
 
-  const removeImage = (
-    field: 'profileUrl' | 'masjidProfile',
-  ) => {
-    setFormData({ ...formData, [field]: null });
+  const removeImage = (field: 'profileUrl' | 'masjidProfile') => {
+    setValue(field, null, { shouldValidate: true });
   };
 
-
-
-  const isFormInvalid =
-    typeof emailError === 'string' ||
-    typeof passwordError === 'string' ||
-    typeof nameError === 'string' ||
-    typeof usernameError === 'string' ||
-    !isChecked ||
-    !email ||
-    !password ||
-    !name ||
-    !username;
-
-  const handleSubmit = async () => {
-    const locationErrors = Object.entries(formData.location).reduce(
-      (errors, [key, value]) => {
-        if (!value.trim()) {
-          errors.push(
-            `${key.charAt(0).toUpperCase() + key.slice(1)} is required.`,
-          );
-        }
-        return errors;
-      },
-      [] as string[],
-    );
-
-    const committeeErrors: string[] = [];
-    if (committeeDetails.length !== parseInt(numberOfCommittee)) {
-      committeeErrors.push(
-        `You must enter details for exactly ${numberOfCommittee} committee members.`,
-      );
-    } else {
-      committeeDetails.forEach((member, index) => {
-        if (!member.name.trim())
-          committeeErrors.push(
-            `Committee member ${index + 1}: Name is required.`,
-          );
-        if (!member.address.trim())
-          committeeErrors.push(
-            `Committee member ${index + 1}: Address is required.`,
-          );
-        if (!member.profession.trim())
-          committeeErrors.push(
-            `Committee member ${index + 1}: Profession is required.`,
-          );
-        if (!member.mobile.trim())
-          committeeErrors.push(
-            `Committee member ${index + 1}: Mobile number is required.`,
-          );
-      });
-    }
-
-    const allErrors = [...locationErrors, ...committeeErrors];
-
-    if (allErrors.length > 0) {
-      showToast('error', allErrors.join('\n'));
-      return;
-    }
+  const handleFormSubmit = async (formData: any) => {
+    const payload = formData as SignupPayload;
 
     const formDataPayload = new FormData();
 
-    formDataPayload.append('emailOrPhone', email);
-    formDataPayload.append('masjidName', name);
-    formDataPayload.append('password', password);
-    formDataPayload.append('fullName', username);
+    formDataPayload.append('emailOrPhone', selectedTab === 'email' ? payload.email : payload.mobile);
+    formDataPayload.append('masjidName', payload.name);
+    formDataPayload.append('password', payload.password);
+    formDataPayload.append('fullName', payload.username);
     formDataPayload.append(
       'committeeDetails',
-      JSON.stringify(committeeDetails),
+      JSON.stringify(payload.committeeDetails)
     );
-    formDataPayload.append("masjidProfile", formatFileData(formData.masjidProfile))
-    formDataPayload.append('location', JSON.stringify(formData.location));
-    formDataPayload.append('phoneNumber', mobile);
-    formDataPayload.append('address', formData.address);
-    formDataPayload.append('profileUrl', formatFileData(formData.profileUrl));
-    committeeDetails.forEach((member) => {
+    formDataPayload.append("masjidProfile", formatFileData(payload.masjidProfile))
+    formDataPayload.append('location', JSON.stringify(payload.location));
+    formDataPayload.append('address', payload.address);
+    formDataPayload.append('profileUrl', formatFileData(payload.profileUrl));
+    payload?.committeeDetails?.forEach((member) => {
       if (member.profilePicture) {
         formDataPayload.append(`committeePictures`, {
           uri: member.profilePicture?.uri,
-          name: member.profilePicture?.name,
+          name: member.profilePicture?.fileName,
           type: member.profilePicture?.type,
         });
       }
@@ -267,11 +198,19 @@ const SignupScreen = () => {
       formDataPayload,
     );
     setUserId(data?.id);
-    setTempEmail(data?.email)
+    setTempEmail(data?.emailOrPhone)
     setStatus('otp_pending')
     showToast('success', message);
-    navigation.navigate('OtpScreen', { email: data?.email });
+    navigation.navigate('OtpScreen', { email: data?.emailOrPhone });
+  }
+
+  const handleTabChange = (tab: "email" | "mobile") => {
+    setSelectedTab(tab);
+    setValue("selectedTab", tab);
+    setValue("email", "");
+    setValue("mobile", "");
   };
+
 
   return (
     <SafeAreaWrapper>
@@ -283,7 +222,7 @@ const SignupScreen = () => {
           contentContainerStyle={{
             paddingBottom: 30
           }}
-          nestedScrollEnabled={true} 
+          nestedScrollEnabled={true}
         >
           <View style={globalStyles.container}>
             <LoadingOverlay visible={loading} message='আপনার তথ্য প্রক্রিয়া করতে কিছু সময় লাগবে। অনুগ্রহ করে সম্পূর্ণ হওয়া পর্যন্ত অপেক্ষা করুন, অন্যথায় আপনার তথ্য হারিয়ে যেতে পারে।' />
@@ -295,202 +234,340 @@ const SignupScreen = () => {
             </Heading>
             <Paragraph level='Small'>{t('signUpDescription')}</Paragraph>
 
+            <View style={styles.tabContainer}>
+              <TouchableOpacity
+                style={[styles.tab, selectedTab === "email" && styles.activeTab]}
+                onPress={() => handleTabChange("email")}
+              >
+                <Text style={[styles.tabText, selectedTab === "email" && styles.activeTabText]}>
+                  Email
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.tab, selectedTab === "mobile" && styles.activeTab]}
+                onPress={() => handleTabChange("mobile")}
+              >
+                <Text style={[styles.tabText, selectedTab === "mobile" && styles.activeTabText]}>
+                  Phone
+                </Text>
+              </TouchableOpacity>
+            </View>
+
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
               <View style={signupStyles.form}>
                 <View style={[kycScreenStyles.uploadRow, { marginTop: 20 }]}>
-                  <UploadArea
-                    title={t('imamPhotoLabel')}
-                    imageUri={formData.profileUrl}
-                    handlePress={() => handleImagePicker('profileUrl')}
-                    handleRemove={() => removeImage('profileUrl')}
+                  <Controller
+                    name="profileUrl"
+                    control={control}
+                    render={({ field: { value } }) => (
+                      <UploadArea
+                        title={t('imamPhotoLabel')}
+                        imageUri={value}
+                        handlePress={() => handleImagePicker('profileUrl')}
+                        handleRemove={() => removeImage('profileUrl')}
+                        error={errors.profileUrl?.message}
+                      />
+                    )}
                   />
-                  <UploadArea
-                    title={t('masjidPhotoLabel')}
-                    imageUri={formData.masjidProfile}
-                    handlePress={() => handleImagePicker('masjidProfile')}
-                    handleRemove={() => removeImage('masjidProfile')}
+                  <Controller
+                    name="masjidProfile"
+                    control={control}
+                    render={({ field: { value } }) => (
+                      <UploadArea
+                        title={t('masjidPhotoLabel')}
+                        imageUri={value}
+                        handlePress={() => handleImagePicker('masjidProfile')}
+                        handleRemove={() => removeImage('masjidProfile')}
+                        error={errors.masjidProfile?.message}
+                      />
+                    )}
                   />
                 </View>
-                <Input
-                  label={t('masjidNameLabel')}
-                  placeholder={t('masjidNamePlaceholder')}
-                  value={name}
-                  onChangeText={setName}
-                  validation={validateName}
+                <Controller
+                  name="name"
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <Input
+                      label={t('masjidNameLabel')}
+                      placeholder={t('masjidNamePlaceholder')}
+                      value={value}
+                      onChangeText={onChange}
+                      error={errors.name?.message}
+                    />
+                  )}
                 />
                 <Paragraph level="Small" weight="Medium">
                   {t('masjidLocationLabel')}
                 </Paragraph>
-                <View style={{ width: '100%', gap:10, marginTop: 10, marginBottom: 20, flexDirection: 'row', flexWrap: 'wrap' }}>
+                <View style={{ width: '100%', gap: 10, marginBottom: 20, flexDirection: 'row', flexWrap: 'wrap' }}>
                   <View style={{ width: '48%' }}>
-                    <SelectDropdown
-                      data={districts}
-                      value={formData.location.district}
-                      onChange={value => handleLocationChange('district', value)}
-                      placeholder="Select a district"
-                      search={true}
-                      searchPlaceholder="Search district"
+                    <Controller
+                      name="location.district"
+                      control={control}
+                      render={({ field: { value, onChange } }) => (
+                        <SelectDropdown
+                          data={districts}
+                          value={value}
+                          onChange={onChange}
+                          placeholder={t('district')}
+                          search={true}
+                          searchPlaceholder="Search district"
+                          error={errors?.location?.district?.message}
+                          rootStyle={{ marginTop: 10}}
+                        />
+                      )}
                     />
                   </View>
 
                   <View style={{ width: '48%' }}>
-                    <SelectDropdown
-                      data={upazilas}
-                      value={formData.location.upazila}
-                      onChange={value => handleLocationChange('upazila', value)}
-                      placeholder="Select an upazila"
-                      search={true}
-                      searchPlaceholder="Search upazila"
+                    <Controller
+                      name="location.upazila"
+                      control={control}
+                      render={({ field: { value, onChange } }) => (
+                        <SelectDropdown
+                          data={upazilas}
+                          value={value}
+                          onChange={onChange}
+                          placeholder={t('upazila')}
+                          search={true}
+                          searchPlaceholder="Search upazila"
+                          error={errors?.location?.upazila?.message}
+                          rootStyle={{ marginTop: 10}}
+                        />
+                      )}
                     />
                   </View>
 
                   <View style={{ width: '48%' }}>
-                    <SelectDropdown
-                      data={unions}
-                      value={formData.location.union}
-                      onChange={value => handleLocationChange('union', value)}
-                      placeholder="Select a union"
-                      search={true}
-                      searchPlaceholder="Search union"
+                    <Controller
+                      name="location.union"
+                      control={control}
+                      render={({ field: { value, onChange } }) => (
+                        <SelectDropdown
+                          data={unions}
+                          value={value}
+                          onChange={onChange}
+                          placeholder={t('union')}
+                          search={true}
+                          searchPlaceholder="Search union"
+                          error={errors?.location?.union?.message}
+                          rootStyle={{ marginTop: -10}}
+                        />
+                      )}
                     />
                   </View>
 
-                  <View style={{ width: '48%'}}>
-                    <SelectDropdown
-                      data={villages}
-                      value={formData.location.village}
-                      onChange={value => handleLocationChange('village', value)}
-                      placeholder="Select a village"
-                      search={true}
-                      searchPlaceholder="Search village"
+                  <View style={{ width: '48%' }}>
+                    <Controller
+                      name="location.village"
+                      control={control}
+                      render={({ field: { value, onChange } }) => (
+                        <SelectDropdown
+                          data={villages}
+                          value={value}
+                          onChange={onChange}
+                          placeholder={t('village')}
+                          search={true}
+                          searchPlaceholder="Search village"
+                          error={errors?.location?.village?.message}
+                          rootStyle={{ marginTop: -10}}
+                        />
+                      )}
                     />
                   </View>
                 </View>
+                <Controller
+                  name="username"
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <Input
+                      label={t('imamNameLabel')}
+                      placeholder={t('imamNamePlaceholder')}
+                      value={value}
+                      onChangeText={onChange}
+                      error={errors.username?.message}
+                      style={{ marginTop: -14}}
+                    />
+                  )}
+                />
+                {
+                  selectedTab === 'email' ? <Controller
+                    name="email"
+                    control={control}
+                    render={({ field: { value, onChange } }) => (
+                      <Input
+                        label={t('imamEmailLabel')}
+                        placeholder={t('imamEmailPlaceholder')}
+                        keyboardType="email-address"
+                        value={value ?? ''}
+                        onChangeText={onChange}
+                        error={errors.email?.message}
+                      />
+                    )}
+                  /> : <Controller
+                      name='mobile'
+                      control={control}
+                      render={({ field: { value, onChange } }) => (
+                        <PhoneNumberInput
+                          label={t('imamPhoneLabel')}
+                          placeholder={t('imamPhonePlaceholder')}
+                          value={value ?? ''}
+                          onChangeText={onChange}
+                          error={errors.mobile?.message}
+                        />
+                      )}
+                  />
+                }
 
-                <Input
-                  label={t('imamNameLabel')}
-                  placeholder={t('imamNamePlaceholder')}
-                  value={username}
-                  onChangeText={setUsername}
-                  validation={validateUsername}
+                <Controller
+                  name='password'
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <Input
+                      label={t('passwordLabel')}
+                      placeholder={t('confirmPasswordLabel')}
+                      value={value}
+                      onChangeText={onChange}
+                      error={errors?.password?.message}
+                      secureTextEntry
+                    />
+                  )}
                 />
-                <Input
-                  label={t('imamEmailLabel')}
-                  placeholder={t('imamEmailPlaceholder')}
-                  value={email}
-                  onChangeText={setEmail}
-                  validation={validateEmail}
-                  keyboardType="email-address"
+                <Controller
+                  name='address'
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <Input
+                      label={t('currentAddressLabel')}
+                      placeholder={t('currentAddressPlaceholder')}
+                      value={value}
+                      onChangeText={onChange}
+                      error={errors?.address?.message}
+                    />
+                  )}
                 />
-                <PhoneNumberInput
-                  label={t('imamPhoneLabel')}
-                  placeholder={t('imamPhonePlaceholder')}
-                  value={mobile}
-                  onChangeText={text => setMobile(text)}
+
+                <Controller
+                  name='numberOfCommittee'
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <Input
+                      label={t('committeeMembersLabel')}
+                      placeholder={t('committeeMembersPlaceholder')}
+                      keyboardType="numeric"
+                      value={value}
+                      onChangeText={text => {
+                        const count = parseInt(text) || 0;
+                        onChange(text);
+                        handleCommittee(count);
+                      }}
+                      error={errors?.numberOfCommittee?.message}
+                    />
+                  )}
                 />
-                <Input
-                  label={t('passwordLabel')}
-                  placeholder={t('confirmPasswordLabel')}
-                  value={password}
-                  onChangeText={setPassword}
-                  validation={validatePassword}
-                  secureTextEntry
-                />
-                <Input
-                  label={t('currentAddressLabel')}
-                  placeholder={t('currentAddressPlaceholder')}
-                  value={formData.address}
-                  onChangeText={(text) => setFormData({ ...formData, address: text })}
-                  validation={validateCommitteeAddress}
-                />
-                <Input
-                  label={t('committeeMembersLabel')}
-                  placeholder={t('committeeMembersPlaceholder')}
-                  value={numberOfCommittee}
-                  keyboardType="numeric"
-                  onChangeText={text => {
-                    const count = parseInt(text) || 0;
-                    setNumberOfCommittee(text);
-                    handleCommittee(count);
-                  }}
-                />
-                {committeeDetails.map((committee, index) => (
+
+                {committeeDetails?.map((_, index) => (
                   <View key={index} style={styles.childSection}>
                     <Text style={styles.childHeader}>
                       {t('committeeMemberDetailsTitle')} {index + 1}
                     </Text>
-                    <UploadArea
-                      handlePress={() => handleCommitteeImagePicker(index)}
-                      handleRemove={() => removeCommitteeImage(index)}
-                      imageUri={committee.profilePicture}
-                      title={t('committeePhotoLabel')}
+                    <Controller
+                      control={control}
+                      name={`committeeDetails.${index}.profilePicture`}
+                      render={({ field }) => (
+                        <UploadArea
+                          handlePress={() => handleCommitteeImagePicker(index)}
+                          handleRemove={() => removeCommitteeImage(index)}
+                          imageUri={field.value}
+                          title={t('committeePhotoLabel')}
+                        />
+                      )}
                     />
-                    <Input
-                      label={t('committeeNameLabel')}
-                      placeholder={t('committeeNamePlaceholder')}
-                      value={committee.name}
-                      onChangeText={text => {
-                        const updated = [...committeeDetails];
-                        updated[index].name = text;
-                        setCommitteeDetails(updated);
-                      }}
-                      style={{ marginTop: 15 }}
-                      inputStyles={{ backgroundColor: Colors.white }}
-                      inputWrapper={{ backgroundColor: Colors.white }}
+                    <Controller
+                      control={control}
+                      name={`committeeDetails.${index}.name`}
+                      render={({ field }) => (
+                        <Input
+                          label={t('committeeNameLabel')}
+                          placeholder={t('committeeNamePlaceholder')}
+                          value={field.value}
+                          onChangeText={field.onChange}
+                          error={errors.committeeDetails?.[index]?.name?.message}
+                          style={{ marginTop: 15 }}
+                          inputStyles={{ backgroundColor: Colors.white }}
+                          inputWrapper={{ backgroundColor: Colors.white }}
+                        />
+                      )}
                     />
-                    <Input
-                      label={t('committeeAddressLabel')}
-                      placeholder={t('committeeAddressPlaceholder')}
-                      value={committee.address}
-                      onChangeText={text => {
-                        const updated = [...committeeDetails];
-                        updated[index].address = text;
-                        setCommitteeDetails(updated);
-                      }}
-                      inputStyles={{ backgroundColor: Colors.white }}
-                      inputWrapper={{ backgroundColor: Colors.white }}
+                    <Controller
+                      control={control}
+                      name={`committeeDetails.${index}.address`}
+                      render={({ field }) => (
+                        <Input
+                          label={t('committeeAddressLabel')}
+                          placeholder={t('committeeAddressPlaceholder')}
+                          value={field.value}
+                          onChangeText={field.onChange}
+                          inputStyles={{ backgroundColor: Colors.white }}
+                          inputWrapper={{ backgroundColor: Colors.white }}
+                          error={errors?.committeeDetails?.[index]?.address?.message}
+                        />
+                      )}
                     />
-                    <SelectDropdown
-                      label={t('committeeProfessionLabel')}
-                      placeholder={t('committeeProfessionPlaceholder')}
-                      value={committee.profession}
-                      onChange={value => {
-                        const updated = [...committeeDetails];
-                        updated[index].profession = value;
-                        setCommitteeDetails(updated);
-                      }}
-                      data={professions}
-                      search={true}
-                      style={{ marginBottom: 10}}
-                      rootStyle={{ marginTop: -6}}
+                    <Controller
+                      control={control}
+                      name={`committeeDetails.${index}.profession`}
+                      render={({ field }) => (
+                        <SelectDropdown
+                          label={t('committeeProfessionLabel')}
+                          placeholder={t('committeeProfessionPlaceholder')}
+                          value={field.value}
+                          onChange={field.onChange}
+                          data={professions}
+                          search={true}
+                          style={{ marginBottom: 10 }}
+                          rootStyle={{ marginTop: -6 }}
+                          error={errors.committeeDetails?.[index]?.profession?.message}
+                        />
+                      )}
                     />
-                    <PhoneNumberInput
-                      label={t('committeePhoneLabel')}
-                      placeholder={t('committeePhonePlaceholder')}
-                      value={committee.mobile}
-                      inputStyles={{ backgroundColor: Colors.white }}
-                      inputWrapper={{ backgroundColor: Colors.white }}
-                      onChangeText={text => {
-                        const updated = [...committeeDetails];
-                        updated[index].mobile = text;
-                        setCommitteeDetails(updated);
-                      }}
+                    <Controller
+                      control={control}
+                      name={`committeeDetails.${index}.mobile`}
+                      render={({ field }) => (
+                        <PhoneNumberInput
+                          label={t('committeePhoneLabel')}
+                          placeholder={t('committeePhonePlaceholder')}
+                          value={field.value}
+                          onChangeText={field.onChange}
+                          inputStyles={{ backgroundColor: Colors.white }}
+                          inputWrapper={{ backgroundColor: Colors.white }}
+                          error={errors.committeeDetails?.[index]?.mobile?.message}
+                        />
+                      )}
                     />
                   </View>
                 ))}
-                <Checkbox
-                  label={t('agreeToTermsLabel')}
-                  value={isChecked}
-                  onValueChange={setIsChecked}
+                <Controller
+                  control={control}
+                  name="isChecked"
+                  render={({ field: { value, onChange } }) => (
+                    <Checkbox
+                      label={t('agreeToTermsLabel')}
+                      value={value}
+                      onValueChange={onChange}
+                    />
+                  )}
                 />
+                {errors?.isChecked?.message && <ErrorMessage error={errors?.isChecked?.message ?? ''} />}
                 {error && <ErrorMessage error={error} />}
 
                 <AppButton
                   style={{ marginTop: 20 }}
                   text={t('signUpButton')}
-                  onPress={handleSubmit}
+                  onPress={handleSubmit(handleFormSubmit)}
                   variant="primary"
-                  disabled={isFormInvalid}
                 />
                 <View style={signupStyles.bottomCenter}>
                   <Text style={signupStyles.bottomTextFirst}>

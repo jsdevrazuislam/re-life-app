@@ -21,7 +21,7 @@ const ImageComponent: React.FC<ImageComponentProps> = ({ source, style, imageSty
     <Image
       source={imageSource}
       indicator={() => <ActivityIndicator size="small" color={Colors.primary} />}
-      style={style}
+      style={[style, { overflow: 'hidden'}]}
       imageStyle={imageStyle}
     />
   );

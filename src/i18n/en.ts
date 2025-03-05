@@ -11,6 +11,7 @@ export default {
   // Login
   signInTitle: 'Sign In to Your Account',
   signInDescription: 'Log in to your account to begin your journey.',
+  messageLoading: 'We are processing your data, please wait for a moment.',
   emailPlaceholder: 'Enter your email',
   emailLabel: 'Email',
   passwordLabel: 'Password',

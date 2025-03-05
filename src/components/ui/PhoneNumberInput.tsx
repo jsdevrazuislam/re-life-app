@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { ScaledSheet } from 'react-native-size-matters';
 import { Colors } from '../../configs/colors';
+import ErrorMessage from '../ErrorMessage';
 
 interface PhoneNumberInputProps {
   label?: string;
@@ -19,6 +20,7 @@ interface PhoneNumberInputProps {
   inputStyles?: StyleProp<TextStyle>;
   inputWrapper?: StyleProp<ViewStyle>;
   disabled?: boolean;  
+  error?:string
 }
 
 const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
@@ -30,26 +32,12 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
   inputStyles,
   inputWrapper,
   disabled = false, 
+  error
 }) => {
-  const [error, setError] = useState<string | null>(null);
-  const [touched, setTouched] = useState(false);
 
-  const validatePhoneNumber = (number: string) => {
-    const bangladeshPrefixes = /^(013|014|015|016|017|018|019)\d{8}$/;
-
-    if (!number) return "Phone number is required.";
-    if (!/^\d+$/.test(number)) return "Only numbers are allowed.";
-    if (number.length < 11) return "Phone number must be 11 digits.";
-    if (number.length > 11) return "Phone number cannot be more than 11 digits.";
-    if (!bangladeshPrefixes.test(number)) return "Invalid Bangladeshi phone number format.";
-
-    return null;
-  };
 
   const handleBlur = () => {
     if (disabled) return; 
-    setTouched(true);
-    setError(validatePhoneNumber(value));
   };
 
   return (
@@ -67,16 +55,15 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
           onChangeText={(text) => {
             const numericText = text.replace(/[^0-9]/g, '');
             onChangeText(numericText);
-            if (touched) setError(validatePhoneNumber(numericText));
           }}
           onBlur={handleBlur}
           keyboardType="phone-pad"
           maxLength={11} 
-          placeholderTextColor={Colors.placeholder}
+          placeholderTextColor={error ? Colors.danger : Colors.placeholder}
           
         />
       </View>
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error && <ErrorMessage error={error} />}
     </View>
   );
 };
