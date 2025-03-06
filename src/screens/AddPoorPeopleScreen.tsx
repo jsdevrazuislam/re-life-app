@@ -91,15 +91,15 @@ const AddPeopleScreen = () => {
 
 const handleSubmitFormSubmit = async (formData: any) => {
   Alert.alert(
-    'Confirm Submission',
-    'Are you sure all the information is correct?',
+    '⚠️ সতর্কতা',
+    'আপনি যে তথ্য আমাদের দিয়েছেন, তা আরেকবার ভালো করে যাচাই করে নিন। একবার সাবমিট করলে তা আর সম্পাদনা করা সম্ভব নয়। তাই কোনো ভুল থাকলে এখনই সংশোধন করুন।',
     [
       {
-        text: 'Cancel',
+        text: 'বাতিল করুন',
         style: 'cancel',
       },
       {
-        text: 'Submit',
+        text: t('submit'),
         onPress: async () => {
           const formDataPayload = new FormData();
 
@@ -121,10 +121,9 @@ const handleSubmitFormSubmit = async (formData: any) => {
           appendIfExists('isMotherDead', formData.isMotherDead);
           appendIfExists('overview', formData.overview);
           appendIfExists('permanentAddress', formData.permanentAddress);
-          appendIfExists('presentAddress', formData.presentAddress);
+          appendIfExists('address', formData.presentAddress);
           appendIfExists('numberOfChildren', formData.numberOfChildren);
           appendIfExists('contactNumber', formData.contactNumber);
-          appendIfExists('address', formData.address);
           appendIfExists('assistanceType', formData.assistanceType);
           appendIfExists('frequency', formData.frequency);
           appendIfExists('receivingAssistance', formData.receivingAssistance);
