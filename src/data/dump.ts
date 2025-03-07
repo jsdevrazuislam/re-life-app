@@ -60,6 +60,13 @@ export const marriages = [
   { "label": "বিধবা/তালাক", "value": "বিধবা/তালাক" },
   { "label": "অজানা", "value": "অজানা" }
 ]
+
+export const fieldType = [
+    { "label": "কমিটির বিবরণ", "value": "কমিটির বিবরণ" },
+    { "label": "দরিদ্র ব্যক্তিদের তথ্য", "value": "দরিদ্র ব্যক্তিদের তথ্য" }
+]
+
+
 export const othersFoodsOptions = [
   {
     "label": "১ কেজি আটা, ১ কেজি চিনি, সাবান ১ পিস, সাবানের গুড়া ২ প্যাকেট, মাথার তেল ১ পিস",

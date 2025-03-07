@@ -308,6 +308,7 @@ export default {
   poorPeopleInformation: 'দরিদ্র ব্যক্তির তথ্য',
   view: 'দেখুন',
   details: 'বিস্তারিত দেখুন',
+  findBigger: 'ভিক্ষুক স্ক্যান করুন',
   imamDetails: 'ইমামের বিস্তারিত দেখুন',
   presentImam: 'বর্তমান ইমামের',
 
@@ -340,5 +341,16 @@ export default {
   unread: "অপঠিত",
   noNotifications: "কোনো নোটিফিকেশন নেই",
   noUnread: "কোনো অপঠিত নোটিফিকেশন নেই",
+  pickImage: 'ছবি নির্বাচন',
+  pickPhoto: 'ছবি তুলুন',
+  faceScan: 'মুখ স্ক্যান',
+  internetTitle:"ইন্টারনেট সংযোগ নেই",
+  internetDescription: "দয়া করে আপনার নেটওয়ার্ক পরীক্ষা করুন এবং আবার চেষ্টা করুন।",
+  internetButton:"পুনরায় চেষ্টা করুন",
+  requestView: 'অনুরোধের অবস্থা দেখুন',
+  fieldTypeLabel: 'ক্ষেত্রের ধরণ',
+  fieldTypePlaceholder:"ক্ষেত্রের ধরণ নির্বাচন করুন",
+  reasonLabel:"কারণ",
+  reasonPlaceholder:"কারণ লিখুন"
   
 };

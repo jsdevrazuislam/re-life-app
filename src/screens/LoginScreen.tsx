@@ -45,26 +45,41 @@ const LoginScreen = () => {
     setTempEmail
   } = useAuthStore();
 
-  const handleFormSubmit = async (formData:any) => {
+  const handleFormSubmit = async (formData: any) => {
     const { data, message } = await request('post', ApiStrings.LOGIN, {
       password: formData?.password,
       emailOrPhone: formData?.emailOrPhone,
     });
     const user = data?.user;
-    const { data: imamData } = await request(
-      'get',
-      ApiStrings.GET_MASJID_DETAILS(user?.masjid?._id || ''),
-    );
-    setCommittees(imamData?.committees);
-    setPeople(imamData?.poorPeople);
-    setTotalPeople(imamData?.totalPoorPeople);
-    setTotalCommittees(imamData?.totalCommittees);
+    if (user?.role === 'moderator') {
+      const { data: imamData } = await request(
+        'post',
+        ApiStrings.GET_MASJID_DETAILS_FOR_MODERATOR,
+        {
+          "masjids": user?.masjids
+        }
+      );
+      setCommittees(imamData?.committees);
+      setPeople(imamData?.poorPeople);
+      setTotalPeople(imamData?.totalPoorPeople);
+      setTotalCommittees(imamData?.totalCommittees);
+    }
+    else {
+      const { data: imamData } = await request(
+        'get',
+        ApiStrings.GET_MASJID_DETAILS(user?.masjid?._id || ''),
+      );
+      setCommittees(imamData?.committees);
+      setPeople(imamData?.poorPeople);
+      setTotalPeople(imamData?.totalPoorPeople);
+      setTotalCommittees(imamData?.totalCommittees);
+    }
     await setUser(user, data?.accessToken, data?.refreshToken);
     setRole(user?.role);
     showToast('success', message);
-    if(user?.signupStep === 'otp_pending'){
+    if (user?.signupStep === 'otp_pending') {
       setTempEmail(formData?.emailOrPhone)
-      navigation.navigate('OtpScreen', { email: formData?.emailOrPhone})
+      navigation.navigate('OtpScreen', { email: formData?.emailOrPhone })
     } else if (user?.kycStatus === 'pending' || 'rejected') {
       navigation.navigate('ImamPendingScreen');
     } else if (user?.isBlocked) {
@@ -99,33 +114,33 @@ const LoginScreen = () => {
 
             <View style={[loginStyles.loginForm, { width: '100%' }]}>
               <Controller
-                  name='emailOrPhone'
-                  control={control}
-                  render={({ field: { value, onChange } }) => (
-                    <Input
-                      label={t('emailOrPhoneLabel')}
-                      placeholder={t('emailOrPhonePlaceholder')}
-                      value={value}
-                      onChangeText={onChange}
-                      error={errors?.emailOrPhone?.message}
-                      keyboardType="email-address"
-                    />
-                  )}
-                />
+                name='emailOrPhone'
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <Input
+                    label={t('emailOrPhoneLabel')}
+                    placeholder={t('emailOrPhonePlaceholder')}
+                    value={value}
+                    onChangeText={onChange}
+                    error={errors?.emailOrPhone?.message}
+                    keyboardType="email-address"
+                  />
+                )}
+              />
               <Controller
-                  name='password'
-                  control={control}
-                  render={({ field: { value, onChange } }) => (
-                    <Input
-                      label={t('passwordLabel')}
-                      placeholder={t('confirmPasswordLabel')}
-                      value={value}
-                      onChangeText={onChange}
-                      error={errors?.password?.message}
-                      secureTextEntry
-                    />
-                  )}
-                />
+                name='password'
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <Input
+                    label={t('passwordLabel')}
+                    placeholder={t('confirmPasswordLabel')}
+                    value={value}
+                    onChangeText={onChange}
+                    error={errors?.password?.message}
+                    secureTextEntry
+                  />
+                )}
+              />
               {error && (
                 <Paragraph
                   style={loginStyles.errorMessage}

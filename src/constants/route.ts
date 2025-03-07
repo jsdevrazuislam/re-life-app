@@ -21,10 +21,15 @@ export const AppRoutes = {
     RESET_PASSWORD_SCREEN:'ResetPasswordScreen',
     BLOCK_SCREEN:'BlockScreen',
     NOTIFICATION_SCREEN:'NotificationScreen',
+    FACE_SCAN_SCREEN:'FaceScanScreen',
+    REQUEST_ACCESS_VIEW:'RequestAccessView',
+    EDIT_POOR_PERSON:'EditPoorPeopleScreen',
 }
 
 export type AppStackParamList = {
+    FaceScanScreen: undefined; 
     OpeningScreen: undefined; 
+    RequestAccessView: undefined; 
     LoginScreen: undefined; 
     ImamSettingsScreen: undefined; 
     ResetPasswordScreen: { otp: string, email:string}; 
@@ -38,6 +43,9 @@ export type AppStackParamList = {
     KycStartedScreen: undefined; 
     BlockScreen: undefined;
     AddPoorPeopleScreen: undefined;
+    EditPoorPeopleScreen:{
+        item?: PoorPeople
+    };
     ImamHomeScreen: {
         activeTab?:string
     }; 

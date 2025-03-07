@@ -38,7 +38,7 @@ interface CommitteeDetailsData {
 }
 interface ImamDetails {
   userId: string;
-  email: string;
+  emailOrPhone: string;
   name: string;
   mobile: string;
   address: string;
@@ -48,14 +48,17 @@ interface ImamDetails {
 }
 
 
- interface PoorPeople {
+interface PoorPeople {
   essentialsNeedsMonthly: EssentialsNeedsMonthly;
   name: string;
   age: number;
   gender: string;
+  permanentAddress: string;
   marriageStatus: string;
   photoUrl: string;
   isWifeDead: string;
+  isFatherDead: string;
+  isMotherDead: string;
   isHusbandDead: string;
   husbandProfession: string;
   wifeProfession: string;
@@ -65,6 +68,7 @@ interface ImamDetails {
   address: string;
   receivingAssistance: string;
   assistanceType: string;
+  presentAddress: string;
   frequency: string;
   assistanceLocation: string;
   notes: string;
@@ -73,8 +77,14 @@ interface ImamDetails {
   husbandIdProofDocuments?: (IdProofDocuments)[] | null;
   fatherIdProofDocuments?: (IdProofDocuments)[] | null;
   _id: string;
+  otherFoodItems: string;
+  overview: string;
+  notes: string;
+  monthlyMedicineCost: string;
+  financialNeeds: string;
+  ongoingTreatmentsDetails: string;
 }
- interface EssentialsNeedsMonthly {
+interface EssentialsNeedsMonthly {
   rice: number;
   lentils: number;
   oil: number;
@@ -85,7 +95,7 @@ interface ImamDetails {
   ongoingTreatmentsDetails: string;
   financialNeeds: string;
 }
- interface ChildrenDetails {
+interface ChildrenDetails {
   name: string;
   age: number;
   profession: string;
@@ -94,8 +104,33 @@ interface ImamDetails {
   income: number;
   _id: string;
 }
-interface IdProofDocuments{
+interface IdProofDocuments {
   label: string;
   value: string;
   _id: string;
 }
+
+interface ScanResponse {
+  data:{
+    donations: boolean;
+    registered: boolean;
+    poorPeople: PoorPeople;
+  }
+  statusCode: number;
+  success: boolean;
+  message: string;
+}
+
+interface UpdateRequest {
+  _id: string;
+  userId: string;
+  masjidId: string;
+  fieldType: string;
+  recordId: string;
+  updateData: Record<string, any>;
+  reason: string;
+  status: "pending" | "approved" | "rejected";
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+};

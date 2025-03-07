@@ -18,10 +18,6 @@ import profileStyles from '../styles/profile.styles';
 import { useTranslation } from '../hooks/useTranslation';
 import * as ImagePicker from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {
-  validateCommitteeAddress,
-  validateCommitteeName,
-} from '../validations/add.committee';
 import Input from '../components/ui/AppInput';
 import SelectDropdown from '../components/ui/Select';
 import AppButton from '../components/ui/AppButton';
@@ -43,7 +39,7 @@ interface ProfileForm {
   name: string;
   fullName: string;
   address: string;
-  email: string;
+  emailOrPhone: string;
   location: {
     district: string;
     upazila: string;
@@ -61,7 +57,7 @@ const ProfileScreen = () => {
     name: '',
     address: '',
     fullName: '',
-    email: '',
+    emailOrPhone: '',
     location: {
       district: '',
       upazila: '',
@@ -148,7 +144,7 @@ const ProfileScreen = () => {
         name: user.masjid?.name || '',
         fullName: user?.fullName,
         address: user.address || '',
-        email: user.email || user?.phoneNumber,
+        emailOrPhone: user.emailOrPhone,
         location: {
           district: user.masjid?.location?.district || '',
           upazila: user.masjid?.location?.upazila || '',
@@ -287,9 +283,9 @@ const ProfileScreen = () => {
                 />
 
                 <Input
-                  label={t('imamEmailLabel')}
-                  placeholder={t('imamEmailPlaceholder')}
-                  value={formData.email}
+                  label={t('emailOrPhoneLabel')}
+                  placeholder={t('emailOrPhonePlaceholder')}
+                  value={formData.emailOrPhone}
                   onChangeText={text => handleInputChange('email', text)}
                   keyboardType="phone-pad"
                   disabled

@@ -135,7 +135,7 @@ const HomeViewDetailsInfoScreen = () => {
                         </Paragraph>
                       </View>
                       <Paragraph level="Small" weight="Medium" style={homeViewDetailsStyles.value}>
-                        {item.mobile}
+                        {item.emailOrPhone}
                       </Paragraph>
                     </View>
                     <View style={homeViewDetailsStyles.flexLayout}>

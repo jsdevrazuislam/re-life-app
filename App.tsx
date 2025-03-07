@@ -31,7 +31,7 @@ const showForegroundNotification = async (title: string, message: string) => {
 };
 
 const App = () => {
-  const { loadUserFromStorage, accessToken, isFirstTime, isLoading, role, userTempId, user, status } = useAuthStore();
+  const { loadUserFromStorage, accessToken, isLoading, role, userTempId, user, status } = useAuthStore();
   const socketRef = useRef<any>(null);
 
   async function requestPermissions() {
@@ -122,7 +122,7 @@ const App = () => {
     return <SplashScreenComponent />;
   }
 
-  return <AppEntryPoint isFirstTime={isFirstTime} user={user} userTempId={userTempId ?? ""} status={status ?? ""} role={role ?? ""} />;
+  return <AppEntryPoint user={user} userTempId={userTempId ?? ""} status={status ?? ""} role={role ?? ""} />;
 };
 
 export default App;

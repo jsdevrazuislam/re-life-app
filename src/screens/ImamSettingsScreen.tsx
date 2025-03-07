@@ -63,7 +63,7 @@ const SettingsScreen = () => {
               {user?.fullName}
             </Heading>
             <Paragraph level="Small" weight="Medium" style={styles.userEmail}>
-              {user?.email}
+              {user?.emailOrPhone}
             </Paragraph>
           </View>
 
@@ -76,6 +76,11 @@ const SettingsScreen = () => {
             {
               user?.role === 'imam' &&
               <>
+                <SettingItem
+                  icon="remove-red-eye"
+                  label={t('requestView')}
+                  onPress={() => navigation.navigate('RequestAccessView')}
+                />
                 <SettingItem
                   icon="lock"
                   label={t('changePasswordTitle')}

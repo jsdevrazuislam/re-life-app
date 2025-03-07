@@ -15,6 +15,7 @@ export default {
   emailPlaceholder: 'Enter your email',
   emailLabel: 'Email',
   passwordLabel: 'Password',
+  findBigger: 'Scan Beggar’s',
   passwordPlaceholder: 'Enter your password',
   forgotPassword: 'Forgot Password?',
   signInButton: 'Sign In',
@@ -326,7 +327,16 @@ years: 'Years',
   unread: "Unread",
   noNotifications: "No notifications available",
   noUnread: "No unread notifications",
-
-
+  pickImage: 'Pick Image',
+  pickPhoto: 'Take Photo',
+  faceScan: 'Face Scan',
+  internetTitle:"No Internet Connection",
+  internetDescription: "Please check your network and try again",
+  internetButton:"Retry",
+  requestView: 'Request Status View',
+  fieldTypeLabel: 'Field Type',
+  fieldTypePlaceholder:"Select field type",
+  reasonLabel:"Reason",
+  reasonPlaceholder:"Enter the reason"
 
 };

@@ -15,6 +15,7 @@ const ApiStrings = {
     REQUEST_TO_ADMIN:'/masjids/request-access',
     GET_MASJIDS_NAME:'/masjids/masjid-name',
     GET_MASJID_DETAILS: (id:string) => `/masjids/${id}/details`,
+    GET_MASJID_DETAILS_FOR_MODERATOR:`/masjids/moderator/stats`,
     CREATE_PEOPLE: (ID:string) => `poor-people/${ID}/poor-person`,
     COMMITTEE_PROFILE_DELETE: (masjidId:string, committeeId:string) => `committee/${masjidId}/committee/${committeeId}/image`,
     CREATE_COMMITTEE:'/committee/create',
@@ -24,6 +25,7 @@ const ApiStrings = {
     READ_NOTIFICATION: (notificationId:string) => `/notifications/read/${notificationId}`,
     SAVE_FCM_TOKEN: `/users/save-token`,
     DELETE_NOTIFICATION:(id:string) => `/notifications/${id}`,
+    GET_REQUEST_HISTORY: `/users/requests-history`
 }
 
 export default ApiStrings

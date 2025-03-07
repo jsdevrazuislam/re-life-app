@@ -1,97 +1,30 @@
-import React, {useState} from 'react';
-import {imamStyles} from '../../styles/imamHomeStyles';
-import {View, ScrollView, Text, TouchableOpacity, Image} from 'react-native';
+import React from 'react';
+import { imamStyles } from '../../styles/imamHomeStyles';
+import { View, ScrollView, Text, TouchableOpacity } from 'react-native';
 import Paragraph from '../ui/Paragraph';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Heading from '../ui/Heading';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
-import {baseURLPhoto} from '../../lib/api';
-import Modal from 'react-native-modal';
-import Input from '../ui/AppInput';
-import {useApi} from '../../hooks/useApi';
-import Textarea from '../ui/Textarea';
-import AppButton from '../ui/AppButton';
-import ApiStrings from '../../lib/apis_string';
-import { useAuthStore } from '../../store/store';
-import { showToast } from '../../utils/toast';
-import ErrorMessage from '../ErrorMessage';
+import { baseURLPhoto } from '../../lib/api';
 import { useTranslation } from '../../hooks/useTranslation';
 import ImageComponent from '../ui/Image';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { AppStackParamList } from '../../constants/route';
+import { useAuthStore } from '../../store/store';
+import { Colors } from '../../configs/colors';
 
-const PeopleTab: React.FC<PeopleTabProps> = ({data, onAdd, loading}) => {
-  const [modalType, setModalType] = useState<'edit' | 'delete' | null>(null);
-  const [subject, setSubject] = useState('');
-  const [description, setDescription] = useState('');
-  const [isModalVisible, setModalVisible] = useState(false);
-  const {request, loading: requestLoading, error} = useApi();
-  const { user } = useAuthStore()
+const PeopleTab: React.FC<PeopleTabProps> = ({ data, onAdd, loading }) => {
+
   const { t } = useTranslation()
+  const navigation = useNavigation<NavigationProp<AppStackParamList>>();
+  const { user } = useAuthStore()
 
-  const openModal = (person: PoorPeopleResponse, type: 'edit' | 'delete') => {
-    setModalType(type);
-    setModalVisible(true);
-  };
 
-  const handleSubmit = async () =>{
-    const payload = {
-        masjidId: user?.masjid?._id, 
-        imamId: user?._id, 
-        type: modalType, 
-        subject, 
-        reason: description
-    }
-    const { message } = await request('post', ApiStrings.REQUEST_TO_ADMIN, payload);
-    showToast('success', message)
-    setDescription('')
-    setSubject('')
-    setModalVisible(false);
-  }
 
 
   return (
     <View style={imamStyles.tabContainer}>
-      <Modal
-        isVisible={isModalVisible}
-        onBackdropPress={() => setModalVisible(false)}
-        style={imamStyles.container}>
-        <View style={imamStyles.content}>
-          <View style={imamStyles.headerModal}>
-            <Paragraph level="Medium" weight="Medium">
-              {modalType === 'edit'
-                ? 'Edit Access Request'
-                : 'Delete Access Request'}
-            </Paragraph>
-            <TouchableOpacity onPress={() => setModalVisible(false)}>
-              <Icon name="close" size={22} color="#555" />
-            </TouchableOpacity>
-          </View>
 
-          <Input
-            label="Subject"
-            placeholder="Subject"
-            value={subject}
-            onChangeText={setSubject}
-          />
-          <Textarea
-            label="Reason"
-            placeholder="Description"
-            value={description}
-            onChangeText={setDescription}
-            maxLength={300}
-            numberOfLines={5}
-          />
-
-          {error && <ErrorMessage error={error} />}
-
-          <AppButton
-            loading={requestLoading}
-            disabled={requestLoading}
-            style={{marginTop: 20}}
-            onPress={handleSubmit}
-            text="Submit"
-          />
-        </View>
-      </Modal>
       <TouchableOpacity style={imamStyles.addButton} onPress={onAdd}>
         <Icon name="person-add" size={20} color="white" />
         <Text style={imamStyles.buttonText}>{t('addBegger')}</Text>
@@ -99,12 +32,12 @@ const PeopleTab: React.FC<PeopleTabProps> = ({data, onAdd, loading}) => {
 
       {loading ? (
         <ScrollView>
-          {Array.from({length: 3}).map((_, index) => (
+          {Array.from({ length: 3 }).map((_, index) => (
             <SkeletonPlaceholder key={index}>
               <View style={imamStyles.infoCard}>
                 <View style={imamStyles.cardContent}>
                   <View style={imamStyles.skeletonPhoto} />
-                  <View style={{marginLeft: 10}}>
+                  <View style={{ marginLeft: 10 }}>
                     <View style={imamStyles.skeletonText} />
                     <View style={imamStyles.skeletonTextSmall} />
                     <View style={imamStyles.skeletonTextSmall} />
@@ -135,7 +68,7 @@ const PeopleTab: React.FC<PeopleTabProps> = ({data, onAdd, loading}) => {
                 <ImageComponent
                   source={baseURLPhoto(item?.photoUrl || '')}
                   style={imamStyles.infoPhoto}
-                  imageStyle={{ borderRadius: 3}}
+                  imageStyle={{ borderRadius: 3 }}
                 />
                 <View style={imamStyles.cardText}>
                   <Paragraph
@@ -148,7 +81,7 @@ const PeopleTab: React.FC<PeopleTabProps> = ({data, onAdd, loading}) => {
                     level="Small"
                     weight='Bold'
                     style={imamStyles.cardSubtitle}>
-                    Age: <Paragraph level="Small" weight="Medium">{item.age}</Paragraph>
+                    Age: <Paragraph level="Small" weight="Medium">{item?.age}</Paragraph>
                   </Paragraph>
                   <Paragraph
                     level="Small"
@@ -158,16 +91,14 @@ const PeopleTab: React.FC<PeopleTabProps> = ({data, onAdd, loading}) => {
                   </Paragraph>
                 </View>
               </View>
-              {
-                user?.role === 'imam' && <View style={imamStyles.actionButtons}>
-                <TouchableOpacity onPress={() => openModal(item, 'edit')}>
-                  <Icon name="edit" size={20} color="#4CAF50" />
+              <View style={imamStyles.actionButtons}>
+                <TouchableOpacity onPress={() => navigation.navigate("PoorPeopleView", { item })}>
+                  <Icon name="remove-red-eye" size={20} color={Colors.primary} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => openModal(item, 'delete')}>
-                  <Icon name="delete" size={20} color="#F44336" />
-                </TouchableOpacity>
+                {user?.role === 'imam' && <TouchableOpacity onPress={() => navigation.navigate('EditPoorPeopleScreen', { item })}>
+                  <Icon name="edit" size={20} color={Colors.secondary} />
+                </TouchableOpacity>}
               </View>
-              }
             </View>
           ))}
         </ScrollView>

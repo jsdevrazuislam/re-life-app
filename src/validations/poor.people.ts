@@ -26,19 +26,18 @@ const poorPeopleSchema = yup.object().shape({
     financialNeeds: yup.string().required('আর্থিক প্রয়োজন আবশ্যক'),
     treatments: yup.string().optional(),
     notes: yup.string().optional(),
-
     idProofFront: yup.mixed().required('সামনের পরিচয়পত্র আবশ্যক'),
     idProofBack: yup.mixed().required('পিছনের পরিচয়পত্র আবশ্যক'),
 
     idProofFrontHusband: yup.mixed().when(['marriageStatus', 'gender', 'isHusbandDead'], {
-        is: (marriageStatus: string, gender: string, isHusbandDead:string) =>
+        is: (marriageStatus: string, gender: string, isHusbandDead: string) =>
             ['বিবাহিত', 'বিচ্ছেদপ্রাপ্ত', 'বিধবা/তালাক'].includes(marriageStatus) &&
             gender === 'মহিলা' && isHusbandDead === 'হ্যাঁ',
         then: (schema) => schema.required('স্বামীর সামনের পরিচয়পত্র আবশ্যক'),
         otherwise: (schema) => schema.notRequired(),
     }),
     idProofBackHusband: yup.mixed().when(['marriageStatus', 'gender', 'isHusbandDead'], {
-        is: (marriageStatus: string, gender: string, isHusbandDead:string) =>
+        is: (marriageStatus: string, gender: string, isHusbandDead: string) =>
             ['বিবাহিত', 'বিচ্ছেদপ্রাপ্ত', 'বিধবা/তালাক'].includes(marriageStatus) &&
             gender === 'মহিলা' && isHusbandDead === 'হ্যাঁ',
         then: (schema) => schema.required('স্বামীর পিছনের পরিচয়পত্র আবশ্যক'),
@@ -46,16 +45,16 @@ const poorPeopleSchema = yup.object().shape({
     }),
 
     idProofFrontWife: yup.mixed().when(['marriageStatus', 'gender', 'isWifeDead'], {
-        is: (marriageStatus: string, gender: string, isWifeDead:string) =>
+        is: (marriageStatus: string, gender: string, isWifeDead: string) =>
             ['বিবাহিত', 'বিচ্ছেদপ্রাপ্ত', 'বিধবা/বিপত্নীক'].includes(marriageStatus) &&
             gender === 'পুরুষ' && isWifeDead === 'হ্যাঁ',
         then: (schema) => schema.required('স্ত্রীর সামনের পরিচয়পত্র আবশ্যক'),
         otherwise: (schema) => schema.notRequired(),
     }),
     idProofBackWife: yup.mixed().when(['marriageStatus', 'gender', 'isWifeDead'], {
-        is: (marriageStatus: string, gender: string, isWifeDead:string) =>
+        is: (marriageStatus: string, gender: string, isWifeDead: string) =>
             ['বিবাহিত', 'বিচ্ছেদপ্রাপ্ত', 'বিধবা/বিপত্নীক'].includes(marriageStatus) &&
-            gender === 'পুরুষ'  && isWifeDead === 'হ্যাঁ',
+            gender === 'পুরুষ' && isWifeDead === 'হ্যাঁ',
         then: (schema) => schema.required('স্ত্রীর পিছনের পরিচয়পত্র আবশ্যক'),
         otherwise: (schema) => schema.notRequired(),
     }),
@@ -108,7 +107,7 @@ const poorPeopleSchema = yup.object().shape({
         otherwise: (schema) => schema.notRequired(),
     }),
     wifeProfession: yup.string().when(['marriageStatus', 'gender'], {
-        is: (marriageStatus: string, gender: string, isWifeDead:string) =>
+        is: (marriageStatus: string, gender: string, isWifeDead: string) =>
             ['বিবাহিত', 'বিচ্ছেদপ্রাপ্ত', 'বিধবা/বিপত্নীক'].includes(marriageStatus) &&
             gender === 'পুরুষ' && isWifeDead === 'হ্যাঁ',
         then: (schema) => schema.required('স্ত্রীর পেশা আবশ্যক'),
@@ -122,7 +121,7 @@ const poorPeopleSchema = yup.object().shape({
         otherwise: (schema) => schema.notRequired(),
     }),
     husbandProfession: yup.string().when(['marriageStatus', 'gender'], {
-        is: (marriageStatus: string, gender: string, isHusbandDead:string) =>
+        is: (marriageStatus: string, gender: string, isHusbandDead: string) =>
             ['বিবাহিত', 'বিচ্ছেদপ্রাপ্ত', 'বিধবা/তালাক'].includes(marriageStatus) &&
             gender === 'মহিলা' && isHusbandDead === 'হ্যাঁ',
         then: (schema) => schema.required('স্বামীর পেশা আবশ্যক'),
@@ -206,5 +205,189 @@ const poorPeopleSchema = yup.object().shape({
         otherwise: (schema) => schema.notRequired(),
     }),
 });
+
+
+
+export const editPoorPeopleSchema = yup.object().shape({
+    isUpdate: yup.boolean().default(true),
+
+
+
+    age: yup.string()
+        .nullable()
+        .notRequired(),
+
+    gender: yup.string()
+        .nullable()
+        .notRequired(),
+
+    marriageStatus: yup.string()
+        .nullable()
+        .notRequired(),
+
+    photoUrl: yup.mixed()
+        .nullable()
+        .notRequired(),
+
+
+
+    contactNumber: yup.string()
+        .nullable()
+        .notRequired()
+        .test("valid-number", "শুধুমাত্র সংখ্যা গ্রহণযোগ্য", (value) => {
+            if (!value) return true; // If no value is provided, it's optional
+            return /^\d+$/.test(value);
+        })
+        .test("valid-length", "ফোন নম্বর অবশ্যই ১১ ডিজিট হতে হবে", (value) => {
+            if (!value) return true;
+            return value.length === 11;
+        })
+        .test("valid-bd-number", "অবৈধ বাংলাদেশি ফোন নম্বর", (value) => {
+            if (!value) return true;
+            return bangladeshPrefixes.test(value);
+        }),
+
+    presentAddress: yup.string()
+        .nullable()
+        .notRequired()
+        .test("min-length", "বর্তমান ঠিকানা কমপক্ষে ৮ অক্ষরের হতে হবে", (value) => {
+            if (!value) return true;
+            return value.length >= 8;
+        }),
+
+    permanentAddress: yup.string()
+        .nullable()
+        .notRequired()
+        .test("min-length", "স্থায়ী ঠিকানা কমপক্ষে ৮ অক্ষরের হতে হবে", (value) => {
+            if (!value) return true;
+            return value.length >= 8;
+        }),
+
+    name: yup.string()
+        .nullable()
+        .notRequired()
+        .test("min-length", "নাম কমপক্ষে ৩ অক্ষরের হতে হবে", (value) => {
+            if (!value) return true;
+            return value.length >= 3;
+        }),
+
+
+    overview: yup.string()
+        .nullable()
+        .notRequired(),
+
+    rice: yup.string().nullable().notRequired(),
+    lentils: yup.string().nullable().notRequired(),
+    oil: yup.string().nullable().notRequired(),
+    clothingFamily: yup.string().nullable().notRequired(),
+    clothingSelf: yup.string().nullable().notRequired(),
+    otherFood: yup.string().nullable().notRequired(),
+    medicineCost: yup.string().nullable().notRequired(),
+    financialNeeds: yup.string().nullable().notRequired(),
+    treatments: yup.string().nullable().notRequired(),
+    notes: yup.string().nullable().notRequired(),
+
+    fieldType: yup.string()
+        .nullable()
+        .notRequired()
+        .when("isUpdate", {
+            is: true,
+            then: (schema) => schema.required("আপডেট ক্ষেত্র আবশ্যক"),
+        }),
+
+    reason: yup.string()
+        .nullable()
+        .notRequired()
+        .when("isUpdate", {
+            is: true,
+            then: (schema) => schema.required("আপডেটের কারণ আবশ্যক"),
+        }),
+
+    idProofFront: yup.mixed().nullable().notRequired(),
+    idProofBack: yup.mixed().nullable().notRequired(),
+
+    receivingAssistance: yup.string().nullable().notRequired(),
+
+    assistanceType: yup.string().nullable().notRequired()
+        .when("receivingAssistance", {
+            is: "হ্যাঁ",
+            then: (schema) => schema.required("সহায়তার ধরন আবশ্যক"),
+        }),
+
+    frequency: yup.string().nullable().notRequired()
+        .when("receivingAssistance", {
+            is: "হ্যাঁ",
+            then: (schema) => schema.required("সহায়তার সময়কাল আবশ্যক"),
+        }),
+
+    assistanceLocation: yup.string().nullable().notRequired()
+        .when("receivingAssistance", {
+            is: "হ্যাঁ",
+            then: (schema) => schema.required("সহায়তার স্থান আবশ্যক"),
+        }),
+
+    hasChildren: yup.string().nullable().notRequired(),
+
+    numberOfChildren: yup.string().nullable().notRequired()
+        .when("hasChildren", {
+            is: "হ্যাঁ",
+            then: (schema) => schema.required("সন্তানের সংখ্যা আবশ্যক"),
+        }),
+
+    childrenDetails: yup.array().of(
+        yup.object().shape({
+            name: yup.string()
+                .nullable()
+                .notRequired()
+                .test("is-required", "সন্তানের নাম আবশ্যক", (value) => {
+                    return !value || (typeof value === "string" && value.trim().length > 0);
+                }),
+
+            childrenProveDocument: yup.mixed()
+                .nullable()
+                .notRequired()
+                .test("is-required", "সন্তান প্রমাণপত্র আবশ্যক", (value) => {
+                    return value ? true : false;
+                }),
+
+
+            age: yup.string()
+                .nullable()
+                .notRequired()
+                .test("is-number", "বয়স একটি সংখ্যা হতে হবে", (value) => !value || !isNaN(Number(value)))
+                .test("min-age", "বয়স ০ বা তার বেশি হতে হবে", (value) => !value || Number(value) >= 0),
+
+            profession: yup.string().nullable().notRequired()
+                .when("age", {
+                    is: (age: number) => age >= 15,
+                    then: (schema) => schema.required("সন্তানের পেশা আবশ্যক"),
+                }),
+
+            income: yup.string().nullable().notRequired()
+                .when("age", {
+                    is: (age: number) => age >= 15,
+                    then: (schema) => schema.required("সন্তানের আয় আবশ্যক"),
+                }),
+
+            frequency: yup.string().nullable().notRequired()
+                .when("age", {
+                    is: (age: number) => age >= 15,
+                    then: (schema) => schema.required("আয়ের পুনরাবৃত্তি আবশ্যক"),
+                }),
+
+            mobile: yup.string().nullable().notRequired()
+                .when("age", {
+                    is: (age: number) => age >= 15,
+                    then: (schema) => schema.required("সন্তানের ফোন নম্বর আবশ্যক"),
+                }),
+        })
+    ).nullable().notRequired()
+        .when("hasChildren", {
+            is: "হ্যাঁ",
+            then: (schema) => schema.required("সন্তানদের তথ্য আবশ্যক"),
+        }),
+});
+
+
 
 export default poorPeopleSchema;

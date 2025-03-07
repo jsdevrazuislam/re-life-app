@@ -4,7 +4,7 @@
     fileId: string;
     createdAt: string;
     documentType: string;
-    email: string;
+    emailOrPhone: string;
     address: string;
     rejectionReason: string;
     fullName: string;

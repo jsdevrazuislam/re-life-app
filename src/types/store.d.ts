@@ -35,9 +35,8 @@ interface AuthState {
   setTotalCommittees: (totalCommittees: number) => void;
   committees: CommitteeResponse[];
   setCommittees: (committees: CommitteeResponse[]) => void;
-  people: PoorPeopleResponse[];
-  setPeople: (people: PoorPeopleResponse[]) => void;
-  isFirstTime: boolean,
+  people: PoorPeople[];
+  setPeople: (people: PoorPeople[]) => void;
   notifications: NotificationResponseData[],
   setNotifications: (notifications: NotificationResponseData[]) => void;
 }
