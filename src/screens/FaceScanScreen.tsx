@@ -2,14 +2,22 @@ import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, ActivityIndicator, Image, Platform, Alert, Linking, Dimensions, TouchableOpacity } from 'react-native';
 import Animated, { Easing, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
 import { api } from '../lib/api'
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import { requestAndroidPermission } from '../utils/permission';
+import { ImageLibraryOptions, launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import { requestAndroidPermission, requestAndroidPermissionCamera } from '../utils/permission';
 import { Colors } from '../configs/colors';
 import Paragraph from '../components/ui/Paragraph';
 import { AppStackParamList } from '../constants/route';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { useTranslation } from '../hooks/useTranslation';
+
+export const options: ImageLibraryOptions = {
+    mediaType: 'photo',
+    quality: 1,
+    includeBase64: false,
+    maxWidth: 1080, 
+    maxHeight: 1920,
+  };
 
 const { height } = Dimensions.get('window');
 
@@ -72,7 +80,7 @@ const FaceScanScreen = () => {
         }
 
 
-        launchImageLibrary({ mediaType: 'photo', quality: 0.8 }, (response) => {
+        launchImageLibrary(options, (response) => {
             if (response.didCancel) {
                 console.log('User canceled image picker');
             } else if (response.errorCode) {
@@ -88,7 +96,7 @@ const FaceScanScreen = () => {
     const takePhoto = async () => {
 
         if (Platform.OS === 'android') {
-            const hasPermission = await requestAndroidPermission();
+            const hasPermission = await requestAndroidPermissionCamera();
             if (!hasPermission) {
                 Alert.alert(
                     'Permission Denied',
@@ -102,7 +110,7 @@ const FaceScanScreen = () => {
             }
         }
 
-        launchCamera({ mediaType: 'photo', quality: 0.8 }, (response) => {
+        launchCamera(options, (response) => {
             if (response.didCancel) {
                 console.log('User canceled camera');
             } else if (response.errorCode) {

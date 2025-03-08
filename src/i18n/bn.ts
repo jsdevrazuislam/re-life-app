@@ -1,6 +1,6 @@
 export default {
   welcome: 'স্বাগতম!',
-  introTitle: 'একটি ভিক্ষুক মুক্ত বাংলাদেশ গড়ার লক্ষ্যে',
+  introTitle: 'ভিক্ষুক মুক্ত বাংলাদেশ গড়তে',
   introDescription: 'আপনার সহযোগিতায় আমরা একটি আত্মমর্যাদাশীল জাতি গড়ে তুলতে পারি',
   donateNow: 'এখনই দান করুন',
   exploreCauses: 'আমাদের কারণসমূহ দেখুন',
@@ -351,6 +351,16 @@ export default {
   fieldTypeLabel: 'ক্ষেত্রের ধরণ',
   fieldTypePlaceholder:"ক্ষেত্রের ধরণ নির্বাচন করুন",
   reasonLabel:"কারণ",
-  reasonPlaceholder:"কারণ লিখুন"
+  reasonPlaceholder:"কারণ লিখুন",
+  requestHistory: "অনুরোধ ইতিহাস",
+  viewRequestStatus: "আপনার আগের অনুরোধের অবস্থা দেখুন",
+  previousValue: "আগের মান",
+  modifiedValue: "পরিবর্তিত মান",
+  viewDetails: "বিস্তারিত দেখুন",
+  approved: "অনুমোদিত",
+    pending: "অপেক্ষমান",
+    rejected: "প্রত্যাখ্যাত",
+    poorPeopleInformations: "দরিদ্র মানুষের তথ্য",
+
   
 };

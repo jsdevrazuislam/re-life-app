@@ -53,32 +53,23 @@ const RequestHistoryScreen = () => {
         <View style={styles.card}>
             <View style={styles.cardHeader}>
                 <Paragraph level='Medium' weight='Bold' style={styles.requestTitle}>
-                    {item.fieldType}
+                    {item.fieldType === 'poorPeopleInformations' ? t('poorPeopleInformations') : t('committeeDetails')}
                 </Paragraph>
                 <Paragraph level='XSmall' weight='Medium' style={styles.requestDate}>
                     {new Date(item.createdAt).toLocaleDateString()} · REQ-{item._id}
                 </Paragraph>
             </View>
 
-            {Object.entries(item.updateData || {}).map(([key, value], index) => (
+            {item.changes.map((change, index) => (
                 <View style={styles.detailItem} key={index}>
-                    <Paragraph level='Small' weight='Bold' style={styles.detailLabel}>
-                        {key}:
+                    <Paragraph level='Small' weight='Medium' style={styles.detailValue}>
+                        {t('previousValue')}: {change.previousValue}
                     </Paragraph>
                     <Paragraph level='Small' weight='Medium' style={styles.detailValue}>
-                        {value || 'N/A'}
+                        {t('modifiedValue')}: {change.modifiedValue}
                     </Paragraph>
                 </View>
             ))}
-
-            <View style={styles.detailItem}>
-                <Paragraph level='Small' weight='Bold' style={styles.detailLabel}>
-                    New:
-                </Paragraph>
-                <Paragraph level='Small' weight='Medium' style={styles.detailValue}>
-                    {item.updateData?.modifiedValue || "N/A"}
-                </Paragraph>
-            </View>
 
             <View
                 style={[
@@ -92,7 +83,9 @@ const RequestHistoryScreen = () => {
             </View>
 
             <TouchableOpacity onPress={() => console.log('View')} style={styles.viewDetailsButton}>
-                <Paragraph level='Small' style={styles.viewDetailsText}>View Details</Paragraph>
+                <Paragraph level='Small' style={styles.viewDetailsText}>
+                    {t('viewDetails')}
+                </Paragraph>
             </TouchableOpacity>
         </View>
     );
@@ -102,10 +95,10 @@ const RequestHistoryScreen = () => {
             <View style={globalStyles.container}>
             <BackButton />
             <Heading level={5} weight='Bold' style={styles.headerTitle}>
-                Request History
+                {t('requestHistory')}
             </Heading>
             <Paragraph level='Medium' weight='Medium' style={styles.subtitle}>
-                View status of your previous requests
+                {t('viewRequestStatus')}
             </Paragraph>
 
             <FlatList
@@ -147,8 +140,6 @@ const styles = StyleSheet.create({
         color: '#666666',
     },
     detailItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
         marginBottom: mvs(8),
     },
     detailLabel: {

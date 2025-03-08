@@ -39,6 +39,7 @@ import LoadingOverlay from '../components/LoadingOverlay';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import poorPeopleSchema from '../validations/poor.people';
+import { options } from './FaceScanScreen';
 
 const AddPeopleScreen = () => {
   const { t } = useTranslation();
@@ -223,8 +224,7 @@ const handleSubmitFormSubmit = async (formData: any) => {
       }
     }
 
-    ImagePicker.launchImageLibrary(
-      { mediaType: 'photo', quality: 0.8 },
+    ImagePicker.launchImageLibrary(options,
       response => {
         if (response.didCancel) return;
         if (response.errorMessage) {
@@ -271,8 +271,7 @@ const handleSubmitFormSubmit = async (formData: any) => {
       }
     }
 
-    ImagePicker.launchImageLibrary(
-      { mediaType: 'photo', quality: 0.8 },
+    ImagePicker.launchImageLibrary(options,
       response => {
         if (response.didCancel) return;
         if (response.errorMessage) {

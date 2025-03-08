@@ -31,6 +31,7 @@ import LoadingOverlay from '../components/LoadingOverlay';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { validationSchema } from '../validations/signup';
+import { options } from './FaceScanScreen';
 
 
 
@@ -99,8 +100,7 @@ const SignupScreen = () => {
       }
     }
 
-    ImagePicker.launchImageLibrary(
-      { mediaType: 'photo', quality: 0.8 },
+    ImagePicker.launchImageLibrary(options,
       response => {
         if (response.didCancel) return;
         if (response.errorMessage) {
@@ -130,8 +130,7 @@ const SignupScreen = () => {
       }
     }
 
-    ImagePicker.launchImageLibrary(
-      { mediaType: 'photo', quality: 0.8 },
+    ImagePicker.launchImageLibrary(options,
       response => {
         if (response.didCancel) return;
         if (response.errorMessage) {

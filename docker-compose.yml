@@ -1,0 +1,13 @@
+services:
+  react-native:
+    build: .
+    ports:
+      - "8081:8081"
+      - "5555:5555"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - ANDROID_HOME=/opt/android-sdk
+      - PATH=$PATH:/opt/android-sdk/platform-tools:/opt/android-sdk/emulator
+    command: ["pnpm", "start"]

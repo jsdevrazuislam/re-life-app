@@ -39,7 +39,7 @@ const OpeningScreen = () => {
             />
           </View>
           <View style={openingStyles.appTitle}>
-            <Heading style={{ textAlign: 'center' }} level={3} weight="Bold">
+            <Heading style={{ textAlign: 'center' }} level={5} weight="Bold">
               {t('introTitle')}
             </Heading>
             <Text

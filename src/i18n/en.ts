@@ -337,6 +337,16 @@ years: 'Years',
   fieldTypeLabel: 'Field Type',
   fieldTypePlaceholder:"Select field type",
   reasonLabel:"Reason",
-  reasonPlaceholder:"Enter the reason"
+  reasonPlaceholder:"Enter the reason",
+  requestHistory: "Request History",
+  viewRequestStatus: "View status of your previous requests",
+  previousValue: "Previous Value",
+  modifiedValue: "Modified Value",
+  viewDetails: "View Details",
+  approved: "Approved",
+    pending: "Pending",
+    rejected: "Rejected",
+    poorPeopleInformations: "Poor People's Information",
+
 
 };

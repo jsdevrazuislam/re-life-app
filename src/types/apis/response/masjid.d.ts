@@ -123,14 +123,17 @@ interface ScanResponse {
 
 interface UpdateRequest {
   _id: string;
-  userId: string;
   masjidId: string;
   fieldType: string;
   recordId: string;
-  updateData: Record<string, any>;
   reason: string;
-  status: "pending" | "approved" | "rejected";
+  changes: UpdateChange[];
   createdAt: string;
-  updatedAt: string;
-  __v: number;
+  status: 'pending' | 'approved' | 'rejected';
+};
+
+type UpdateChange = {
+  field: string;
+  previousValue: string | number;
+  modifiedValue: string | number;
 };
