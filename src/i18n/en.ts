@@ -58,8 +58,11 @@ export default {
   confirmPasswordPlaceholder: 'Re-enter your password',
 
   // Current Address
-  currentAddressLabel: 'Current Address',
+  currentAddressLabel: 'Your Current Address',
   currentAddressPlaceholder: 'Enter your current address',
+
+  currentAddressLabelMasjid: 'Masjid Current Address',
+  currentAddressPlaceholderMasjid: 'Enter masjid current address',
 
   // Committee Members Count
   committeeMembersLabel: 'Number of Committee Members',
@@ -126,7 +129,7 @@ export default {
   weakPassword: 'Password is too weak! Please use a stronger password.',
   // kyc screen
   kycTitle: 'Verify Your Identity',
-  kycDescription: 'To ensure your authenticity and security, please follow the steps below. Your information will remain encrypted and securely stored.',
+  kycDescription: 'To ensure your authenticity and security, please follow the steps below. Your information will remain and securely stored InShaAllah.',
   title1: 'Take a photo of a valid ID',
   description1: 'Upload a clear picture of a valid national ID, passport, or driver’s license to verify your personal details.',
   title2: 'Take a selfie of yourself',

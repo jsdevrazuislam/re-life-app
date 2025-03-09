@@ -7,13 +7,13 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 
 
-const AppEntryPoint = ({ role, user, status, userTempId }: { role: string, user: IUser | null, status: string, userTempId: string }) => {
+const AppEntryPoint = ({ role, user, status, userTempId, isFirstTime }: { role: string, user: IUser | null, status: string, userTempId: string, isFirstTime:boolean }) => {
 
   return (
     <GestureHandlerRootView>
       <NavigationContainer>
         <Host>
-          <AppNavigator role={role} user={user} status={status} userTempId={userTempId} />
+          <AppNavigator isFirstTime={isFirstTime} role={role} user={user} status={status} userTempId={userTempId} />
           <Toast />
         </Host>
       </NavigationContainer>

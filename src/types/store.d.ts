@@ -26,9 +26,8 @@ interface AuthState {
   userTempEmail:string | null,
   setStatus: (status: string) => void;
   loadUserFromStorage: () => Promise<void>;
+  isFirstTime: boolean;
   isLoading: boolean;
-  masjids: MasjidNames[] | null,
-  setMasjids: (data: MasjidNames[]) => void
   totalPeople: number;
   totalCommittees: number;
   setTotalPeople: (totalPeople: number) => void;

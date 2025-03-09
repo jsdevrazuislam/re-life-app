@@ -35,7 +35,7 @@ const Tab = createBottomTabNavigator();
 
 
 const Stack = createStackNavigator();
-const AppNavigator = ({ role, status, userTempId, user }: { role: string, user: IUser | null, status: string, userTempId: string }) => {
+const AppNavigator = ({ role, status, userTempId, user, isFirstTime }: { role: string, user: IUser | null, status: string, userTempId: string, isFirstTime:boolean }) => {
 
   const [isConnected, setIsConnected] = useState(true);
 
@@ -75,7 +75,7 @@ const AppNavigator = ({ role, status, userTempId, user }: { role: string, user: 
   if (!role) {
     return (
       <Stack.Navigator screenOptions={stackNavigationOptions}>
-        <Stack.Screen name={AppRoutes.OPENING_SCREEN} component={OpeningScreen} />
+        {!isFirstTime && <Stack.Screen name={AppRoutes.OPENING_SCREEN} component={OpeningScreen} />}
         <Stack.Screen name={AppRoutes.HOME_SCREEN} component={HomeScreen} />
         <Stack.Screen name={AppRoutes.FACE_SCAN_SCREEN} component={FaceScanScreen} />
         <Stack.Screen name={AppRoutes.LOGIN_SCREEN} component={LoginScreen} />

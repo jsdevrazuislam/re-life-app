@@ -2,7 +2,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuthStore } from "../store/store";
 
-export const SERVER_URL = "https://great-cities-stare.loca.lt";
+export const SERVER_URL = "https://legal-insects-kiss.loca.lt";
 const baseURL = `${SERVER_URL}/api/v1`;
 export const baseURLPhoto = (url:string) : string => {
   return url

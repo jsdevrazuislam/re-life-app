@@ -57,7 +57,7 @@ const OpeningScreen = () => {
               text={t('getStarted')}
               onPress={() => navigation.navigate('LoginScreen')}
             />
-            <AppButton variant="outline" text={t('findBigger')} onPress={() => navigation.navigate('FaceScanScreen')} />
+            <AppButton variant="outline" text={t('signUpPrompt')} onPress={() => navigation.navigate('SignupScreen')} />
           </View>
         </View>
       </ScrollView>

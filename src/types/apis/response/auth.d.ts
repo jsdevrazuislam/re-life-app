@@ -60,12 +60,13 @@
   }
 
    interface SignupPayload {
+    fullAddress: string;
     address: string;
     committeeDetails?: (CommitteeDetailsEntity)[] | null;
     email: string;
     isChecked: boolean;
     location: Location;
-    masjidProfile: MasjidProfileOrProfileUrl;
+    masjidProfile: MasjidProfileOrProfileUrl[];
     mobile: string;
     name: string;
     numberOfCommittee: string;

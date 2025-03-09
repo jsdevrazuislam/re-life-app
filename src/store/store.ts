@@ -17,12 +17,12 @@ const initialState = {
   status: '',
   userTempId: null,
   userTempEmail: "",
-  masjids: [],
   totalPeople: 0,
   totalCommittees: 0,
   committees: [],
   people: [],
   notifications: [],
+  isFirstTime: false
 };
 
 export const useAuthStore = create<AuthState>(set => ({
@@ -47,7 +47,6 @@ export const useAuthStore = create<AuthState>(set => ({
     });
   },
   setNotifications: (notifications) => set({ notifications }),
-  setMasjids: (masjids) => set({ masjids }),
   setTotalPeople: (totalPeople) => set({ totalPeople }),
   setTotalCommittees: (totalCommittees) => set({ totalCommittees }),
   setCommittees: (committees) => set({ committees }),
@@ -61,12 +60,11 @@ export const useAuthStore = create<AuthState>(set => ({
       const status = await AsyncStorage.getItem('status');
       const userTempEmail = await AsyncStorage.getItem('userTempEmail');
       const user = await AsyncStorage.getItem('tempUser');
+      const isFirstTime = await AsyncStorage.getItem('hasSeenOpening');
       const tempUser = user ? JSON.parse(user) : null;
 
-      set({ status, userTempId, userTempEmail, tempUser });
+      set({ status, userTempId, userTempEmail, tempUser,  isFirstTime: isFirstTime ? true : false });
 
-      const { data } = await api.get(ApiStrings.GET_MASJIDS_NAME);
-      set({ masjids: data?.data?.data })
 
       await messaging().requestPermission();
       const token = await messaging().getToken();

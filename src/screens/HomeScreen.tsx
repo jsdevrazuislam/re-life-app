@@ -6,7 +6,8 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
   ScrollView,
-  RefreshControl
+  RefreshControl,
+  TextInput
 } from 'react-native';
 import React, { useState, useCallback } from 'react';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
@@ -15,9 +16,7 @@ import globalStyles from '../styles/global.style';
 import homeStyles from '../styles/home.style';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import AppLogo from '../components/ui/AppLogo';
-import AreaSelector from '../components/AreaSelector';
 import { useTranslation } from '../hooks/useTranslation';
-import { districts, unions, upazilas, villages } from '../data/dump';
 import AppButton from '../components/ui/AppButton';
 import FokirCard from '../components/FokirCard';
 import { Colors } from '../configs/colors';
@@ -25,11 +24,12 @@ import ApiStrings from '../lib/apis_string';
 import api from '../lib/api';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { AppStackParamList } from '../constants/route';
-import { useAuthStore } from '../store/store';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { ms } from 'react-native-size-matters';
+
 
 const HomeScreen = () => {
   const { t } = useTranslation();
-  const { masjids: masjidsNameList } = useAuthStore();
   const fadeAnim = useState(new Animated.Value(0))[0];
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
   const [masjids, setMasjids] = useState([]);
@@ -47,13 +47,8 @@ const HomeScreen = () => {
   const [errorMessage, setErrorMessage] = useState('');
 
   const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    setMasjids([]); 
-    setCurrentPage(1);
-    setErrorMessage('');
-    fetchMasjids(1, filters);
-    setRefreshing(false);
-  }, [filters]);
+    console.log("run app")
+  }, []);
 
   const fetchMasjids = async (page = 1, newFilters = filters) => {
     if (isLoading) return;
@@ -131,48 +126,22 @@ const HomeScreen = () => {
             </TouchableOpacity>
           </View>
 
-          <AreaSelector
-            value={filters.name}
-            style={homeStyles.filterMargin}
-            label={t('masjidName')}
-            placeholder={t('masjidNamePlaceholder1')}
-            data={masjidsNameList || []}
-            onChange={(value) => handleValueChange(value, 'name')}
-          />
-          <AreaSelector
-            value={filters.district}
-            style={homeStyles.filterMargin}
-            label={t('district')}
-            placeholder={t('districtPlaceholder')}
-            data={districts}
-            onChange={(value) => handleValueChange(value, 'district')}
-          />
-          <AreaSelector
-            value={filters.upazila}
-            style={homeStyles.filterMargin}
-            label={t('upazila')}
-            placeholder={t('upazilaPlaceholder')}
-            data={upazilas}
-            onChange={(value) => handleValueChange(value, 'upazila')}
-          />
-          <AreaSelector
-            value={filters.union}
-            style={homeStyles.filterMargin}
-            label={t('union')}
-            placeholder={t('unionPlaceholder')}
-            data={unions}
-            onChange={(value) => handleValueChange(value, 'union')}
-          />
-          <AreaSelector
-            value={filters.village}
-            style={homeStyles.filterMargin}
-            label={t('village')}
-            placeholder={t('villagePlaceholder')}
-            data={villages}
-            onChange={(value) => handleValueChange(value, 'village')}
-          />
+          <View style={homeStyles.inputContainer}>
+            <Ionicons name="card-outline" size={ms(24)} color={Colors.placeholder} />
+            <TextInput
+              style={homeStyles.input}
+              placeholder="Enter ID number"
+              placeholderTextColor={Colors.placeholder}
+              keyboardType="numeric"
+            />
 
-          <AppButton style={{ marginTop: 20 }} text={t('searchPlaceholder')} onPress={getSearchResult} />
+          </View>
+          <TouchableOpacity onPress={() => navigation.navigate('FaceScanScreen')} style={homeStyles.button}>
+            <Ionicons name="scan-outline" size={ms(16)} color={Colors.white} />
+            <Paragraph style={homeStyles.buttonText} level='Small' weight='Medium'>
+              {t('findBigger')}
+            </Paragraph>
+          </TouchableOpacity>
 
           {masjids.length > 0 ? (
             <Animated.View style={[homeStyles.viewArea, { opacity: fadeAnim }]}>
