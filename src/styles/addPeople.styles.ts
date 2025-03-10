@@ -145,11 +145,6 @@ const styles = ScaledSheet.create({
     activeTab: {
         backgroundColor: Colors.primary,
     },
-    tabText: {
-        fontSize: "14@s",
-        fontWeight: "bold",
-        color: "#6B7280",
-    },
     activeTabText: {
         color: "white",
     },

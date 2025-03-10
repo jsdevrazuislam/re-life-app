@@ -1,10 +1,11 @@
 import {FC} from 'react';
 import {SafeAreaView, Platform, StatusBar, Dimensions} from 'react-native';
 import {SafeAreaWrapperProps} from '../types/safeArea';
+import { Colors } from '../configs/colors';
 
 const SafeAreaWrapper: FC<SafeAreaWrapperProps> = ({
   children,
-  bg = '#fff',
+  bg = Colors.white,
   flex = 1,
   ...props
 }) => {

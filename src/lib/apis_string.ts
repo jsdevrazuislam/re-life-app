@@ -19,7 +19,7 @@ const ApiStrings = {
     CREATE_PEOPLE: (ID:string) => `poor-people/${ID}/poor-person`,
     COMMITTEE_PROFILE_DELETE: (masjidId:string, committeeId:string) => `committee/${masjidId}/committee/${committeeId}/image`,
     CREATE_COMMITTEE:'/committee/create',
-    GET_MASJIDS:'/masjids',
+    GET_MASJIDS:'/users/home-search',
     UPDATE_COMMITTEE: '/committee/update',
     GET_NOTIFICATIONS: (userId:string) => `/notifications/${userId}`,
     READ_NOTIFICATION: (notificationId:string) => `/notifications/read/${notificationId}`,

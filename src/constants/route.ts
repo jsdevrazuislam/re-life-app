@@ -51,7 +51,7 @@ export type AppStackParamList = {
     }; 
     SignupScreen: undefined; 
     HomeViewDetailsInfo: {
-        item:Masjids
+        item:HomeSearchResultDatas
     }; 
     PoorPeopleView: {
         item:PoorPeople

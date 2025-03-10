@@ -1,7 +1,6 @@
 import {
   View,
   Animated,
-  ActivityIndicator,
   TouchableOpacity,
   NativeSyntheticEvent,
   NativeScrollEvent,
@@ -26,50 +25,53 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { AppStackParamList } from '../constants/route';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { ms } from 'react-native-size-matters';
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+
 
 
 const HomeScreen = () => {
   const { t } = useTranslation();
   const fadeAnim = useState(new Animated.Value(0))[0];
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
-  const [masjids, setMasjids] = useState([]);
+  const [masjids, setMasjids] = useState<HomeSearchResultDatas[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [isSearch, setIsSearch] = useState(false);
-  const [filters, setFilters] = useState({
-    district: '',
-    upazila: '',
-    union: '',
-    village: '',
-    name: '',
-  });
   const [refreshing, setRefreshing] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [searchInput, setSearchInput] = useState('');
+
 
   const onRefresh = useCallback(() => {
-    console.log("run app")
-  }, []);
+    setRefreshing(true);
+    setMasjids([]);
+    setCurrentPage(1);
+    setErrorMessage('');
+    fetchMasjids(1, searchInput);
+    setRefreshing(false);
+  }, [searchInput]);
 
-  const fetchMasjids = async (page = 1, newFilters = filters) => {
+  const fetchMasjids = async (page = 1, idCardNumber = '') => {
     if (isLoading) return;
 
     setIsLoading(true);
     try {
-      const query = new URLSearchParams(
-        Object.fromEntries(Object.entries(newFilters).filter(([_, value]) => value))
-      ).toString();
+      const { data } = await api.get(`${ApiStrings.GET_MASJIDS}`, {
+        params: {
+          page,
+          limit: 10,
+          idCardNumber: idCardNumber.trim() || undefined,
+        },
+      });
 
-      const { data } = await api.get(`${ApiStrings.GET_MASJIDS}?${query}&page=${page}&limit=10`);
-
-
-      if (data.data.masjids.length === 0) {
+      if (data.data.data?.length === 0) {
         setErrorMessage(t('noResultsFound'));
       } else {
         setErrorMessage('');
       }
 
-      setMasjids(page === 1 ? data.data.masjids : [...masjids, ...data.data.masjids]);
-      setCurrentPage(data.data.currentPage);
+      setMasjids(page === 1 ? data.data.data : [...masjids, ...data.data.data]);
+      setCurrentPage(data.data.page);
 
       Animated.timing(fadeAnim, {
         toValue: 1,
@@ -85,19 +87,14 @@ const HomeScreen = () => {
     }
   };
 
-  const handleValueChange = (value: string, type: string) => {
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      [type.toLowerCase()]: value,
-    }));
-  };
 
   const getSearchResult = () => {
     setIsSearch(true);
     setMasjids([]);
     setCurrentPage(1);
     setErrorMessage('');
-    fetchMasjids(1, filters);
+    fetchMasjids(1, searchInput);
+
   };
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -106,7 +103,7 @@ const HomeScreen = () => {
     const isNearBottom = contentOffset.y + layoutMeasurement.height >= contentSize.height - 100;
 
     if (isNearBottom && !isLoading) {
-      fetchMasjids(currentPage + 1, filters);
+      fetchMasjids(currentPage + 1);
     }
   };
 
@@ -130,9 +127,11 @@ const HomeScreen = () => {
             <Ionicons name="card-outline" size={ms(24)} color={Colors.placeholder} />
             <TextInput
               style={homeStyles.input}
-              placeholder="Enter ID number"
+              placeholder={t('homeSearchPlaceholder')}
               placeholderTextColor={Colors.placeholder}
               keyboardType="numeric"
+              value={searchInput}
+              onChangeText={setSearchInput}
             />
 
           </View>
@@ -142,6 +141,8 @@ const HomeScreen = () => {
               {t('findBigger')}
             </Paragraph>
           </TouchableOpacity>
+
+          <AppButton style={{ marginTop: 20 }} text={t('searchPlaceholder')} onPress={getSearchResult} />
 
           {masjids.length > 0 ? (
             <Animated.View style={[homeStyles.viewArea, { opacity: fadeAnim }]}>
@@ -153,7 +154,24 @@ const HomeScreen = () => {
             !isLoading && isSearch || errorMessage && <Paragraph level="Small" style={{ textAlign: 'center', marginTop: 20 }}>{errorMessage || t('noResultsFound')}</Paragraph>
           )}
 
-          {isLoading && <ActivityIndicator size="large" color={Colors.primary} style={{ marginTop: 20 }} />}
+          {isLoading && 
+            Array.from({ length: 6 }).map((_, index) => (
+              <SkeletonPlaceholder key={index}>
+                <View style={[homeStyles.flexLayout, { width: '100%', padding: 0, marginTop: 20}]}>
+                  <View style={[homeStyles.image, { borderRadius: 5 }]} />
+                  <View style={homeStyles.textContainer}>
+                    <View style={{ maxWidth: '90%', width: '100%' }}>
+                      <View style={homeStyles.skeletonText} />
+                      <View style={homeStyles.skeletonText} />
+                      <View style={homeStyles.skeletonText} />
+                    </View>
+                    <View style={homeStyles.skeletonButton} />
+                  </View>
+                </View>
+              </SkeletonPlaceholder>
+            ))
+          }
+
         </View>
       </ScrollView>
     </SafeAreaWrapper>

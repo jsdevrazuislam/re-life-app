@@ -37,6 +37,7 @@ import { options } from './FaceScanScreen';
 
 const SignupScreen = () => {
   const { t } = useTranslation();
+  const [photoLoading, setPhotoLoading] = useState(false);
   const { control, handleSubmit, setValue, watch, getValues, formState: { errors } } = useForm({
     resolver: yupResolver(validationSchema),
     mode: 'onBlur',
@@ -96,9 +97,11 @@ const SignupScreen = () => {
       }
     }
 
+    setPhotoLoading(true)
     ImagePicker.launchImageLibrary(
       { selectionLimit: multiple ? 3 : 1, ...options },
       (response) => {
+        setPhotoLoading(false)
         if (response.didCancel) return;
         if (response.errorMessage) {
           showToast('error', response.errorMessage);
@@ -133,8 +136,10 @@ const SignupScreen = () => {
       }
     }
 
+    setPhotoLoading(true)
     ImagePicker.launchImageLibrary(options,
       response => {
+      setPhotoLoading(false)
         if (response.didCancel) return;
         if (response.errorMessage) {
           showToast('error', response.errorMessage);
@@ -246,18 +251,18 @@ const SignupScreen = () => {
                 style={[styles.tab, selectedTab === "email" && styles.activeTab]}
                 onPress={() => handleTabChange("email")}
               >
-                <Text style={[styles.tabText, selectedTab === "email" && styles.activeTabText]}>
-                  Email
-                </Text>
+                <Paragraph weight='Bold' level='Medium' style={[selectedTab === "email" && styles.activeTabText]}>
+                  {t('emailLabel')}
+                </Paragraph>
               </TouchableOpacity>
 
               <TouchableOpacity
                 style={[styles.tab, selectedTab === "mobile" && styles.activeTab]}
                 onPress={() => handleTabChange("mobile")}
               >
-                <Text style={[styles.tabText, selectedTab === "mobile" && styles.activeTabText]}>
-                  Phone
-                </Text>
+                <Paragraph weight='Bold' level='Medium' style={[selectedTab === "mobile" && styles.activeTabText]}>
+                  {t('mobile')}
+                </Paragraph>
               </TouchableOpacity>
             </View>
 
@@ -273,6 +278,7 @@ const SignupScreen = () => {
                       handlePress={() => handleImagePicker('masjidProfile', true)}
                       handleRemove={(uri) => removeImage('masjidProfile', uri)}
                       error={errors.masjidProfile?.message}
+                      loading={photoLoading}
                     />
                   )}
                 />
@@ -287,6 +293,7 @@ const SignupScreen = () => {
                         handlePress={() => handleImagePicker('profileUrl')}
                         handleRemove={() => removeImage('profileUrl')}
                         error={errors.profileUrl?.message}
+                        loading={photoLoading}
                       />
                     )}
                   />
@@ -502,6 +509,7 @@ const SignupScreen = () => {
                           handleRemove={() => removeCommitteeImage(index)}
                           imageUri={committee.profilePicture}
                           title={t('committeePhotoLabel')}
+                          loading={photoLoading}
                         />
                       }}
                     />

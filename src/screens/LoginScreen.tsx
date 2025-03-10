@@ -51,6 +51,7 @@ const LoginScreen = () => {
       emailOrPhone: formData?.emailOrPhone,
     });
     const user = data?.user;
+    await setUser(user, data?.accessToken, data?.refreshToken);
     if (user?.role === 'moderator') {
       const { data: imamData } = await request(
         'post',
@@ -74,7 +75,6 @@ const LoginScreen = () => {
       setTotalPeople(imamData?.totalPoorPeople);
       setTotalCommittees(imamData?.totalCommittees);
     }
-    await setUser(user, data?.accessToken, data?.refreshToken);
     setRole(user?.role);
     showToast('success', message);
     if (user?.signupStep === 'otp_pending') {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, StyleSheet, TouchableOpacity, FlatList, RefreshControl } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, FlatList, RefreshControl, Image } from 'react-native';
 import { ms, mvs } from 'react-native-size-matters';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
@@ -28,9 +28,9 @@ const RequestHistoryScreen = () => {
         setRefreshing(false);
     };
 
-    useEffect(() => {
-        fetchRequests();
-    }, []);
+    // useEffect(() => {
+    //     fetchRequests();
+    // }, []);
 
     const onRefresh = useCallback(() => {
         fetchRequests();
@@ -106,6 +106,17 @@ const RequestHistoryScreen = () => {
                 keyExtractor={(item, index) => (item?._id || index.toString())}
                 renderItem={loading ? renderSkeleton : renderItem}
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+                ListEmptyComponent={!loading && requests.length === 0 ? (
+                    <View style={styles.emptyStateContainer}>
+                        <Image source={require('../assets/no-request.png')} style={styles.emptyStateImage} />
+                        <Paragraph level="Large" weight="Bold" style={styles.emptyStateText}>
+                            {t('noRequests')}
+                        </Paragraph>
+                        <Paragraph level="Small" weight="Medium" style={styles.emptyStateSubText}>
+                            {t('noRequestsDescription')}
+                        </Paragraph>
+                    </View>
+                ) : null}
             />
             </View>
         </SafeAreaWrapper>
@@ -129,6 +140,11 @@ const styles = StyleSheet.create({
         marginBottom: mvs(16),
         borderWidth: 1,
         borderColor: '#E0E0E0',
+    },
+    emptyStateImage:{
+        width: '100%',
+        height: 200,
+        objectFit:'cover'
     },
     cardHeader: {
         marginBottom: mvs(12),
@@ -174,7 +190,20 @@ const styles = StyleSheet.create({
         color: Colors.secondary,
     },
 
-    // Skeleton styles
+    emptyStateContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: mvs(100),
+    },
+    emptyStateText: {
+        color: '#1A1A1A',
+        textAlign: 'center',
+        marginBottom: mvs(4),
+    },
+    emptyStateSubText: {
+        color: '#666666',
+        textAlign: 'center',
+    },
     skeletonTitle: {
         width: '60%',
         height: 20,

@@ -9,6 +9,7 @@ import {
   Image,
   ViewStyle,
   StyleProp,
+  ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Colors } from '../configs/colors';
@@ -37,6 +38,7 @@ import ErrorMessage from '../components/ErrorMessage';
 
 
 const KycScreen = () => {
+  const [photoLoading, setPhotoLoading] = useState(false);
   const { setUserId, userTempId, setUser, setRole, setStatus, tempUser, setTempUser } = useAuthStore();
   const { control, handleSubmit, setValue, watch, formState: { errors } } = useForm({
     resolver: yupResolver(validationSchemaKyc),
@@ -95,9 +97,11 @@ const KycScreen = () => {
       }
     }
 
+    setPhotoLoading(true);
     ImagePicker.launchImageLibrary(
       { mediaType: 'photo', quality: 0.8 },
       response => {
+      setPhotoLoading(false);
         if (response.didCancel) return;
         if (response.errorMessage) {
           showToast('error', response.errorMessage);
@@ -245,6 +249,7 @@ const KycScreen = () => {
                       handlePress={() => handleImagePicker('idProofFront')}
                       handleRemove={() => removeImage('idProofFront')}
                       error={errors.idProofFront?.message}
+                      loading={photoLoading}
                     />
                   )}
                 />
@@ -258,6 +263,7 @@ const KycScreen = () => {
                       handlePress={() => handleImagePicker('idProofBack')}
                       handleRemove={() => removeImage('idProofBack')}
                       error={errors.idProofBack?.message}
+                      loading={photoLoading}
                     />
                   )}
                 />
@@ -272,6 +278,7 @@ const KycScreen = () => {
                     handlePress={() => handleImagePicker('imamDocument')}
                     handleRemove={() => removeImage('imamDocument')}
                     error={errors.imamDocument?.message}
+                    loading={photoLoading}
                   />
                 )}
               />
@@ -295,21 +302,24 @@ export const UploadArea = ({
   imageUri,
   handleRemove,
   style,
-  error
+  error,
+  loading
 }: {
   title: string;
   style?: StyleProp<ViewStyle>
   imageUri: any;
   handlePress: () => void;
-  handleRemove: (uri?:string) => void;
+  handleRemove: (uri?: string) => void;
   error?: string
+  loading?: boolean
 }) => {
 
   const images = Array.isArray(imageUri) ? imageUri : imageUri ? [imageUri] : [];
 
-
   return (
-    imageUri?.uri ? (
+    loading && !imageUri?.uri && images.length === 0  ? <View style={[styles.uploadArea, style]}>
+      <ActivityIndicator size="large" color={Colors.primary} />
+    </View> : imageUri?.uri ? (
       <View style={[styles.uploadArea, style]}>
         <Image source={{ uri: imageUri?.uri }} style={[styles.image]} />
         <TouchableOpacity style={styles.deleteButton} onPress={() => handleRemove()}>

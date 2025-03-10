@@ -77,18 +77,8 @@ const PeopleTab: React.FC<PeopleTabProps> = ({ data, onAdd, loading }) => {
                     style={imamStyles.cardTitle}>
                     {item.name}
                   </Paragraph>
-                  <Paragraph
-                    level="Small"
-                    weight='Bold'
-                    style={imamStyles.cardSubtitle}>
-                    Age: <Paragraph level="Small" weight="Medium">{item?.age}</Paragraph>
-                  </Paragraph>
-                  <Paragraph
-                    level="Small"
-                    weight="Bold"
-                    style={imamStyles.cardSubtitle}>
-                    Location: <Paragraph level="Small" weight="Medium">{item.presentAddress ?? item.permanentAddress}</Paragraph>
-                  </Paragraph>
+                  <Paragraph level="Small" weight="Bold">{item?.age} {t('years')}</Paragraph>
+                  <Paragraph level="Small" weight="Bold">{item.presentAddress ?? item.permanentAddress}</Paragraph>
                 </View>
               </View>
               <View style={imamStyles.actionButtons}>

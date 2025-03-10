@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, ScrollView, Platform, Alert, Linking, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import SelectDropdown from '../components/ui/Select';
 import Input from '../components/ui/AppInput';
@@ -15,6 +15,8 @@ import {
   clothNeeds,
   frequencyOptions,
   genders,
+  homeTypes,
+  landSizes,
   marriages,
   oliNeeds,
   othersFoodsOptions,
@@ -42,9 +44,10 @@ import poorPeopleSchema from '../validations/poor.people';
 import { options } from './FaceScanScreen';
 
 const AddPeopleScreen = () => {
+  const [photoLoading, setPhotoLoading] = useState(false);
   const { t } = useTranslation();
   const { user, people, totalPeople, setPeople, setTotalPeople } = useAuthStore();
-  const { control, handleSubmit, setValue, watch, trigger, formState: { errors } } = useForm({
+  const { control, handleSubmit, setValue, watch, getValues, reset, formState: { errors } } = useForm({
     resolver: yupResolver(poorPeopleSchema),
     mode: 'onBlur'
   });
@@ -54,6 +57,8 @@ const AddPeopleScreen = () => {
   const marriageStatus = watch('marriageStatus')
   const isFatherDead = watch('isFatherDead')
   const isMotherDead = watch('isMotherDead')
+  const hasHouse = watch('hasHouse')
+  const hasLand = watch('hasLand')
   const hasChildren = watch('hasChildren')
   const gender = watch('gender')
   const isHusbandDead = watch('isHusbandDead')
@@ -90,107 +95,126 @@ const AddPeopleScreen = () => {
 
 
 
-const handleSubmitFormSubmit = async (formData: any) => {
-  Alert.alert(
-    '⚠️ সতর্কতা',
-    'আপনি যে তথ্য আমাদের দিয়েছেন, তা আরেকবার ভালো করে যাচাই করে নিন। একবার সাবমিট করলে তা আর সম্পাদনা করা সম্ভব নয়। তাই কোনো ভুল থাকলে এখনই সংশোধন করুন।',
-    [
-      {
-        text: 'বাতিল করুন',
-        style: 'cancel',
-      },
-      {
-        text: t('submit'),
-        onPress: async () => {
-          const formDataPayload = new FormData();
+  const handleSubmitFormSubmit = async (formData: any) => {
 
-          const appendIfExists = (key: string, value: any) => {
-            if (value !== undefined && value !== null && value !== '') {
-              formDataPayload.append(key, value);
+    Alert.alert(
+      '⚠️ সতর্কতা',
+      'আপনি যে তথ্য আমাদের দিয়েছেন, তা আরেকবার ভালো করে যাচাই করে নিন। একবার সাবমিট করলে তা আর সম্পাদনা করা সম্ভব নয়। তাই কোনো ভুল থাকলে এখনই সংশোধন করুন।',
+      [
+        {
+          text: 'বাতিল করুন',
+          style: 'cancel',
+        },
+        {
+          text: t('submit'),
+          onPress: async () => {
+            const formDataPayload = new FormData();
+
+            const appendIfExists = (key: string, value: any) => {
+              if (value !== undefined && value !== null && value !== '') {
+                formDataPayload.append(key, value);
+              }
+            };
+
+            const homeDetails = {
+              hasHouse: formData.hasHouse,
+              houseType: formData.houseType,
+              hasLand: formData.hasLand,
+              isOwnLand: formData.isOwnLand,
+              landSize: formData.landSize,
             }
-          };
 
-          appendIfExists('name', formData.name);
-          appendIfExists('age', formData.age);
-          appendIfExists('gender', formData.gender);
-          appendIfExists('marriageStatus', formData.marriageStatus);
-          appendIfExists('profileUrl', formatFileData(formData.photoUrl));
-          appendIfExists('isWifeDead', formData.isWifeDead);
-          appendIfExists('wifeProfession', formData.wifeProfession);
-          appendIfExists('husbandProfession', formData.husbandProfession);
-          appendIfExists('isFatherDead', formData.isFatherDead);
-          appendIfExists('isMotherDead', formData.isMotherDead);
-          appendIfExists('overview', formData.overview);
-          appendIfExists('permanentAddress', formData.permanentAddress);
-          appendIfExists('address', formData.presentAddress);
-          appendIfExists('numberOfChildren', formData.numberOfChildren);
-          appendIfExists('contactNumber', formData.contactNumber);
-          appendIfExists('assistanceType', formData.assistanceType);
-          appendIfExists('frequency', formData.frequency);
-          appendIfExists('receivingAssistance', formData.receivingAssistance);
-          appendIfExists('assistanceLocation', formData.assistanceLocation);
-          appendIfExists('notes', formData.notes);
+            appendIfExists('name', formData.name);
+            appendIfExists('age', formData.age);
+            appendIfExists('gender', formData.gender);
+            appendIfExists('isHusbandDead', formData.isHusbandDead);
+            appendIfExists('marriageStatus', formData.marriageStatus);
+            appendIfExists('profileUrl', formatFileData(formData.photoUrl));
+            appendIfExists('isWifeDead', formData.isWifeDead);
+            appendIfExists('wifeProfession', formData.wifeProfession);
+            appendIfExists('husbandProfession', formData.husbandProfession);
+            appendIfExists('isFatherDead', formData.isFatherDead);
+            appendIfExists('isMotherDead', formData.isMotherDead);
+            appendIfExists('overview', formData.overview);
+            appendIfExists('permanentAddress', formData.permanentAddress);
+            appendIfExists('address', formData.presentAddress);
+            appendIfExists('numberOfChildren', formData.numberOfChildren);
+            appendIfExists('contactNumber', formData.contactNumber);
+            appendIfExists('assistanceType', formData.assistanceType);
+            appendIfExists('frequency', formData.frequency);
+            appendIfExists('receivingAssistance', formData.receivingAssistance);
+            appendIfExists('assistanceLocation', formData.assistanceLocation);
+            appendIfExists('notes', formData.notes);
+            appendIfExists('idCardNumber', formData.idCardNumber);
+            appendIfExists('homeDetails', JSON.stringify(homeDetails));
 
-          if (formData?.childrenDetails?.length > 0) {
-            appendIfExists('childrenDetails', JSON.stringify(formData.childrenDetails));
-          }
-
-          appendIfExists(
-            'essentialsNeedsMonthly',
-            JSON.stringify({
-              rice: formData.rice,
-              lentils: formData.lentils,
-              oil: formData.oil,
-              otherFoodItems: formData.otherFood || '',
-              clothingForSelf: formData.clothingSelf,
-              clothingForFamily: formData.clothingFamily,
-              monthlyMedicineCost: formData.medicineCost || '',
-              ongoingTreatmentsDetails: formData.treatments || '',
-              financialNeeds: formData.financialNeeds,
-            })
-          );
-
-          const appendFileIfExists = (key: string, file: any) => {
-            if (file && file.uri) {
-              formDataPayload.append(key, formatFileData(file));
+            if (formData?.childrenDetails?.length > 0) {
+              appendIfExists('childrenDetails', JSON.stringify(formData.childrenDetails));
             }
-          };
 
-          appendFileIfExists('idProofFront', formData.idProofFront);
-          appendFileIfExists('idProofBack', formData.idProofBack);
-          appendFileIfExists('idProofFrontWife', formData.idProofFrontWife);
-          appendFileIfExists('idProofBackWife', formData.idProofBackWife);
-          appendFileIfExists('idProofFrontFather', formData.idProofFrontFather);
-          appendFileIfExists('idProofBackFather', formData.idProofBackFather);
-          appendFileIfExists('idProofFrontMother', formData.idProofFrontMother);
-          appendFileIfExists('idProofBackMother', formData.idProofBackMother);
+            appendIfExists(
+              'essentialsNeedsMonthly',
+              JSON.stringify({
+                rice: formData.rice,
+                lentils: formData.lentils,
+                oil: formData.oil,
+                otherFoodItems: formData.otherFood || '',
+                clothingForSelf: formData.clothingSelf,
+                clothingForFamily: formData.clothingFamily,
+                monthlyMedicineCost: formData.medicineCost || '',
+                ongoingTreatmentsDetails: formData.treatments || '',
+                financialNeeds: formData.financialNeeds,
+              })
+            );
 
-          formData?.childrenDetails?.forEach((children: any) => {
-            if (children.childrenProveDocument?.uri) {
-              formDataPayload.append(`childrenProveDocument`, {
-                uri: children.childrenProveDocument.uri,
-                name: children.childrenProveDocument.fileName,
-                type: children.childrenProveDocument.type,
+            const appendFileIfExists = (key: string, file: any) => {
+              if (file && file.uri) {
+                formDataPayload.append(key, formatFileData(file));
+              }
+            };
+
+            appendFileIfExists('idProofFront', formData.idProofFront);
+            appendFileIfExists('idProofBack', formData.idProofBack);
+            appendFileIfExists('idProofFrontWife', formData.idProofFrontWife);
+            appendFileIfExists('idProofFrontHusband', formData.idProofFrontHusband);
+            appendFileIfExists('idProofBackHusband', formData.idProofBackHusband);
+            appendFileIfExists('idProofBackWife', formData.idProofBackWife);
+            appendFileIfExists('idProofFrontFather', formData.idProofFrontFather);
+            appendFileIfExists('idProofBackFather', formData.idProofBackFather);
+            appendFileIfExists('idProofFrontMother', formData.idProofFrontMother);
+            appendFileIfExists('idProofBackMother', formData.idProofBackMother);
+
+            formData?.childrenDetails?.forEach((children: any) => {
+              if (children.childrenProveDocument?.uri) {
+                formDataPayload.append(`childrenProveDocument`, formatFileData(children.childrenProveDocument));
+              }
+            });
+            
+            if(formData?.houseImages?.length > 1){
+              formData?.houseImages?.forEach((houseImage: IFile) => {
+                if (houseImage?.uri) {
+                  formDataPayload.append(`houseImages`, formatFileData(houseImage));
+                }
               });
             }
-          });
 
-          const { message, data } = await request(
-            'post',
-            ApiStrings.CREATE_PEOPLE(user?.masjid?._id || ''),
-            formDataPayload
-          );
+            const { message, data } = await request(
+              'post',
+              ApiStrings.CREATE_PEOPLE(user?.masjid?._id || ''),
+              formDataPayload
+            );
 
-          const newPeople = [...people, data];
-          setPeople(newPeople);
-          setTotalPeople(totalPeople + 1);
-          showToast('success', message);
-          navigation.navigate('ImamHomeScreen', { activeTab: t('beggers') });
+            const newPeople = [...people, data];
+            setPeople(newPeople);
+            setTotalPeople(totalPeople + 1);
+            showToast('success', message);
+            reset()
+            navigation.navigate('ImamHomeScreen', { activeTab: t('beggers') });
+          },
         },
-      },
-    ]
-  );
-};
+      ]
+    );
+  };
 
   const handleImagePicker = async (
     field:
@@ -205,6 +229,8 @@ const handleSubmitFormSubmit = async (formData: any) => {
       | 'idProofBackFather'
       | 'idProofFrontMother'
       | 'idProofBackMother'
+      | 'houseImages',
+    multiple = false
   ) => {
     if (Platform.OS === 'android') {
       const hasPermission = await requestAndroidPermission();
@@ -224,15 +250,23 @@ const handleSubmitFormSubmit = async (formData: any) => {
       }
     }
 
-    ImagePicker.launchImageLibrary(options,
+    setPhotoLoading(true);
+
+    ImagePicker.launchImageLibrary({ selectionLimit: multiple ? 3 : 1, ...options },
       response => {
+        setPhotoLoading(false);
         if (response.didCancel) return;
         if (response.errorMessage) {
           showToast('error', response.errorMessage);
           return;
         }
         if (response.assets && response.assets.length > 0) {
-          setValue(field, response.assets[0])
+          if (field === 'houseImages') {
+            const existingImages = getValues('houseImages') || [];
+            setValue('houseImages', [...existingImages, ...response.assets]);
+          } else {
+            setValue(field, response.assets[0]);
+          }
         }
       },
     );
@@ -251,8 +285,17 @@ const handleSubmitFormSubmit = async (formData: any) => {
       | 'idProofBackFather'
       | 'idProofFrontMother'
       | 'idProofBackMother'
+      | 'houseImages',
+    uri?: string
   ) => {
-    setValue(field, '');
+    if (field === 'houseImages' && uri) {
+      const updatedImages = (getValues('houseImages') || []).filter(
+        (image) => image.uri !== uri
+      );
+      setValue('houseImages', updatedImages);
+    } else {
+      setValue(field, '');
+    }
   };
 
   const handleChildrenImagePicker = async (index: number) => {
@@ -271,8 +314,11 @@ const handleSubmitFormSubmit = async (formData: any) => {
       }
     }
 
+    setPhotoLoading(true);
+
     ImagePicker.launchImageLibrary(options,
       response => {
+        setPhotoLoading(false);
         if (response.didCancel) return;
         if (response.errorMessage) {
           showToast('error', response.errorMessage);
@@ -314,6 +360,7 @@ const handleSubmitFormSubmit = async (formData: any) => {
                   render={({ field: { value } }) => (
                     <UploadArea
                       title={t('beggerPhoto')}
+                      loading={photoLoading}
                       imageUri={value}
                       handlePress={() => handleImagePicker('photoUrl')}
                       handleRemove={() => removeImage('photoUrl')}
@@ -536,6 +583,7 @@ const handleSubmitFormSubmit = async (formData: any) => {
                           <UploadArea
                             title={t('childrenProveDocument')}
                             imageUri={value}
+                            loading={photoLoading}
                             handlePress={() => handleChildrenImagePicker(index)}
                             handleRemove={() => {
                               removeChildrenImage(index);
@@ -679,6 +727,7 @@ const handleSubmitFormSubmit = async (formData: any) => {
                     render={({ field: { value, onChange } }) => (
                       <Input
                         label={t('assistanceLocation')}
+                        placeholder={t('assistanceLocation')}
                         value={value ?? ''}
                         onChangeText={onChange}
                         error={errors?.assistanceLocation?.message}
@@ -729,10 +778,117 @@ const handleSubmitFormSubmit = async (formData: any) => {
                 )}
               />
 
+              <Heading level={6} weight="Bold" style={styles.sectionTitle}>
+                {t('homeDetailsTitle')}
+              </Heading>
+              <Paragraph
+                level="Small"
+                weight="Medium"
+                style={styles.sectionDescription}>
+                {t('homeDetailsDescription')}
+              </Paragraph>
+
+              <View style={{ marginTop: 10 }}>
+                <Controller
+                  name='hasHouse'
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <SelectDropdown
+                      value={value}
+                      onChange={onChange}
+                      label={t('hasHouseLabel')}
+                      data={yesNoOptions}
+                      placeholder={t('hasHousePlaceholder')}
+                      rootStyle={styles.halfInput}
+                      error={errors?.hasHouse?.message}
+                    />
+                  )}
+                />
+                {hasHouse === 'হ্যাঁ' && <Controller
+                  name='houseType'
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <SelectDropdown
+                      value={value ?? ''}
+                      onChange={onChange}
+                      label={t('houseTypeLabel')}
+                      data={homeTypes}
+                      rootStyle={styles.halfInput}
+                      placeholder={t('houseTypePlaceholder')}
+                      error={errors?.houseType?.message}
+                    />
+                  )}
+                />}
+                <Controller
+                  name='hasLand'
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <SelectDropdown
+                      value={value}
+                      onChange={onChange}
+                      label={t('hasLandLabel')}
+                      data={yesNoOptions}
+                      placeholder={t('hasLandPlaceholder')}
+                      rootStyle={styles.halfInput}
+                      error={errors?.hasLand?.message}
+                    />
+                  )}
+                />
+                {hasLand === 'হ্যাঁ' && <>
+                  <Controller
+                    name='isOwnLand'
+                    control={control}
+                    render={({ field: { value, onChange } }) => (
+                      <SelectDropdown
+                        value={value ?? ''}
+                        onChange={onChange}
+                        label={t('isOwnLandLabel')}
+                        data={yesNoOptions}
+                        rootStyle={styles.halfInput}
+                        placeholder={t('isOwnLandPlaceholder')}
+                        error={errors?.isOwnLand?.message}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name='landSize'
+                    control={control}
+                    render={({ field: { value, onChange } }) => (
+                      <SelectDropdown
+                        value={value ?? ''}
+                        onChange={onChange}
+                        label={t('landSizeLabel')}
+                        data={landSizes}
+                        rootStyle={styles.halfInput}
+                        placeholder={t('landSizePlaceholder')}
+                        error={errors?.landSize?.message}
+                      />
+                    )}
+                  />
+
+                </>}
+
+                {
+                  hasHouse === 'হ্যাঁ' && <Controller
+                    name="houseImages"
+                    control={control}
+                    render={() => (
+                      <UploadArea
+                        title={t('houseImagesLabel')}
+                        imageUri={watch('houseImages')}
+                        handlePress={() => handleImagePicker('houseImages', true)}
+                        handleRemove={(uri) => removeImage('houseImages', uri)}
+                        error={errors.houseImages?.message}
+                        loading={photoLoading}
+                      />
+                    )}
+                  />
+                }
+              </View>
 
 
               {/* Essentials Needs Section */}
-              <Heading level={6} weight="Bold" style={styles.sectionTitle}>
+              <Heading level={6} weight="Bold" style={[styles.sectionTitle, { marginTop: 20 }]}>
                 {t('monthlyNeedsTitle')}
               </Heading>
               <Paragraph
@@ -917,6 +1073,21 @@ const handleSubmitFormSubmit = async (formData: any) => {
                   />
                 )}
               />
+              <Controller
+                name='idCardNumber'
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <Input
+                    label={t('idCardNumberLabel')}
+                    placeholder={t('idCardNumberPlaceholder')}
+                    value={value}
+                    isNumber={true}
+                    onChangeText={onChange}
+                    error={errors?.idCardNumber?.message}
+                    keyboardType='numeric'
+                  />
+                )}
+              />
 
               {/* ID Proof Sections */}
               <Paragraph level="Medium" weight="Bold" style={styles.sectionTitle}>
@@ -933,6 +1104,7 @@ const handleSubmitFormSubmit = async (formData: any) => {
                       handlePress={() => handleImagePicker('idProofFront')}
                       handleRemove={() => removeImage('idProofFront')}
                       error={errors?.idProofFront?.message}
+                      loading={photoLoading}
                     />
                   )}
                 />
@@ -947,6 +1119,7 @@ const handleSubmitFormSubmit = async (formData: any) => {
                       handlePress={() => handleImagePicker('idProofBack')}
                       handleRemove={() => removeImage('idProofBack')}
                       error={errors?.idProofBack?.message}
+                      loading={photoLoading}
                     />
                   )}
                 />
@@ -973,6 +1146,7 @@ const handleSubmitFormSubmit = async (formData: any) => {
                           handlePress={() => handleImagePicker(gender === 'মহিলা' ? 'idProofFrontHusband' : 'idProofFrontWife')}
                           handleRemove={() => removeImage(gender === 'মহিলা' ? 'idProofFrontHusband' : 'idProofFrontWife')}
                           error={gender === 'মহিলা' ? errors?.idProofFrontHusband?.message : errors?.idProofFrontWife?.message}
+                          loading={photoLoading}
                         />
                       )}
                     />
@@ -986,6 +1160,7 @@ const handleSubmitFormSubmit = async (formData: any) => {
                           handlePress={() => handleImagePicker(gender === 'মহিলা' ? 'idProofBackHusband' : 'idProofBackWife')}
                           handleRemove={() => removeImage(gender === 'মহিলা' ? 'idProofBackHusband' : 'idProofBackWife')}
                           error={gender === 'মহিলা' ? errors?.idProofBackHusband?.message : errors?.idProofBackWife?.message}
+                          loading={photoLoading}
                         />
                       )}
                     />
@@ -1012,6 +1187,7 @@ const handleSubmitFormSubmit = async (formData: any) => {
                             handlePress={() => handleImagePicker('idProofFrontFather')}
                             handleRemove={() => removeImage('idProofFrontFather')}
                             error={errors?.idProofFrontFather?.message}
+                            loading={photoLoading}
                           />
                         )}
                       />
@@ -1025,6 +1201,7 @@ const handleSubmitFormSubmit = async (formData: any) => {
                             handlePress={() => handleImagePicker('idProofBackFather')}
                             handleRemove={() => removeImage('idProofBackFather')}
                             error={errors?.idProofBackFather?.message}
+                            loading={photoLoading}
                           />
                         )}
                       />
@@ -1041,6 +1218,7 @@ const handleSubmitFormSubmit = async (formData: any) => {
                           handlePress={() => handleImagePicker('idProofFrontMother')}
                           handleRemove={() => removeImage('idProofFrontMother')}
                           error={errors?.idProofFrontMother?.message}
+                          loading={photoLoading}
                         />
                       )}
                     />
@@ -1054,6 +1232,7 @@ const handleSubmitFormSubmit = async (formData: any) => {
                           handlePress={() => handleImagePicker('idProofBackMother')}
                           handleRemove={() => removeImage('idProofBackMother')}
                           error={errors?.idProofBackMother?.message}
+                          loading={photoLoading}
                         />
                       )}
                     />

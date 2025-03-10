@@ -5,7 +5,7 @@ import { Fonts } from "../../configs/fonts";
 const buttonStyles = StyleSheet.create({
     appButtonPrimary: {
       width:'100%',
-      paddingVertical: 17,
+      paddingVertical: 14,
       backgroundColor: Colors.primary,
       justifyContent:'center',
       alignItems:'center',
@@ -17,7 +17,7 @@ const buttonStyles = StyleSheet.create({
     },
     appButtonOutline: {
         width:'100%',
-        paddingVertical: 17,
+        paddingVertical: 14,
         borderWidth: 1,
         borderStyle: 'solid',
         borderColor: Colors.dark,
