@@ -16,7 +16,7 @@ const committeeStyles = ScaledSheet.create({
         width: '100%',
         height: '100%',
         borderRadius: '50@ms',
-        backgroundColor: "#ddd",
+        backgroundColor: Colors.neutral[300],
         overflow:'hidden'
     },
     relative:{
@@ -30,7 +30,7 @@ const committeeStyles = ScaledSheet.create({
     placeholder: {
         width: "100%",
         height: "100%",
-        backgroundColor: "#ccc",
+        backgroundColor: Colors.neutral[300],
       },
     image: {
         width: "100%",

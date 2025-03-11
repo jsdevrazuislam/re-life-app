@@ -26,18 +26,16 @@ interface AuthState {
   userTempEmail:string | null,
   setStatus: (status: string) => void;
   loadUserFromStorage: () => Promise<void>;
+  isFirstTime: boolean;
   isLoading: boolean;
-  masjids: MasjidNames[] | null,
-  setMasjids: (data: MasjidNames[]) => void
   totalPeople: number;
   totalCommittees: number;
   setTotalPeople: (totalPeople: number) => void;
   setTotalCommittees: (totalCommittees: number) => void;
   committees: CommitteeResponse[];
   setCommittees: (committees: CommitteeResponse[]) => void;
-  people: PoorPeopleResponse[];
-  setPeople: (people: PoorPeopleResponse[]) => void;
-  isFirstTime: boolean,
+  people: PoorPeople[];
+  setPeople: (people: PoorPeople[]) => void;
   notifications: NotificationResponseData[],
   setNotifications: (notifications: NotificationResponseData[]) => void;
 }

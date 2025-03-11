@@ -62,19 +62,19 @@ const styles = ScaledSheet.create({
     },
     label: {
         fontSize: '14@ms',
-        color: '#333',
+        color: Colors.text,
         marginBottom: '8@vs',
     },
     input: {
         borderWidth: 1,
-        borderColor: '#ddd',
+        borderColor: Colors.border,
         borderRadius: '8@s',
         padding: '12@s',
         fontSize: '14@ms',
     },
     dropdownContainer: {
         borderWidth: 1,
-        borderColor: '#ddd',
+        borderColor: Colors.border,
         borderRadius: '8@s',
     },
     row: {
@@ -92,35 +92,11 @@ const styles = ScaledSheet.create({
         marginBottom: '5@vs'
     },
     sectionDescription: {
-        color: '#666',
+        color: Colors.textSecondary,
     },
-    uploadField: {
-        borderWidth: 2,
-        borderColor: '#3F51B5',
-        borderRadius: '8@s',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '15@s',
-        borderStyle: 'dashed',
-    },
-    uploadFieldText: {
-        color: '#3F51B5',
-        marginTop: '8@vs',
-    },
-    submitButton: {
-        backgroundColor: '#3F51B5',
-        padding: '15@s',
-        borderRadius: '8@s',
-        alignItems: 'center',
-        marginVertical: '20@vs',
-    },
-    submitText: {
-        color: 'white',
-        fontSize: '16@ms',
-        fontWeight: 'bold',
-    },
+    
     childSection: {
-        backgroundColor: '#f5f5f5',
+        backgroundColor: Colors.neutral[200],
         borderRadius: '8@s',
         padding: '15@s',
         marginVertical: '10@vs',
@@ -128,11 +104,11 @@ const styles = ScaledSheet.create({
     childHeader: {
         fontWeight: 'bold',
         marginBottom: '15@vs',
-        color: '#333',
+        color: Colors.black,
     },
     tabContainer: {
         flexDirection: "row",
-        backgroundColor: "#F1F5F9",
+        backgroundColor: Colors.neutral[200],
         borderRadius: "8@s",
         marginTop: '15@vs'
     },
@@ -144,11 +120,6 @@ const styles = ScaledSheet.create({
     },
     activeTab: {
         backgroundColor: Colors.primary,
-    },
-    tabText: {
-        fontSize: "14@s",
-        fontWeight: "bold",
-        color: "#6B7280",
     },
     activeTabText: {
         color: "white",

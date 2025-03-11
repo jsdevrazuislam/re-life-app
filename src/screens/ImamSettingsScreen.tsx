@@ -30,12 +30,12 @@ const SettingItem: React.FC<SettingItemProps> = ({
 }) => (
   <TouchableOpacity style={styles.settingItem} onPress={onPress}>
     <View style={styles.itemLeft}>
-      <Icon name={icon} size={24} color="#333" />
+      <Icon name={icon} size={24} color={Colors.black} />
       <Paragraph level="Small" weight="Medium" style={styles.itemLabel}>
         {label}
       </Paragraph>
     </View>
-    {rightComponent || <Icon name="chevron-right" size={24} color="#666" />}
+    {rightComponent || <Icon name="chevron-right" size={24} color={Colors.textSecondary} />}
   </TouchableOpacity>
 );
 
@@ -63,7 +63,7 @@ const SettingsScreen = () => {
               {user?.fullName}
             </Heading>
             <Paragraph level="Small" weight="Medium" style={styles.userEmail}>
-              {user?.email}
+              {user?.emailOrPhone}
             </Paragraph>
           </View>
 
@@ -76,6 +76,11 @@ const SettingsScreen = () => {
             {
               user?.role === 'imam' &&
               <>
+                <SettingItem
+                  icon="remove-red-eye"
+                  label={t('requestView')}
+                  onPress={() => navigation.navigate('RequestAccessView')}
+                />
                 <SettingItem
                   icon="lock"
                   label={t('changePasswordTitle')}
@@ -95,8 +100,8 @@ const SettingsScreen = () => {
                 <Switch
                   value={language === 'bn'}
                   onValueChange={val => setLanguage(val ? 'bn' : 'en')}
-                  trackColor={{ false: '#767577', true: Colors.primary }}
-                  thumbColor={language === 'bn' ? Colors.primary : '#f4f3f4'}
+                  trackColor={{ false: Colors.neutral[400], true: Colors.primary }}
+                  thumbColor={language === 'bn' ? Colors.primary : Colors.neutral[600]}
                 />
               }
             />

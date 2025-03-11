@@ -26,19 +26,46 @@ const poorPeopleSchema = yup.object().shape({
     financialNeeds: yup.string().required('আর্থিক প্রয়োজন আবশ্যক'),
     treatments: yup.string().optional(),
     notes: yup.string().optional(),
-
+    role: yup.string().optional(),
     idProofFront: yup.mixed().required('সামনের পরিচয়পত্র আবশ্যক'),
     idProofBack: yup.mixed().required('পিছনের পরিচয়পত্র আবশ্যক'),
+    hasHouse: yup.string().required("বাড়ি আছে কিনা তা নির্বাচন করুন"),
+    houseType: yup.string().when("hasHouse", {
+        is: true,
+        then: (schema) => schema.required("বাড়ির ধরণ নির্বাচন করা আবশ্যক"),
+        otherwise: (schema) => schema.notRequired(),
+    }),
+    masjidId: yup.string().when(['role'], {
+        is: (role: string) => ['moderator'].includes(role),
+        then: (schema) => schema.required('আবশ্যক'),
+        otherwise: (schema) => schema.notRequired(),
+    }),
+    hasLand: yup.string().required("জমি আছে কিনা তা নির্বাচন করুন"),
+    isOwnLand: yup.string().when("hasLand", {
+        is: true,
+        then: (schema) => schema.required("নিজের জমি কিনা তা নির্বাচন করুন"),
+        otherwise: (schema) => schema.notRequired(),
+    }),
+    landSize: yup.string().when("hasLand", {
+        is: true,
+        then: (schema) => schema.required("জমির পরিমাণ দেওয়া আবশ্যক"),
+        otherwise: (schema) => schema.notRequired(),
+    }),
+    houseImages: yup.array().when("hasHouse", {
+        is: true,
+        then: (schema) => schema.min(1, "অন্তত একটি বাড়ির ছবি আপলোড করতে হবে"),
+        otherwise: (schema) => schema.notRequired(), 
+      }),
 
     idProofFrontHusband: yup.mixed().when(['marriageStatus', 'gender', 'isHusbandDead'], {
-        is: (marriageStatus: string, gender: string, isHusbandDead:string) =>
+        is: (marriageStatus: string, gender: string, isHusbandDead: string) =>
             ['বিবাহিত', 'বিচ্ছেদপ্রাপ্ত', 'বিধবা/তালাক'].includes(marriageStatus) &&
             gender === 'মহিলা' && isHusbandDead === 'হ্যাঁ',
         then: (schema) => schema.required('স্বামীর সামনের পরিচয়পত্র আবশ্যক'),
         otherwise: (schema) => schema.notRequired(),
     }),
     idProofBackHusband: yup.mixed().when(['marriageStatus', 'gender', 'isHusbandDead'], {
-        is: (marriageStatus: string, gender: string, isHusbandDead:string) =>
+        is: (marriageStatus: string, gender: string, isHusbandDead: string) =>
             ['বিবাহিত', 'বিচ্ছেদপ্রাপ্ত', 'বিধবা/তালাক'].includes(marriageStatus) &&
             gender === 'মহিলা' && isHusbandDead === 'হ্যাঁ',
         then: (schema) => schema.required('স্বামীর পিছনের পরিচয়পত্র আবশ্যক'),
@@ -46,16 +73,16 @@ const poorPeopleSchema = yup.object().shape({
     }),
 
     idProofFrontWife: yup.mixed().when(['marriageStatus', 'gender', 'isWifeDead'], {
-        is: (marriageStatus: string, gender: string, isWifeDead:string) =>
+        is: (marriageStatus: string, gender: string, isWifeDead: string) =>
             ['বিবাহিত', 'বিচ্ছেদপ্রাপ্ত', 'বিধবা/বিপত্নীক'].includes(marriageStatus) &&
             gender === 'পুরুষ' && isWifeDead === 'হ্যাঁ',
         then: (schema) => schema.required('স্ত্রীর সামনের পরিচয়পত্র আবশ্যক'),
         otherwise: (schema) => schema.notRequired(),
     }),
     idProofBackWife: yup.mixed().when(['marriageStatus', 'gender', 'isWifeDead'], {
-        is: (marriageStatus: string, gender: string, isWifeDead:string) =>
+        is: (marriageStatus: string, gender: string, isWifeDead: string) =>
             ['বিবাহিত', 'বিচ্ছেদপ্রাপ্ত', 'বিধবা/বিপত্নীক'].includes(marriageStatus) &&
-            gender === 'পুরুষ'  && isWifeDead === 'হ্যাঁ',
+            gender === 'পুরুষ' && isWifeDead === 'হ্যাঁ',
         then: (schema) => schema.required('স্ত্রীর পিছনের পরিচয়পত্র আবশ্যক'),
         otherwise: (schema) => schema.notRequired(),
     }),
@@ -108,7 +135,7 @@ const poorPeopleSchema = yup.object().shape({
         otherwise: (schema) => schema.notRequired(),
     }),
     wifeProfession: yup.string().when(['marriageStatus', 'gender'], {
-        is: (marriageStatus: string, gender: string, isWifeDead:string) =>
+        is: (marriageStatus: string, gender: string, isWifeDead: string) =>
             ['বিবাহিত', 'বিচ্ছেদপ্রাপ্ত', 'বিধবা/বিপত্নীক'].includes(marriageStatus) &&
             gender === 'পুরুষ' && isWifeDead === 'হ্যাঁ',
         then: (schema) => schema.required('স্ত্রীর পেশা আবশ্যক'),
@@ -122,7 +149,7 @@ const poorPeopleSchema = yup.object().shape({
         otherwise: (schema) => schema.notRequired(),
     }),
     husbandProfession: yup.string().when(['marriageStatus', 'gender'], {
-        is: (marriageStatus: string, gender: string, isHusbandDead:string) =>
+        is: (marriageStatus: string, gender: string, isHusbandDead: string) =>
             ['বিবাহিত', 'বিচ্ছেদপ্রাপ্ত', 'বিধবা/তালাক'].includes(marriageStatus) &&
             gender === 'মহিলা' && isHusbandDead === 'হ্যাঁ',
         then: (schema) => schema.required('স্বামীর পেশা আবশ্যক'),
@@ -190,6 +217,7 @@ const poorPeopleSchema = yup.object().shape({
     }),
 
     receivingAssistance: yup.string().required('আবশ্যক'),
+    idCardNumber: yup.string().required('আবশ্যক'),
     assistanceType: yup.string().when('receivingAssistance', {
         is: 'হ্যাঁ',
         then: (schema) => schema.required('সহায়তার ধরন আবশ্যক'),
@@ -206,5 +234,6 @@ const poorPeopleSchema = yup.object().shape({
         otherwise: (schema) => schema.notRequired(),
     }),
 });
+
 
 export default poorPeopleSchema;

@@ -57,7 +57,7 @@ const DashboardScreen = () => {
 
 
   return (
-    <SafeAreaWrapper bg={Colors.light}>
+    <SafeAreaWrapper>
       <View style={globalStyles.container}>
         <View style={imamStyles.header}>
           <View>
@@ -80,7 +80,7 @@ const DashboardScreen = () => {
                   toggleMenu()
                   navigation.navigate('ProfileScreen')
                 }}>
-                  <Feather name="user" size={20} color="#333" />
+                  <Feather name="user" size={20} color={Colors.black} />
                   <Text style={imamStyles.menuText}>{t('profileTitle')}</Text>
                 </TouchableOpacity>
               }
@@ -89,7 +89,7 @@ const DashboardScreen = () => {
                 toggleMenu()
                 navigation.navigate('ImamSettingsScreen')
               }}>
-                <Feather name="settings" size={20} color="#333" />
+                <Feather name="settings" size={20} color={Colors.black} />
                 <Text style={imamStyles.menuText}>{t('settingsTitle')}</Text>
               </TouchableOpacity>
 
@@ -124,6 +124,7 @@ const DashboardScreen = () => {
             tabBarLabelStyle: { fontSize: 14, fontWeight: 'bold' },
             tabBarIndicatorStyle: { backgroundColor: Colors.black },
             tabBarStyle: { backgroundColor: "transparent", elevation: 0 },
+            sceneStyle: { backgroundColor: 'transparent'}
           }}>
           <Tab.Screen name={t('beggers')}>
             {() => <PeopleTab loading={loading} data={people} onAdd={handleAddPerson} />}

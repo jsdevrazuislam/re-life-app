@@ -17,13 +17,12 @@ const initialState = {
   status: '',
   userTempId: null,
   userTempEmail: "",
-  masjids: [],
   totalPeople: 0,
   totalCommittees: 0,
   committees: [],
   people: [],
-  isFirstTime: false,
   notifications: [],
+  isFirstTime: false
 };
 
 export const useAuthStore = create<AuthState>(set => ({
@@ -48,7 +47,6 @@ export const useAuthStore = create<AuthState>(set => ({
     });
   },
   setNotifications: (notifications) => set({ notifications }),
-  setMasjids: (masjids) => set({ masjids }),
   setTotalPeople: (totalPeople) => set({ totalPeople }),
   setTotalCommittees: (totalCommittees) => set({ totalCommittees }),
   setCommittees: (committees) => set({ committees }),
@@ -65,23 +63,22 @@ export const useAuthStore = create<AuthState>(set => ({
       const isFirstTime = await AsyncStorage.getItem('hasSeenOpening');
       const tempUser = user ? JSON.parse(user) : null;
 
-      set({ status, userTempId, userTempEmail, tempUser, isFirstTime: isFirstTime ? true : false });
+      set({ status, userTempId, userTempEmail, tempUser,  isFirstTime: isFirstTime ? true : false });
 
-      const { data } = await api.get(ApiStrings.GET_MASJIDS_NAME);
-      set({ masjids: data?.data?.data })
 
       await messaging().requestPermission();
       const token = await messaging().getToken();
 
       if (accessToken) {
         const { data } = await api.get(ApiStrings.ME);
-        if (!data?.data?.fcmToken || data?.data?.fcmToken !== token) {
-          await api.post(ApiStrings.SAVE_FCM_TOKEN, { userId: data?.data?._id, fcmToken: token })
+        const user = data?.data;
+        if (!user.fcmToken || user.fcmToken !== token) {
+          await api.post(ApiStrings.SAVE_FCM_TOKEN, { userId: user._id, fcmToken: token })
           console.log("FCM Token:", token);
         }
-        if (data?.data?.kycStatus === 'verified') {
-          const { data: imamData } = await api.get(ApiStrings.GET_MASJID_DETAILS(data?.data?.masjid?._id || ''));
-          const { data: notifications } = await api.get(ApiStrings.GET_NOTIFICATIONS(data?.data?._id || ''));
+        if (user.kycStatus === 'verified') {
+          const { data: imamData } = user.role === 'moderator' ? await api.post(ApiStrings.GET_MASJID_DETAILS_FOR_MODERATOR, { masjids : user.masjids}) :  await api.get(ApiStrings.GET_MASJID_DETAILS(user.masjid?._id || ''));
+          const { data: notifications } = await api.get(ApiStrings.GET_NOTIFICATIONS(user._id || ''));
           set({ committees: imamData?.data?.committees, people: imamData?.data?.poorPeople, totalPeople: imamData?.data?.totalPoorPeople, totalCommittees: imamData?.data?.totalCommittees, notifications: notifications?.data });
         }
 

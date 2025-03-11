@@ -159,9 +159,9 @@ const NotificationsScreen = () => {
                 source={require('../assets/no-notifications.png')}
                 style={styles.emptyImage}
               />
-              <Text style={styles.emptyText}>
+              <Paragraph level='Medium' weight='Medium' style={styles.emptyText}>
                 {selectedSegment === 'All' ? t('noNotifications') : t('noUnread')}
-              </Text>
+              </Paragraph>
             </View>
           ) : (
             <FlatList

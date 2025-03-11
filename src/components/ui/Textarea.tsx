@@ -35,7 +35,7 @@ const Textarea: React.FC<TextareaProps> = ({
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
-        placeholderTextColor={error ? Colors.danger :"#999"}
+        placeholderTextColor={error ? Colors.danger : Colors.placeholder}
         multiline
         numberOfLines={numberOfLines}
         maxLength={maxLength}
@@ -57,19 +57,19 @@ const styles = ScaledSheet.create({
   },
   label: {
     marginBottom: '6@ms',
-    color: '#333',
+    color: Colors.text,
   },
   textarea: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: Colors.neutral[300],
     borderRadius: '8@ms',
     padding: '12@ms',
     fontSize: '14@ms',
     textAlignVertical: 'top',
-    color: '#333',
+    color: Colors.text,
   },
   charCount: {
-    color: '#666',
+    color: Colors.lightGray,
     textAlign: 'right',
     marginTop: '4@ms',
   },

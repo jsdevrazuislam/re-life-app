@@ -86,7 +86,7 @@ const Input: React.FC<InputProps> = ({
         />
         {secureTextEntry && !disabled && (
           <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)} style={styles.iconWrapper}>
-            <Icon name={isPasswordVisible ? 'eye' : 'eye-off'} size={20} color="#999" />
+            <Icon name={isPasswordVisible ? 'eye' : 'eye-off'} size={20} color={Colors.neutral[700]} />
           </TouchableOpacity>
         )}
       </View>
@@ -117,7 +117,7 @@ const styles = ScaledSheet.create({
   },
   default:{
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: Colors.neutral[300],
   },
   error:{
     borderWidth: 1,
@@ -142,12 +142,12 @@ const styles = ScaledSheet.create({
     marginTop: 4,
   },
   disabledInput: {
-    backgroundColor: '#f0f0f0',
-    color: '#a0a0a0', 
+    backgroundColor: Colors.neutral[200],
+    color: Colors.neutral[700], 
   },
   disabledWrapper: {
-    backgroundColor: '#f0f0f0', 
-    borderColor: '#d1d1d1',
+    backgroundColor: Colors.neutral[200], 
+    borderColor: Colors.border,
   },
 });
 

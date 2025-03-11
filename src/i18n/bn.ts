@@ -1,6 +1,6 @@
 export default {
   welcome: 'স্বাগতম!',
-  introTitle: 'একটি ভিক্ষুক মুক্ত বাংলাদেশ গড়ার লক্ষ্যে',
+  introTitle: 'ভিক্ষুক মুক্ত বাংলাদেশ গড়তে',
   introDescription: 'আপনার সহযোগিতায় আমরা একটি আত্মমর্যাদাশীল জাতি গড়ে তুলতে পারি',
   donateNow: 'এখনই দান করুন',
   exploreCauses: 'আমাদের কারণসমূহ দেখুন',
@@ -56,8 +56,11 @@ export default {
   confirmPasswordPlaceholder: 'আপনার পাসওয়ার্ড পুনরায় লিখুন',
 
   // Current Address
-  currentAddressLabel: 'বর্তমান ঠিকানা',
+  currentAddressLabel: 'আপনার বর্তমান ঠিকানা',
   currentAddressPlaceholder: 'আপনার বর্তমান ঠিকানা লিখুন',
+
+  currentAddressLabelMasjid: 'মসজিদের বর্তমান ঠিকানা',
+  currentAddressPlaceholderMasjid: 'মসজিদের বর্তমান ঠিকানা লিখুন',
 
   // Committee Members Count
   committeeMembersLabel: 'কমিটির সদস্য সংখ্যা',
@@ -128,7 +131,8 @@ export default {
   weakPassword: 'পাসওয়ার্ডটি খুব দুর্বল! অনুগ্রহ করে শক্তিশালী পাসওয়ার্ড ব্যবহার করুন।',
   // kyc
   kycTitle: 'নিশ্চিত করুন যে আপনি আসল ব্যবহারকারী',
-  kycDescription: 'আপনার পরিচয় নিশ্চিত করার জন্য, দয়া করে নিচের ধাপগুলো অনুসরণ করুন। এটি আমাদের নিরাপত্তার জন্য প্রয়োজনীয়। আপনার সমস্ত তথ্য নিরাপদ এবং এনক্রিপ্টেড থাকবে।',
+  kycDescription: 'আপনার পরিচয় নিশ্চিত করার জন্য, দয়া করে নিচের ধাপগুলো অনুসরণ করুন। এটি আমাদের নিরাপত্তার জন্য প্রয়োজনীয়। আপনার সমস্ত তথ্য নিরাপদ থাকবে ইনশাল্লাহ ।',
+  homeSearchPlaceholder: "জাতীয় পরিচয়পত্র নম্বর লিখুন",
   title1: 'একটি বৈধ পরিচয়পত্রের ছবি তুলুন',
   description1: 'আপনার ব্যক্তিগত তথ্য যাচাই করতে একটি বৈধ জাতীয় পরিচয়পত্র, পাসপোর্ট বা ড্রাইভিং লাইসেন্সের স্পষ্ট ছবি আপলোড করুন।',
   title2: 'নিজের একটি সেলফি তুলুন',
@@ -222,6 +226,7 @@ export default {
   permanentAddress: 'স্থায়ী ঠিকানা',
   permanentAddressPlaceholder: 'স্থায়ী ঠিকানা লিখুন',
   overview: 'কেন ভিক্ষা করছে তার বিবরণ দিন',
+  overview1: 'কেন ভিক্ষা করছে তার বিবরণ',
   childrenProveDocument: 'সন্তানের জন্ম সনদ',
   phoneNumberPlaceholder1: 'ফোন নম্বর লিখুন',
   phoneNumberPlaceholder2: 'ফোন নম্বর',
@@ -229,12 +234,19 @@ export default {
   phoneNumberPlaceholder: 'ফোন নম্বর লিখুন',
   profession: 'পেশা',
   professionPlaceholder: 'পেশা লিখুন',
+  vikhukEditRequesttitle: "ভিক্ষুক তথ্য সম্পাদনা করার জন্য অনুরোধ",
+  vikhukEditRequestdescription: "আপনি এখানে ভিক্ষুকের তথ্য আপডেট করার জন্য অনুরোধ করতে পারবেন। মনে রাখবেন, কোনো ভুল তথ্য আপডেটের জন্য দিলে সেটি গ্রহণ করা হবে না, আমাদের কাছে প্রতিবেদন করে ব্যাখ্যা করতে হবে কেন আপনি তথ্য সম্পাদনা করতে চান।",
+
 
   // Monthly Needs
   monthlyNeedsTitle: 'মাসিক চাহিদা',
   monthlyNeedsDescription: 'খাদ্য, পোশাক ও চিকিৎসার মাসিক চাহিদা নির্ধারণ করুন।',
+  monthlyNeedsDescription1: 'খাদ্য, পোশাক ও চিকিৎসার মাসিক চাহিদা',
   ricePerMonth: 'চাল (কেজি/মাস)',
   rice: 'চাল',
+  medicalNeeds: "চিকিৎসার প্রয়োজন",
+  beggarIdCardAndFamilyInfo: "ভিক্ষুকের আইডি কার্ড এবং তার পরিবারের তথ্যের ছবি",
+  totalFinancialNeeds: "মোট আর্থিক প্রয়োজন",
   lentils: 'ডাল',
   oil: 'তেল',
   otherFoodItems1: 'অন্যান্য খাদ্য সামগ্রী',
@@ -255,6 +267,7 @@ export default {
   treatmentDetailsPlaceholder: 'চলমান চিকিৎসা বা ওষুধের প্রয়োজনীয়তা লিখুন',
   notesPlaceholder: 'যেকোনো অতিরিক্ত তথ্য বা মন্তব্য লিখুন',
   financialNeeds: 'আর্থিক চাহিদা লিখুন',
+  financialNeeds1: 'আর্থিক চাহিদা',
   ongoingTreatmentDetails: 'চলমান চিকিৎসার বিস্তারিত লিখুন',
   notes: 'অতিরিক্ত তথ্য বা মন্তব্য',
 
@@ -292,6 +305,8 @@ export default {
   searchButton: 'অনুসন্ধান',
   noResultsFound: 'কোনো ফলাফল পাওয়া যায়নি। অনুগ্রহ করে সঠিক তথ্য দিয়ে আবার চেষ্টা করুন।',
   searchAgainSuggestion: 'আপনার অনুসন্ধানের সাথে মিলে এমন কোনো তথ্য পাওয়া যায়নি। অন্য কীওয়ার্ড দিয়ে আবার চেষ্টা করুন।',
+  selectMasjidForInfo: "আপনি কোন মসজিদের অধীনে এই তথ্যটি যোগ করতে চান সেটি নির্বাচন করুন।",
+
 
   masjidName: 'মসজিদের নাম',
   masjidNamePlaceholder1: 'মসজিদের নাম নির্বাচন করুন',
@@ -308,8 +323,13 @@ export default {
   poorPeopleInformation: 'দরিদ্র ব্যক্তির তথ্য',
   view: 'দেখুন',
   details: 'বিস্তারিত দেখুন',
+  findBigger: 'ভিক্ষুক স্ক্যান করুন',
   imamDetails: 'ইমামের বিস্তারিত দেখুন',
+  biggerDetails: 'ভিক্ষুকের বিস্তারিত দেখুন',
   presentImam: 'বর্তমান ইমামের',
+  personal: "ব্যক্তিগত",
+  housing: "আবাসন",
+  needs: "প্রয়োজন",
 
   committeeDetails: 'কমিটির বিবরণ',
   totalMembers: 'মোট সদস্য',
@@ -340,5 +360,53 @@ export default {
   unread: "অপঠিত",
   noNotifications: "কোনো নোটিফিকেশন নেই",
   noUnread: "কোনো অপঠিত নোটিফিকেশন নেই",
-  
+  pickImage: 'ছবি নির্বাচন',
+  pickPhoto: 'ছবি তুলুন',
+  faceScan: 'মুখ স্ক্যান',
+  internetTitle: "ইন্টারনেট সংযোগ নেই",
+  internetDescription: "দয়া করে আপনার নেটওয়ার্ক পরীক্ষা করুন এবং আবার চেষ্টা করুন।",
+  internetButton: "পুনরায় চেষ্টা করুন",
+  requestView: 'অনুরোধের অবস্থা দেখুন',
+  fieldTypeLabel: 'ক্ষেত্রের ধরণ',
+  fieldTypePlaceholder: "ক্ষেত্রের ধরণ নির্বাচন করুন",
+  reasonLabel: "কারণ",
+  reasonPlaceholder: "কারণ লিখুন",
+  requestHistory: "অনুরোধ ইতিহাস",
+  viewRequestStatus: "আপনার আগের অনুরোধের অবস্থা দেখুন",
+  previousValue: "আগের মান",
+  modifiedValue: "পরিবর্তিত মান",
+  viewDetails: "বিস্তারিত দেখুন",
+  approved: "অনুমোদিত",
+  pending: "অপেক্ষমান",
+  rejected: "প্রত্যাখ্যাত",
+  poorPeopleInformations: "দরিদ্র মানুষের তথ্য",
+  idCardNumberLabel: "আইডি কার্ড নম্বর",
+  idCardNumberPlaceholder: "আপনার জাতীয় পরিচয়পত্র নম্বর লিখুন",
+  hasHouseLabel: "আপনার কি বাড়ি আছে?",
+  hasHousePlaceholder: "নির্বাচন করুন",
+  houseTypeLabel: "বাড়ির ধরণ",
+  houseTypePlaceholder: "বাড়ির ধরণ লিখুন",
+  hasLandLabel: "আপনার কি জমি আছে?",
+  hasLandPlaceholder: "নির্বাচন করুন",
+  landSizeLabel: "জমির পরিমাণ",
+  landSizePlaceholder: "জমির পরিমাণ (ডেসিমালে) লিখুন",
+  houseImagesLabel: "বাড়ির ছবি",
+  houseImagesPlaceholder: "বাড়ির ছবি আপলোড করুন",
+  homeDetailsTitle: "বাড়ির বিবরণ",
+  homeDetailsTitle1: "বাড়ি এবং সম্পত্তির সঠিক বিবরণ",
+  homeDetailsDescription: "দয়া করে আপনার বাড়ি এবং সম্পত্তির সঠিক বিবরণ দিন। এই তথ্যগুলি যাচাই এবং সহায়তার জন্য গুরুত্বপূর্ণ।",
+  isOwnLandLabel: 'আপনার কি জমি নিজস্ব',
+  isOwnLandPlaceholder: 'নির্বাচন করুন',
+  noRequests: "কোনো অনুরোধ পাওয়া যায়নি",
+  noRequestsDescription: "এই মুহূর্তে আপনার কোনো পূর্বের অনুরোধ নেই।",
+  hasHouse: "বাড়ি আছে",
+  houseType: "বাড়ির ধরন",
+  hasLand: "জমি আছে",
+  isOwnLand: "নিজস্ব জমি",
+  landSize: "জমির পরিমাণ",
+  beggarHouseImages: "ভিক্ষুকের বাড়ির ছবি",
+  ongoingTreatmentDetails1: "চলমান চিকিৎসার বিস্তারিত"
+
+
+
 };

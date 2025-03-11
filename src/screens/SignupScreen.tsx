@@ -31,16 +31,19 @@ import LoadingOverlay from '../components/LoadingOverlay';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { validationSchema } from '../validations/signup';
+import { options } from './FaceScanScreen';
 
 
 
 const SignupScreen = () => {
   const { t } = useTranslation();
+  const [photoLoading, setPhotoLoading] = useState(false);
   const { control, handleSubmit, setValue, watch, getValues, formState: { errors } } = useForm({
     resolver: yupResolver(validationSchema),
     mode: 'onBlur',
-    defaultValues:{
-      selectedTab: 'email'
+    defaultValues: {
+      selectedTab: 'email',
+      committeeDetails: [],
     }
   });
 
@@ -78,9 +81,7 @@ const SignupScreen = () => {
   };
 
 
-  const handleImagePicker = async (
-    field: 'profileUrl' | 'masjidProfile',
-  ) => {
+  const handleImagePicker = async (field: 'profileUrl' | 'masjidProfile', multiple = false) => {
     if (Platform.OS === 'android') {
       const hasPermission = await requestAndroidPermission();
       if (!hasPermission) {
@@ -89,28 +90,33 @@ const SignupScreen = () => {
           'Please enable photo access in Settings to continue.',
           [
             { text: 'Cancel', style: 'cancel' },
-            {
-              text: 'Open Settings',
-              onPress: () => Linking.openSettings(),
-            },
-          ],
+            { text: 'Open Settings', onPress: () => Linking.openSettings() },
+          ]
         );
         return;
       }
     }
 
+    setPhotoLoading(true)
     ImagePicker.launchImageLibrary(
-      { mediaType: 'photo', quality: 0.8 },
-      response => {
+      { selectionLimit: multiple ? 3 : 1, ...options },
+      (response) => {
+        setPhotoLoading(false)
         if (response.didCancel) return;
         if (response.errorMessage) {
           showToast('error', response.errorMessage);
           return;
         }
         if (response.assets && response.assets.length > 0) {
-          setValue(field, response.assets[0] as IFile, { shouldValidate: true });
+          if (field === 'masjidProfile') {
+            const existingImages: FileType[] = watch(field) ? (watch(field) as FileType[]).filter(Boolean) : [];
+            const anotherAssets = response.assets as IFile[];
+            setValue(field, [...existingImages, ...anotherAssets], { shouldValidate: true });
+          } else {
+            setValue(field, response.assets[0] as IFile, { shouldValidate: true });
+          }
         }
-      },
+      }
     );
   };
 
@@ -130,9 +136,10 @@ const SignupScreen = () => {
       }
     }
 
-    ImagePicker.launchImageLibrary(
-      { mediaType: 'photo', quality: 0.8 },
+    setPhotoLoading(true)
+    ImagePicker.launchImageLibrary(options,
       response => {
+      setPhotoLoading(false)
         if (response.didCancel) return;
         if (response.errorMessage) {
           showToast('error', response.errorMessage);
@@ -161,8 +168,13 @@ const SignupScreen = () => {
   };
 
 
-  const removeImage = (field: 'profileUrl' | 'masjidProfile') => {
-    setValue(field, null, { shouldValidate: true });
+  const removeImage = (field: 'profileUrl' | 'masjidProfile', uri?: string) => {
+    if (field === 'profileUrl') {
+      setValue(field, null, { shouldValidate: true });
+    } else {
+      const existingImages = watch(field) || [];
+      setValue(field, existingImages.filter((img: any) => img.uri !== uri), { shouldValidate: true });
+    }
   };
 
   const handleFormSubmit = async (formData: any) => {
@@ -173,22 +185,23 @@ const SignupScreen = () => {
     formDataPayload.append('emailOrPhone', selectedTab === 'email' ? payload.email : payload.mobile);
     formDataPayload.append('masjidName', payload.name);
     formDataPayload.append('password', payload.password);
+    formDataPayload.append('fullAddress', payload.fullAddress);
     formDataPayload.append('fullName', payload.username);
     formDataPayload.append(
       'committeeDetails',
       JSON.stringify(payload.committeeDetails)
     );
-    formDataPayload.append("masjidProfile", formatFileData(payload.masjidProfile))
     formDataPayload.append('location', JSON.stringify(payload.location));
     formDataPayload.append('address', payload.address);
     formDataPayload.append('profileUrl', formatFileData(payload.profileUrl));
     payload?.committeeDetails?.forEach((member) => {
       if (member.profilePicture) {
-        formDataPayload.append(`committeePictures`, {
-          uri: member.profilePicture?.uri,
-          name: member.profilePicture?.fileName,
-          type: member.profilePicture?.type,
-        });
+        formDataPayload.append(`committeePictures`, formatFileData(member));
+      }
+    });
+    payload?.masjidProfile?.forEach((profile) => {
+      if (profile.uri) {
+        formDataPayload.append(`masjidProfile`, formatFileData(profile));
       }
     });
 
@@ -210,7 +223,6 @@ const SignupScreen = () => {
     setValue("email", "");
     setValue("mobile", "");
   };
-
 
   return (
     <SafeAreaWrapper>
@@ -239,23 +251,37 @@ const SignupScreen = () => {
                 style={[styles.tab, selectedTab === "email" && styles.activeTab]}
                 onPress={() => handleTabChange("email")}
               >
-                <Text style={[styles.tabText, selectedTab === "email" && styles.activeTabText]}>
-                  Email
-                </Text>
+                <Paragraph weight='Bold' level='Medium' style={[selectedTab === "email" && styles.activeTabText]}>
+                  {t('emailLabel')}
+                </Paragraph>
               </TouchableOpacity>
 
               <TouchableOpacity
                 style={[styles.tab, selectedTab === "mobile" && styles.activeTab]}
                 onPress={() => handleTabChange("mobile")}
               >
-                <Text style={[styles.tabText, selectedTab === "mobile" && styles.activeTabText]}>
-                  Phone
-                </Text>
+                <Paragraph weight='Bold' level='Medium' style={[selectedTab === "mobile" && styles.activeTabText]}>
+                  {t('mobile')}
+                </Paragraph>
               </TouchableOpacity>
             </View>
 
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
               <View style={signupStyles.form}>
+                <Controller
+                  name="masjidProfile"
+                  control={control}
+                  render={() => (
+                    <UploadArea
+                      title={t('masjidPhotoLabel')}
+                      imageUri={watch('masjidProfile')}
+                      handlePress={() => handleImagePicker('masjidProfile', true)}
+                      handleRemove={(uri) => removeImage('masjidProfile', uri)}
+                      error={errors.masjidProfile?.message}
+                      loading={photoLoading}
+                    />
+                  )}
+                />
                 <View style={[kycScreenStyles.uploadRow, { marginTop: 20 }]}>
                   <Controller
                     name="profileUrl"
@@ -267,22 +293,11 @@ const SignupScreen = () => {
                         handlePress={() => handleImagePicker('profileUrl')}
                         handleRemove={() => removeImage('profileUrl')}
                         error={errors.profileUrl?.message}
+                        loading={photoLoading}
                       />
                     )}
                   />
-                  <Controller
-                    name="masjidProfile"
-                    control={control}
-                    render={({ field: { value } }) => (
-                      <UploadArea
-                        title={t('masjidPhotoLabel')}
-                        imageUri={value}
-                        handlePress={() => handleImagePicker('masjidProfile')}
-                        handleRemove={() => removeImage('masjidProfile')}
-                        error={errors.masjidProfile?.message}
-                      />
-                    )}
-                  />
+
                 </View>
                 <Controller
                   name="name"
@@ -294,6 +309,19 @@ const SignupScreen = () => {
                       value={value}
                       onChangeText={onChange}
                       error={errors.name?.message}
+                    />
+                  )}
+                />
+                <Controller
+                  name='fullAddress'
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <Input
+                      label={t('currentAddressLabelMasjid')}
+                      placeholder={t('currentAddressPlaceholderMasjid')}
+                      value={value}
+                      onChangeText={onChange}
+                      error={errors?.fullAddress?.message}
                     />
                   )}
                 />
@@ -314,7 +342,7 @@ const SignupScreen = () => {
                           search={true}
                           searchPlaceholder="Search district"
                           error={errors?.location?.district?.message}
-                          rootStyle={{ marginTop: 10}}
+                          rootStyle={{ marginTop: 10 }}
                         />
                       )}
                     />
@@ -333,7 +361,7 @@ const SignupScreen = () => {
                           search={true}
                           searchPlaceholder="Search upazila"
                           error={errors?.location?.upazila?.message}
-                          rootStyle={{ marginTop: 10}}
+                          rootStyle={{ marginTop: 10 }}
                         />
                       )}
                     />
@@ -352,7 +380,7 @@ const SignupScreen = () => {
                           search={true}
                           searchPlaceholder="Search union"
                           error={errors?.location?.union?.message}
-                          rootStyle={{ marginTop: -10}}
+                          rootStyle={{ marginTop: -10 }}
                         />
                       )}
                     />
@@ -371,7 +399,7 @@ const SignupScreen = () => {
                           search={true}
                           searchPlaceholder="Search village"
                           error={errors?.location?.village?.message}
-                          rootStyle={{ marginTop: -10}}
+                          rootStyle={{ marginTop: -10 }}
                         />
                       )}
                     />
@@ -387,7 +415,7 @@ const SignupScreen = () => {
                       value={value}
                       onChangeText={onChange}
                       error={errors.username?.message}
-                      style={{ marginTop: -14}}
+                      style={{ marginTop: -14 }}
                     />
                   )}
                 />
@@ -406,17 +434,17 @@ const SignupScreen = () => {
                       />
                     )}
                   /> : <Controller
-                      name='mobile'
-                      control={control}
-                      render={({ field: { value, onChange } }) => (
-                        <PhoneNumberInput
-                          label={t('imamPhoneLabel')}
-                          placeholder={t('imamPhonePlaceholder')}
-                          value={value ?? ''}
-                          onChangeText={onChange}
-                          error={errors.mobile?.message}
-                        />
-                      )}
+                    name='mobile'
+                    control={control}
+                    render={({ field: { value, onChange } }) => (
+                      <PhoneNumberInput
+                        label={t('imamPhoneLabel')}
+                        placeholder={t('imamPhonePlaceholder')}
+                        value={value ?? ''}
+                        onChangeText={onChange}
+                        error={errors.mobile?.message}
+                      />
+                    )}
                   />
                 }
 
@@ -467,7 +495,7 @@ const SignupScreen = () => {
                   )}
                 />
 
-                {committeeDetails?.map((_, index) => (
+                {committeeDetails?.map((committee, index) => (
                   <View key={index} style={styles.childSection}>
                     <Text style={styles.childHeader}>
                       {t('committeeMemberDetailsTitle')} {index + 1}
@@ -475,14 +503,15 @@ const SignupScreen = () => {
                     <Controller
                       control={control}
                       name={`committeeDetails.${index}.profilePicture`}
-                      render={({ field }) => (
-                        <UploadArea
+                      render={() => {
+                        return <UploadArea
                           handlePress={() => handleCommitteeImagePicker(index)}
                           handleRemove={() => removeCommitteeImage(index)}
-                          imageUri={field.value}
+                          imageUri={committee.profilePicture}
                           title={t('committeePhotoLabel')}
+                          loading={photoLoading}
                         />
-                      )}
+                      }}
                     />
                     <Controller
                       control={control}
@@ -526,7 +555,6 @@ const SignupScreen = () => {
                           onChange={field.onChange}
                           data={professions}
                           search={true}
-                          style={{ marginBottom: 10 }}
                           rootStyle={{ marginTop: -6 }}
                           error={errors.committeeDetails?.[index]?.profession?.message}
                         />

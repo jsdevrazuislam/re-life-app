@@ -9,6 +9,7 @@ import {
   Image,
   ViewStyle,
   StyleProp,
+  ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Colors } from '../configs/colors';
@@ -37,16 +38,16 @@ import ErrorMessage from '../components/ErrorMessage';
 
 
 const KycScreen = () => {
+  const [photoLoading, setPhotoLoading] = useState(false);
   const { setUserId, userTempId, setUser, setRole, setStatus, tempUser, setTempUser } = useAuthStore();
   const { control, handleSubmit, setValue, watch, formState: { errors } } = useForm({
     resolver: yupResolver(validationSchemaKyc),
     mode: 'onBlur',
-    defaultValues:{
+    defaultValues: {
       name: tempUser?.name,
       emailOrPhone: tempUser?.emailOrPhone
     }
   });
-  console.log("tempUser", tempUser)
   const { t } = useTranslation();
   const [showError, setShowError] = useState(false)
   const selectedDocType = watch("documentType");
@@ -96,9 +97,11 @@ const KycScreen = () => {
       }
     }
 
+    setPhotoLoading(true);
     ImagePicker.launchImageLibrary(
       { mediaType: 'photo', quality: 0.8 },
       response => {
+      setPhotoLoading(false);
         if (response.didCancel) return;
         if (response.errorMessage) {
           showToast('error', response.errorMessage);
@@ -122,7 +125,7 @@ const KycScreen = () => {
   }, [error])
 
   return (
-    <SafeAreaWrapper bg={Colors.light}>
+    <SafeAreaWrapper>
       <LoadingOverlay visible={loading} />
       <ScrollView
         contentContainerStyle={{
@@ -221,9 +224,9 @@ const KycScreen = () => {
                 </TouchableOpacity>
               ))}
             </View>
-              {
-                errors?.documentType?.message && <ErrorMessage error={errors?.documentType?.message} />
-              }
+            {
+              errors?.documentType?.message && <ErrorMessage error={errors?.documentType?.message} />
+            }
             <View style={styles.uploadSection}>
               <Heading level={6} weight="Bold" style={styles.sectionTitle}>
                 {t('documentTypeLabel')}
@@ -246,6 +249,7 @@ const KycScreen = () => {
                       handlePress={() => handleImagePicker('idProofFront')}
                       handleRemove={() => removeImage('idProofFront')}
                       error={errors.idProofFront?.message}
+                      loading={photoLoading}
                     />
                   )}
                 />
@@ -259,6 +263,7 @@ const KycScreen = () => {
                       handlePress={() => handleImagePicker('idProofBack')}
                       handleRemove={() => removeImage('idProofBack')}
                       error={errors.idProofBack?.message}
+                      loading={photoLoading}
                     />
                   )}
                 />
@@ -273,6 +278,7 @@ const KycScreen = () => {
                     handlePress={() => handleImagePicker('imamDocument')}
                     handleRemove={() => removeImage('imamDocument')}
                     error={errors.imamDocument?.message}
+                    loading={photoLoading}
                   />
                 )}
               />
@@ -296,29 +302,55 @@ export const UploadArea = ({
   imageUri,
   handleRemove,
   style,
-  error
+  error,
+  loading
 }: {
   title: string;
   style?: StyleProp<ViewStyle>
   imageUri: any;
   handlePress: () => void;
-  handleRemove: () => void;
+  handleRemove: (uri?: string) => void;
   error?: string
-}) =>
-  imageUri?.uri ? (
-    <View style={[styles.uploadArea, style]}>
-      <Image source={{ uri: imageUri?.uri }} style={styles.image} />
-      <TouchableOpacity style={styles.deleteButton} onPress={handleRemove}>
-        <Icon name="restore-from-trash" size={24} color={Colors.white} />
+  loading?: boolean
+}) => {
+
+  const images = Array.isArray(imageUri) ? imageUri : imageUri ? [imageUri] : [];
+
+  return (
+    loading && !imageUri?.uri && images.length === 0  ? <View style={[styles.uploadArea, style]}>
+      <ActivityIndicator size="large" color={Colors.primary} />
+    </View> : imageUri?.uri ? (
+      <View style={[styles.uploadArea, style]}>
+        <Image source={{ uri: imageUri?.uri }} style={[styles.image]} />
+        <TouchableOpacity style={styles.deleteButton} onPress={() => handleRemove()}>
+          <Icon name="restore-from-trash" size={24} color={Colors.white} />
+        </TouchableOpacity>
+      </View>
+    ) : images.length > 0 ? (
+      <View style={[styles.uploadArea, style, styles.multipleUploadArea]}>
+        {
+          images.map((img, index) => (
+            <View key={index} style={styles.multipleImageContainer}>
+              <Image source={{ uri: img?.uri }} style={styles.image} />
+              <TouchableOpacity style={[styles.deleteButton, {
+                top: '35%',
+                left: '35%'
+              }]} onPress={() => handleRemove(img?.uri)}>
+                <Icon name="restore-from-trash" size={24} color={Colors.white} />
+              </TouchableOpacity>
+            </View>
+          ))
+        }
+      </View>
+    ) : (
+      <TouchableOpacity style={[error ? styles.uploadAreaError : styles.uploadArea]} onPress={handlePress}>
+        <Icon name="camera-alt" size={30} color={error ? Colors.danger : Colors.primary} />
+        <Paragraph level="Small" weight="SemiBold" style={[error ? styles.uploadAreaTextError : styles.uploadAreaText]}>
+          {title}
+        </Paragraph>
       </TouchableOpacity>
-    </View>
-  ) : (
-    <TouchableOpacity style={[error ? styles.uploadAreaError : styles.uploadArea]} onPress={handlePress}>
-      <Icon name="camera-alt" size={30} color={error ? Colors.danger : Colors.primary} />
-      <Paragraph level="Small" weight="SemiBold" style={[error ? styles.uploadAreaTextError : styles.uploadAreaText]}>
-        {title}
-      </Paragraph>
-    </TouchableOpacity>
-  );
+    )
+  )
+}
 
 export default KycScreen;

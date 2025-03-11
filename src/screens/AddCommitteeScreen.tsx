@@ -34,6 +34,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { validationSchemaAddCommittee } from '../validations/add.committee';
 import ErrorMessage from '../components/ErrorMessage';
+import { options } from './FaceScanScreen';
 
 const AddCommitteeScreen = () => {
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
@@ -66,8 +67,7 @@ const AddCommitteeScreen = () => {
       }
     }
 
-    ImagePicker.launchImageLibrary(
-      { mediaType: "photo", quality: 0.8 },
+    ImagePicker.launchImageLibrary(options,
       (response) => {
         if (response.didCancel) {
           console.log("User cancelled image picker");

@@ -7,12 +7,12 @@ export const styles = ScaledSheet.create({
         paddingHorizontal: ms(20),
         paddingVertical: '15@vs',
         borderBottomWidth: 1,
-        borderBottomColor: '#F0F0F0',
+        borderBottomColor: Colors.border,
     },
     headerTitle: {
         fontSize: ms(24),
         fontWeight: '600',
-        color: '#1A1A1A',
+        color: Colors.text,
     },
     deleteButton:{
         width: '40@ms',
@@ -26,7 +26,7 @@ export const styles = ScaledSheet.create({
     segmentContainer: {
         flexDirection: 'row',
         marginVertical: '15@vs',
-        backgroundColor: '#F5F5F5',
+        backgroundColor: Colors.border,
         borderRadius: ms(8),
     },
     segmentButton: {
@@ -41,25 +41,25 @@ export const styles = ScaledSheet.create({
     segmentText: {
         fontSize: ms(14),
         fontWeight: '500',
-        color: '#666666',
+        color: Colors.text,
     },
     activeSegmentText: {
-        color: '#FFFFFF',
+        color: Colors.white,
     },
     notificationItem: {
         flexDirection: 'row',
         alignItems: 'flex-start',
-        backgroundColor: '#FFFFFF',
+        backgroundColor: Colors.white,
         borderRadius: ms(12),
     },
     unreadNotification: {
-        backgroundColor: '#F8FAFF',
+        backgroundColor: Colors.light,
     },
     iconContainer: {
         width: ms(40),
         height: ms(40),
         borderRadius: ms(20),
-        backgroundColor: '#E8F0FE',
+        backgroundColor: Colors.border,
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: ms(15),
@@ -68,20 +68,18 @@ export const styles = ScaledSheet.create({
         flex: 1,
     },
     notifictionTitle: {
-        fontSize: ms(16),
-        fontWeight: '600',
-        color: '#1A1A1A',
+        color: Colors.text,
         marginBottom: '4@vs',
     },
     notificationMessage: {
-        color: '#4A4A4A',
+        color: Colors.textSecondary,
         marginBottom: '4@vs',
     },
     readMessage: {
         opacity: 0.7,
     },
     timestamp: {
-        color: '#888888',
+        color: Colors.neutral[400],
     },
     unreadIndicator: {
         width: ms(8),
@@ -93,7 +91,7 @@ export const styles = ScaledSheet.create({
     },
     separator: {
         height: 1,
-        backgroundColor: '#F0F0F0',
+        backgroundColor: Colors.border,
         marginVertical: '15@vs',
     },
     listContent: {
@@ -112,9 +110,8 @@ export const styles = ScaledSheet.create({
       },
       
       emptyText: {
-        fontSize: ms(16),
+        marginTop: 20,
         color: Colors.textSecondary,
         textAlign: 'center',
-        fontWeight: '500',
       },
 });

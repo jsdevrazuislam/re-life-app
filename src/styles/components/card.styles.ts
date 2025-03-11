@@ -10,7 +10,7 @@ export const cardStyles = ScaledSheet.create({
   },
   image: {
     width: '98@ms',
-    height: '77@ms',
+    height: '95@ms',
     borderRadius: '5@ms',
   },
   flexLayout: {
@@ -38,6 +38,8 @@ export const cardStyles = ScaledSheet.create({
     backgroundColor: Colors.primary,
     padding: 5,
     borderRadius: 5,
+    width: 92,
+    marginTop: 10
   },
   viewLabel: {
     color: Colors.white,
@@ -49,4 +51,12 @@ export const cardStyles = ScaledSheet.create({
   showPeople: {
     color: Colors.primary,
   },
+  cardContainer:{
+    elevation: 3,
+    shadowColor: Colors.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    borderRadius: 8,
+  }
 });

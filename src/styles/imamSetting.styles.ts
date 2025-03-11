@@ -38,7 +38,7 @@ const styles = ScaledSheet.create({
       position: 'absolute',
       top: -10,
       right: -10,
-      backgroundColor: '#FFF',
+      backgroundColor: Colors.white,
       borderRadius: '15@ms',
       padding: '8@ms',
     },
@@ -47,7 +47,7 @@ const styles = ScaledSheet.create({
       marginTop: '10@vs',
     },
     userEmail: {
-      color: '#666',
+      color: Colors.black,
     },
     settingsGroup: {
       backgroundColor: Colors.white,
@@ -60,7 +60,7 @@ const styles = ScaledSheet.create({
       justifyContent: 'space-between',
       padding: '15@s',
       borderBottomWidth: 1,
-      borderBottomColor: '#EEE',
+      borderBottomColor: Colors.border,
     },
     itemLeft: {
       flexDirection: 'row',
@@ -78,7 +78,7 @@ const styles = ScaledSheet.create({
       marginTop: '20@vs',
       padding: '15@s',
       borderTopWidth: 1,
-      borderTopColor: '#EEE',
+      borderTopColor: Colors.border,
       backgroundColor: Colors.white,
     },
   });

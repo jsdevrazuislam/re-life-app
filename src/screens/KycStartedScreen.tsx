@@ -23,11 +23,6 @@ const KYCVerifyScreen = () => {
       description: t('description1'),
     },
     {
-      icon: 'camera-alt',
-      title: t('title2'),
-      description: t('description2'),
-    },
-    {
       icon: 'description',
       title: t('title3'),
       description: t('description3'),

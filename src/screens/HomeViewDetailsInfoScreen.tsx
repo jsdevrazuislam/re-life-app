@@ -1,114 +1,119 @@
-import { View, TouchableOpacity, Dimensions, Modal } from 'react-native';
-import React, { useRef, useState } from 'react';
+import { View, TouchableOpacity, Modal, ScrollView, Dimensions, Platform, Linking } from 'react-native';
+import React, { useState } from 'react';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
-import { ScrollView } from 'react-native-gesture-handler';
 import globalStyles from '../styles/global.style';
 import BackButton from '../components/BackButton';
 import homeViewDetailsStyles from '../styles/homeViewDetails.styles';
 import { useTranslation } from '../hooks/useTranslation';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import Entypo from 'react-native-vector-icons/Entypo';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { Colors } from '../configs/colors';
-import HorizontalCardList from '../components/HorizontalCardList';
-import Carousel from 'react-native-reanimated-carousel';
 import Paragraph from '../components/ui/Paragraph';
 import Heading from '../components/ui/Heading';
-import { NavigationProp, useNavigation, useRoute } from '@react-navigation/native';
+import { NavigationProp, useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
 import { AppStackParamList } from '../constants/route';
-import { baseURLPhoto } from '../lib/api';
 import ImageView from 'react-native-image-zoom-viewer';
 import ImageComponent from '../components/ui/Image';
+import { mvs } from 'react-native-size-matters';
+import PersonalScreen from '../components/PersonalScreen';
+import HousingScreen from '../components/HousingScreen';
+import NeedsScreen from '../components/NeedsScreen';
+import DocumentsScreen from '../components/DocumentsScreen';
+import { useAuthStore } from '../store/store';
+import CustomTabs from '../components/CustomTabs';
+
+
 
 const HomeViewDetailsInfoScreen = () => {
   const { t } = useTranslation();
-  const [activeIndex, setActiveIndex] = useState(0);
-  const carouselRef = useRef<any>(null);
+  const { accessToken } = useAuthStore()
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
   const route = useRoute<HomeViewDetailsInfoRouteProp>();
-  const singleData = route?.params?.item as Masjids;
+  const singleData = route?.params?.item as HomeSearchResultDatas;
   const [visible, setVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
+  const [activeTab, setActiveTab] = useState('personal');
 
-  const handleSnapToItem = (index: number) => {
-    setActiveIndex(index);
-  };
+  const tabs = [
+    { key: 'personal', label: t('personal') },
+    { key: 'housing', label: t('housing') },
+    { key: 'needs', label: t('needs') },
+    { key: 'documents', label: t('documents') },
+  ];
 
-  const handleDotPress = (index: number) => {
-    setActiveIndex(index);
-    if (carouselRef.current) {
-      carouselRef.current.scrollTo({ index });
+  const openImage = (imageUrl: string) => {
+    if (imageUrl) {
+      setSelectedImage(imageUrl);
+      setVisible(true);
     }
   };
 
+  const onPressMobileNumberClick = (number: string) => {
+
+    let phoneNumber = '';
+    if (Platform.OS === 'android') {
+      phoneNumber = `tel:${number}`;
+    } else {
+      phoneNumber = `telprompt:${number}`;
+    }
+
+    Linking.openURL(phoneNumber);
+  }
+
   return (
-    <SafeAreaWrapper bg={Colors.light}>
-      <ScrollView>
-        <View style={globalStyles.container}>
-          <View style={homeViewDetailsStyles.headerSection}>
-            <BackButton />
-            <Paragraph level="Medium" weight="Bold" style={homeViewDetailsStyles.headerTitle}>
-              {t('details')}
-            </Paragraph>
-            <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
-              <Icon name="user-circle" size={24} />
-            </TouchableOpacity>
-          </View>
-          <View style={homeViewDetailsStyles.mainContent}>
-            {/* Masjid Image */}
-            <TouchableOpacity
-              onPress={() => {
-                setSelectedImage(singleData?.masjidProfile);
-                setVisible(true);
-              }}
-            >
-              <ImageComponent
-                source={singleData?.masjidProfile}
-                style={homeViewDetailsStyles.masjidImage}
-                imageStyle={{ borderRadius: 10 }}
-              />
-            </TouchableOpacity>
-
-            {/* Masjid Info */}
-            <View style={homeViewDetailsStyles.content}>
-              <View style={homeViewDetailsStyles.flexLayout}>
-                <Paragraph level="Small" weight="Bold" style={homeViewDetailsStyles.label}>
-                  {t('masjidName')}:
-                </Paragraph>
-                <Paragraph level="Small" weight="Medium" style={homeViewDetailsStyles.value}>
-                  {singleData?.name}
-                </Paragraph>
-              </View>
-              <View style={homeViewDetailsStyles.flexLayout}>
-                <Paragraph level="Small" weight="Bold" style={homeViewDetailsStyles.label}>
-                  {t('masjidLocationLabel')}:
-                </Paragraph>
-                <Paragraph level="Small" weight="Medium" style={[homeViewDetailsStyles.value, { flexShrink: 1}]}>
-                  {`${singleData.location.district} > ${singleData.location.upazila} > ${singleData.location.union} > ${singleData.location.village}`}
-                </Paragraph>
-              </View>
+    <SafeAreaWrapper>
+      <View style={globalStyles.container}>
+        <View style={homeViewDetailsStyles.headerSection}>
+          <BackButton />
+          <Paragraph level="Medium" weight="Bold" style={homeViewDetailsStyles.headerTitle}>
+            {t('details')}
+          </Paragraph>
+          {!accessToken ? <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
+            <Icon name="user-circle" size={24} />
+          </TouchableOpacity> : <View></View>}
+        </View>
+        <View style={homeViewDetailsStyles.mainContent}>
+          <Heading level={5} weight='Bold'>{singleData.name}</Heading>
+          <View style={homeViewDetailsStyles.content}>
+            <View style={homeViewDetailsStyles.flexLayout}>
+              <Entypo name='location-pin' size={mvs(24)} />
+              <Paragraph level="Small" weight="Medium" style={[homeViewDetailsStyles.value, { flexShrink: 1 }]}>
+                {singleData?.fullAddress}
+              </Paragraph>
             </View>
+          </View>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={homeViewDetailsStyles.scrollContent}
+          >
+            {singleData.masjidProfile?.map((item, index) => (
+              <View
+                key={item._id || index}
+                style={homeViewDetailsStyles.masjidImage}
+              >
+                <ImageComponent
+                  source={item?.url}
+                  style={{ width: Dimensions.get('window').width / 3.2, height: 120, borderRadius: 10 }}
+                />
+                <TouchableOpacity style={homeViewDetailsStyles.expanded} onPress={() => openImage(item.url)}>
+                  <SimpleLineIcons color={Colors.white} name='size-fullscreen' size={mvs(12)} />
+                </TouchableOpacity>
+              </View>
+            ))}
+          </ScrollView>
 
-            {/* Imam Details */}
-            <View style={homeViewDetailsStyles.imamDetails}>
-              <Heading level={5} weight="Bold">
-                {t('imamDetails')}
-              </Heading>
-
-              <Carousel
-                data={singleData?.imamDetails || []}
-                ref={carouselRef}
-                renderItem={({ item }) => (
-                  <View style={[homeViewDetailsStyles.imamCard]}>
-                    {item.isPresentImam && (
-                      <Paragraph level="XSmall" weight="Medium" style={homeViewDetailsStyles.subTitle}>
-                        {t('presentImam')}
-                      </Paragraph>
-                    )}
+          {/* Imam Details */}
+          <View style={homeViewDetailsStyles.imamDetails}>
+            <Heading level={6} weight='Bold'>{t('imamDetails')}</Heading>
+            {
+              singleData.imamDetails && singleData.imamDetails.filter(imam => imam.isPresentImam).map((item) => (
+                <View style={[homeViewDetailsStyles.imamCard]} key={item._id}>
+                  <View style={homeViewDetailsStyles.imamCardLeft}>
                     <TouchableOpacity
-                      onPress={() => {
-                        setSelectedImage(item.profilePicture);
-                        setVisible(true);
-                      }}
+                      onPress={() => openImage(item.profilePicture)}
                     >
                       <ImageComponent
                         source={item.profilePicture}
@@ -116,94 +121,46 @@ const HomeViewDetailsInfoScreen = () => {
                         imageStyle={{ borderRadius: 50 }}
                       />
                     </TouchableOpacity>
-                    <View style={homeViewDetailsStyles.flexLayout}>
-                      <View style={homeViewDetailsStyles.labelIcon}>
-                        <Icon name="user-circle" size={16} color={Colors.text} />
-                        <Paragraph level="Small" weight="Bold" style={homeViewDetailsStyles.label}>
-                          {t('name')}:
-                        </Paragraph>
-                      </View>
-                      <Paragraph level="Small" weight="Medium" style={homeViewDetailsStyles.value}>
-                        {item.name}
-                      </Paragraph>
-                    </View>
-                    <View style={homeViewDetailsStyles.flexLayout}>
-                      <View style={homeViewDetailsStyles.labelIcon}>
-                        <MaterialIcons name="phone" size={16} color={Colors.text} />
-                        <Paragraph level="Small" weight="Bold" style={homeViewDetailsStyles.label}>
-                          {t('mobile')}:
-                        </Paragraph>
-                      </View>
-                      <Paragraph level="Small" weight="Medium" style={homeViewDetailsStyles.value}>
-                        {item.mobile}
-                      </Paragraph>
-                    </View>
-                    <View style={homeViewDetailsStyles.flexLayout}>
-                      <View style={homeViewDetailsStyles.labelIcon}>
-                        <MaterialIcons name="location-on" size={16} />
-                        <Paragraph level="Small" weight="Bold" style={homeViewDetailsStyles.label}>
-                          {t('address')}:
-                        </Paragraph>
-                      </View>
-                      <Paragraph level="Small" weight="Medium" style={homeViewDetailsStyles.value}>
-                        {item.address}
-                      </Paragraph>
+
+                    <View>
+                      <Paragraph level='Small' weight='Bold'>{item.name}</Paragraph>
+                      <Paragraph level='Small' weight='Medium'>{item.address}</Paragraph>
                     </View>
                   </View>
-                )}
-                onSnapToItem={handleSnapToItem}
-                loop={false}
-                width={Dimensions.get('window').width * 0.9}
-                height={220}
-              />
+                  <TouchableOpacity onPress={() => onPressMobileNumberClick(item.emailOrPhone)} style={homeViewDetailsStyles.call}>
+                    <MaterialIcons name='local-phone' size={mvs(18)} color={Colors.white} />
+                  </TouchableOpacity>
+                </View>
+              ))
+            }
 
-              {/* Carousel Dots */}
-              <View style={homeViewDetailsStyles.dotsContainer}>
-                {singleData.imamDetails?.map((_, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    onPress={() => handleDotPress(index)}
-                    style={[
-                      homeViewDetailsStyles.dot,
-                      activeIndex === index ? homeViewDetailsStyles.activeDot : homeViewDetailsStyles.inactiveDot,
-                    ]}
-                  />
-                ))}
-              </View>
-            </View>
+          </View>
 
-            {/* Committee & Poor People Information */}
-            <View style={homeViewDetailsStyles.content}>
-            <HorizontalCardList
-              title={t('committeeDetails')}
-              subTitle={`${t("totalMembers")}: ${singleData.committeeDetails?.length || 0}`}
-              data={singleData?.committeeDetails?.map((item) => ({
-                ...item,
-                photo: String(baseURLPhoto(item.profilePicture)), 
-              })) || []}
-              imageKey="photo"
-              isCommitteeCard={true}
-            />
-              <HorizontalCardList
-                title={t('poorPeopleInformation')}
-                subTitle={`${t("totalMembers")}: ${singleData.poorPeopleInformations?.length || 0}`}
-                imageKey="newPhoto"
-                onPress={(data) => navigation.navigate('PoorPeopleView', { item: data })}
-                data={
-                  singleData?.poorPeopleInformations?.map(person => ({
-                    ...person,
-                    newPhoto: String(baseURLPhoto(person.photoUrl)),
-                  })) || []
-                }
-              />
-            </View>
+          <Heading level={6} weight='Bold'>{t('biggerDetails')}</Heading>
+
+        </View>
+        <Modal transparent={true} visible={visible} onRequestClose={() => setVisible(false)}>
+          <ImageView renderHeader={() => (
+            <TouchableOpacity
+              style={{ position: 'absolute', top: 40, right: 20, zIndex: 1 }}
+              onPress={() => setVisible(false)}
+            >
+              <MaterialIcons name="close" size={24} color="white" />
+            </TouchableOpacity>
+          )} imageUrls={[{ url: selectedImage }]} onCancel={() => setVisible(false)} enableSwipeDown />
+        </Modal>
+        <View style={{ flex: 1, marginTop: 20 }}>
+          <CustomTabs tabs={tabs} onTabChange={setActiveTab} activeTab={activeTab} />
+
+          <View style={{ flex: 1, padding: 10 }}>
+            {activeTab === 'personal' && <PersonalScreen data={singleData} />}
+            {activeTab === 'housing' && <HousingScreen data={singleData} />}
+            {activeTab === 'needs' && <NeedsScreen data={singleData} />}
+            {activeTab === 'documents' && <DocumentsScreen data={singleData} />}
           </View>
         </View>
 
-        <Modal visible={visible} transparent={true} onRequestClose={() => setVisible(false)}>
-          <ImageView imageUrls={[{ url: selectedImage }]} onCancel={() => setVisible(false)} enableSwipeDown />
-        </Modal>
-      </ScrollView>
+      </View>
     </SafeAreaWrapper>
   );
 };

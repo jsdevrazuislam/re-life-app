@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { stackNavigationOptions } from '../../configs/navigation';
@@ -10,7 +10,6 @@ import { AppRoutes } from '../../constants/route';
 import SignupScreen from '../../screens/SignupScreen';
 import ForgotPasswordScreen from '../../screens/ForgotPasswordScreen';
 import HomeViewDetailsInfoScreen from '../../screens/HomeViewDetailsInfoScreen';
-import PoorPeopleViewScreen from '../../screens/PoorPeopleViewScreen';
 import OtpScreen from '../../screens/OtpScreen';
 import ImamHomeScreen from '../../screens/ImamHomeScreen';
 import AddCommitteeScreen from '../../screens/AddCommitteeScreen';
@@ -23,13 +22,34 @@ import UpdateEmailScreen from '../../screens/UpdateEmailScreen';
 import ChangePasswordScreen from '../../screens/ChangePasswordScreen';
 import ResetPasswordScreen from '../../screens/ResetPasswordScreen';
 import NotificationsScreen from '../../screens/NotificationScreen';
+import FaceScanScreen from '../../screens/FaceScanScreen';
+import NetInfo from '@react-native-community/netinfo';
+import NoInternetScreen from '../../screens/InternetConnectionScreen';
+import RequestAccessViewScreen from '../../screens/RequestAccessViewScreen';
+import EditPeopleScreen from '../../screens/EditPoorPeopleScreen';
+
 
 
 const Tab = createBottomTabNavigator();
 
 
 const Stack = createStackNavigator();
-const AppNavigator = ({ role, status, userTempId, user , isFirstTime} : { role:string, user:IUser | null, status:string, userTempId:string, isFirstTime:boolean }) => {
+const AppNavigator = ({ role, status, userTempId, user, isFirstTime }: { role: string, user: IUser | null, status: string, userTempId: string, isFirstTime:boolean }) => {
+
+  const [isConnected, setIsConnected] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      setIsConnected(state.isConnected ?? false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  if (!isConnected) {
+    return <NoInternetScreen />;
+  }
+
 
   if (status === 'otp_pending') {
     return (
@@ -56,11 +76,11 @@ const AppNavigator = ({ role, status, userTempId, user , isFirstTime} : { role:s
       <Stack.Navigator screenOptions={stackNavigationOptions}>
         {!isFirstTime && <Stack.Screen name={AppRoutes.OPENING_SCREEN} component={OpeningScreen} />}
         <Stack.Screen name={AppRoutes.HOME_SCREEN} component={HomeScreen} />
+        <Stack.Screen name={AppRoutes.FACE_SCAN_SCREEN} component={FaceScanScreen} />
         <Stack.Screen name={AppRoutes.LOGIN_SCREEN} component={LoginScreen} />
         <Stack.Screen name={AppRoutes.SIGNUP_SCREEN} component={SignupScreen} />
         <Stack.Screen name={AppRoutes.FORGOT_PASSWORD} component={ForgotPasswordScreen} />
         <Stack.Screen name={AppRoutes.HOME_VIEW_DETAILS_INFO} component={HomeViewDetailsInfoScreen} />
-        <Stack.Screen name={AppRoutes.POOR_PEOPLE_VIEW} component={PoorPeopleViewScreen} />
         <Stack.Screen name={AppRoutes.OTP_SCREEN} component={OtpScreen} />
         <Stack.Screen name={AppRoutes.KYC_VERIFY_SCREEN} component={KYCVerifyScreen} />
         <Stack.Screen name={AppRoutes.KYC_SCREEN} component={KycScreen} />
@@ -73,8 +93,10 @@ const AppNavigator = ({ role, status, userTempId, user , isFirstTime} : { role:s
   if (['imam', 'moderator'].includes(role)) {
     return (
       <Stack.Navigator screenOptions={stackNavigationOptions}>
-        {["pending", "rejected"].includes(user?.kycStatus ?? '') &&  <Stack.Screen name={AppRoutes.IMAM_PENDING_SCREEN} component={ImamPendingScreen} />}
+        {["pending", "rejected"].includes(user?.kycStatus ?? '') && <Stack.Screen name={AppRoutes.IMAM_PENDING_SCREEN} component={ImamPendingScreen} />}
         <Stack.Screen name={AppRoutes.IMAM_HOME_SCREEN} component={ImamHomeScreen} />
+        <Stack.Screen name={AppRoutes.REQUEST_ACCESS_VIEW} component={RequestAccessViewScreen} />
+        <Stack.Screen name={AppRoutes.EDIT_POOR_PERSON} component={EditPeopleScreen} />
         <Stack.Screen name={AppRoutes.ADD_COMMITTEE_SCREEN} component={AddCommitteeScreen} />
         <Stack.Screen name={AppRoutes.PROFILE_SCREEN} component={ProfileScreen} />
         <Stack.Screen name={AppRoutes.IMAM_SETTING_SCREEN} component={SettingsScreen} />
@@ -85,6 +107,7 @@ const AppNavigator = ({ role, status, userTempId, user , isFirstTime} : { role:s
         <Stack.Screen name={AppRoutes.OTP_SCREEN} component={OtpScreen} />
         <Stack.Screen name={AppRoutes.KYC_VERIFY_SCREEN} component={KYCVerifyScreen} />
         <Stack.Screen name={AppRoutes.KYC_SCREEN} component={KycScreen} />
+        <Stack.Screen name={AppRoutes.HOME_VIEW_DETAILS_INFO} component={HomeViewDetailsInfoScreen} />
       </Stack.Navigator>
     );
   }

@@ -15,12 +15,16 @@ export const fileSchema = yup
     })
     .nullable()
     .test('file-required', 'এই ক্ষেত্রটি অবশ্যই পূরণ করতে হবে', (value) => value !== null && !!value.uri);
+    
+    const multipleFilesSchema = yup.array().of(fileSchema).min(1, 'অন্তত একটি ছবি আপলোড করতে হবে').nullable();
+
 
 export const validationSchema = yup.object().shape({
     profileUrl: fileSchema,
-    masjidProfile: fileSchema,
+    masjidProfile: multipleFilesSchema,
     selectedTab: yup.string().optional(),
     name: yup.string().min(8, 'মসজিদের নাম অন্তত ৮ অক্ষরের হতে হবে').required('মসজিদের নাম দেওয়া আবশ্যক'),
+    fullAddress: yup.string().min(8, 'মসজিদের বর্তমান ঠিকানা অন্তত ৮ অক্ষরের হতে হবে').required('মসজিদের বর্তমান ঠিকানা দেওয়া আবশ্যক'),
     location: yup.object().shape({
         district: yup.string().required('জেলার নাম দেওয়া আবশ্যক'),
         upazila: yup.string().required('উপজেলার নাম দেওয়া আবশ্যক'),

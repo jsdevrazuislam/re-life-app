@@ -1,3 +1,5 @@
+import { Colors } from "./colors"
+
 export const Fonts = {
     QUICKSAND_BOLD: 'Quicksand-Bold',
     QUICKSAND_LIGHT: 'Quicksand-Light',
@@ -295,7 +297,7 @@ export const AppFonts = {
   labelLarge: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#000',
+    color: Colors.text,
   },
   errorText: {
     fontSize: 12,

@@ -40,6 +40,8 @@ interface AddPoorPeopleScreenFormState{
         clothingFamily: string,
         medicineCost: string,
         treatments: string,
+        fieldType: string,
+        reason: string,
         financialNeeds: string,
         notes: string,
         photoUrl: IFile | null,

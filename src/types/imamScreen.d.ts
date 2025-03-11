@@ -1,6 +1,6 @@
 
   interface PeopleTabProps {
-    data: PoorPeopleResponse[];
+    data: PoorPeople[];
     onAdd: () => void;
     loading:boolean
   }

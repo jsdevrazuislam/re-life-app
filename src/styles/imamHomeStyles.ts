@@ -1,5 +1,5 @@
 
-import { moderateScale, ScaledSheet } from "react-native-size-matters";
+import { ScaledSheet } from "react-native-size-matters";
 import { Colors } from "../configs/colors";
 
 
@@ -14,7 +14,7 @@ export const imamStyles = ScaledSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+    borderBottomColor: Colors.neutral[300],
     paddingBottom: 10,
     marginBottom: 15,
   },
@@ -25,7 +25,7 @@ export const imamStyles = ScaledSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: "#ddd",
+    backgroundColor: Colors.neutral[300],
   },
   container: {
     justifyContent: 'center',
@@ -36,7 +36,7 @@ export const imamStyles = ScaledSheet.create({
     backgroundColor: 'white',
     padding: 20,
     borderRadius: 10,
-    shadowColor: '#000',
+    shadowColor: Colors.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
@@ -45,14 +45,14 @@ export const imamStyles = ScaledSheet.create({
   skeletonText: {
     width: 120,
     height: 15,
-    backgroundColor: "#ddd",
+    backgroundColor: Colors.neutral[300],
     marginBottom: 5,
     borderRadius: 5,
   },
   skeletonTextSmall: {
     width: 80,
     height: 12,
-    backgroundColor: "#ddd",
+    backgroundColor: Colors.neutral[300],
     marginBottom: 5,
     borderRadius: 5,
   },
@@ -84,7 +84,7 @@ export const imamStyles = ScaledSheet.create({
     elevation: 2,
   },
   statLabel: {
-    color: '#666',
+    color: Colors.black,
   },
   statValue: {
     color: Colors.text,
@@ -121,13 +121,18 @@ export const imamStyles = ScaledSheet.create({
     gap: 10,
   },  
   infoCard: {
-    backgroundColor: 'white',
+    backgroundColor: Colors.white,
     borderRadius: '8@ms',
     padding: '16@ms',
-    marginBottom: '16@ms',
+    marginTop: '16@ms',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
+    elevation: 3,
+    shadowColor: Colors.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
   },
   cardTitle: {
     color: Colors.text,
@@ -143,10 +148,10 @@ export const imamStyles = ScaledSheet.create({
     position: "absolute",
     top: 80,
     right: 15,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.white,
     borderRadius: 8,
     paddingVertical: 10,
-    shadowColor: "#000",
+    shadowColor: Colors.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -189,7 +194,7 @@ export const imamStyles = ScaledSheet.create({
     fontWeight: 'bold',
   },
   emptyDescription: {
-    color: '#666',
+    color: Colors.black,
     textAlign: 'center',
     marginTop: 5,
     paddingHorizontal: 20,

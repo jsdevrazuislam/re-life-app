@@ -18,10 +18,6 @@ import profileStyles from '../styles/profile.styles';
 import { useTranslation } from '../hooks/useTranslation';
 import * as ImagePicker from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {
-  validateCommitteeAddress,
-  validateCommitteeName,
-} from '../validations/add.committee';
 import Input from '../components/ui/AppInput';
 import SelectDropdown from '../components/ui/Select';
 import AppButton from '../components/ui/AppButton';
@@ -43,7 +39,7 @@ interface ProfileForm {
   name: string;
   fullName: string;
   address: string;
-  email: string;
+  emailOrPhone: string;
   location: {
     district: string;
     upazila: string;
@@ -61,7 +57,7 @@ const ProfileScreen = () => {
     name: '',
     address: '',
     fullName: '',
-    email: '',
+    emailOrPhone: '',
     location: {
       district: '',
       upazila: '',
@@ -148,7 +144,7 @@ const ProfileScreen = () => {
         name: user.masjid?.name || '',
         fullName: user?.fullName,
         address: user.address || '',
-        email: user.email || user?.phoneNumber,
+        emailOrPhone: user.emailOrPhone,
         location: {
           district: user.masjid?.location?.district || '',
           upazila: user.masjid?.location?.upazila || '',
@@ -166,7 +162,7 @@ const ProfileScreen = () => {
   }, [user]);
 
   return (
-    <SafeAreaWrapper bg={Colors.light}>
+    <SafeAreaWrapper>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
@@ -256,6 +252,7 @@ const ProfileScreen = () => {
                       search={true}
                       searchPlaceholder="Search union"
                       disabled
+                      rootStyle={{ marginTop: -10}}
                     />
                   </View>
 
@@ -268,6 +265,7 @@ const ProfileScreen = () => {
                       search={true}
                       searchPlaceholder="Search village"
                       disabled
+                      rootStyle={{ marginTop: -10}}
                     />
                   </View>
                 </View>
@@ -278,6 +276,7 @@ const ProfileScreen = () => {
                   placeholder={t('imamNamePlaceholder')}
                   value={formData.fullName}
                   onChangeText={text => handleInputChange('fullName', text)}
+                  style={{ marginTop: -10}}
                 />
                 <Input
                   label={t('currentAddressLabel')}
@@ -287,9 +286,9 @@ const ProfileScreen = () => {
                 />
 
                 <Input
-                  label={t('imamEmailLabel')}
-                  placeholder={t('imamEmailPlaceholder')}
-                  value={formData.email}
+                  label={t('emailOrPhoneLabel')}
+                  placeholder={t('emailOrPhonePlaceholder')}
+                  value={formData.emailOrPhone}
                   onChangeText={text => handleInputChange('email', text)}
                   keyboardType="phone-pad"
                   disabled

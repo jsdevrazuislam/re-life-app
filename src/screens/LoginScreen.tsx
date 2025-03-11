@@ -6,7 +6,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import { AppStackParamList } from '../constants/route';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
@@ -34,7 +34,8 @@ const LoginScreen = () => {
     mode: 'onBlur'
   });
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
-  const { request, loading, error } = useApi();
+  const { request, error } = useApi();
+  const [loading, setLoading] = useState(false)
   const {
     setUser,
     setRole,
@@ -45,26 +46,43 @@ const LoginScreen = () => {
     setTempEmail
   } = useAuthStore();
 
-  const handleFormSubmit = async (formData:any) => {
+  const handleFormSubmit = async (formData: any) => {
+    setLoading(true)
     const { data, message } = await request('post', ApiStrings.LOGIN, {
       password: formData?.password,
       emailOrPhone: formData?.emailOrPhone,
     });
     const user = data?.user;
-    const { data: imamData } = await request(
-      'get',
-      ApiStrings.GET_MASJID_DETAILS(user?.masjid?._id || ''),
-    );
-    setCommittees(imamData?.committees);
-    setPeople(imamData?.poorPeople);
-    setTotalPeople(imamData?.totalPoorPeople);
-    setTotalCommittees(imamData?.totalCommittees);
     await setUser(user, data?.accessToken, data?.refreshToken);
+    if (user?.role === 'moderator') {
+      const { data: imamData } = await request(
+        'post',
+        ApiStrings.GET_MASJID_DETAILS_FOR_MODERATOR,
+        {
+          "masjids": user?.masjids
+        }
+      );
+      setCommittees(imamData?.committees);
+      setPeople(imamData?.poorPeople);
+      setTotalPeople(imamData?.totalPoorPeople);
+      setTotalCommittees(imamData?.totalCommittees);
+    }
+    else {
+      const { data: imamData } = await request(
+        'get',
+        ApiStrings.GET_MASJID_DETAILS(user?.masjid?._id || ''),
+      );
+      setCommittees(imamData?.committees);
+      setPeople(imamData?.poorPeople);
+      setTotalPeople(imamData?.totalPoorPeople);
+      setTotalCommittees(imamData?.totalCommittees);
+    }
     setRole(user?.role);
     showToast('success', message);
-    if(user?.signupStep === 'otp_pending'){
+    setLoading(false)
+    if (user?.signupStep === 'otp_pending') {
       setTempEmail(formData?.emailOrPhone)
-      navigation.navigate('OtpScreen', { email: formData?.emailOrPhone})
+      navigation.navigate('OtpScreen', { email: formData?.emailOrPhone })
     } else if (user?.kycStatus === 'pending' || 'rejected') {
       navigation.navigate('ImamPendingScreen');
     } else if (user?.isBlocked) {
@@ -85,7 +103,7 @@ const LoginScreen = () => {
               globalStyles.container,
               { justifyContent: 'center', alignItems: 'center' },
             ]}>
-            <LoadingOverlay visible={loading} />
+            <LoadingOverlay visible={!error && loading} />
 
             <View style={{ width: '100%', alignItems: 'center' }}>
               <AppLogo />
@@ -99,33 +117,33 @@ const LoginScreen = () => {
 
             <View style={[loginStyles.loginForm, { width: '100%' }]}>
               <Controller
-                  name='emailOrPhone'
-                  control={control}
-                  render={({ field: { value, onChange } }) => (
-                    <Input
-                      label={t('emailOrPhoneLabel')}
-                      placeholder={t('emailOrPhonePlaceholder')}
-                      value={value}
-                      onChangeText={onChange}
-                      error={errors?.emailOrPhone?.message}
-                      keyboardType="email-address"
-                    />
-                  )}
-                />
+                name='emailOrPhone'
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <Input
+                    label={t('emailOrPhoneLabel')}
+                    placeholder={t('emailOrPhonePlaceholder')}
+                    value={value}
+                    onChangeText={onChange}
+                    error={errors?.emailOrPhone?.message}
+                    keyboardType="email-address"
+                  />
+                )}
+              />
               <Controller
-                  name='password'
-                  control={control}
-                  render={({ field: { value, onChange } }) => (
-                    <Input
-                      label={t('passwordLabel')}
-                      placeholder={t('confirmPasswordLabel')}
-                      value={value}
-                      onChangeText={onChange}
-                      error={errors?.password?.message}
-                      secureTextEntry
-                    />
-                  )}
-                />
+                name='password'
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <Input
+                    label={t('passwordLabel')}
+                    placeholder={t('confirmPasswordLabel')}
+                    value={value}
+                    onChangeText={onChange}
+                    error={errors?.password?.message}
+                    secureTextEntry
+                  />
+                )}
+              />
               {error && (
                 <Paragraph
                   style={loginStyles.errorMessage}

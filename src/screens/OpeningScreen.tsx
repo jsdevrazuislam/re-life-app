@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import openingStyles from '../styles/opening_screen.styles';
 import globalStyles from '../styles/global.style';
@@ -27,38 +27,40 @@ const OpeningScreen = () => {
 
   return (
     <SafeAreaWrapper>
-      <View style={globalStyles.container}>
-        <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')} style={openingStyles.skipButton}>
-          <Text>{t('skip')}</Text>
-        </TouchableOpacity>
-        <View style={openingStyles.container}>
-          <Image
-            source={require('../assets/app_logo.png')}
-            style={openingStyles.image}
-          />
+      <ScrollView contentContainerStyle={{ flex: 1}}>
+        <View style={globalStyles.container}>
+          <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')} style={openingStyles.skipButton}>
+            <Text>{t('skip')}</Text>
+          </TouchableOpacity>
+          <View style={openingStyles.container}>
+            <Image
+              source={require('../assets/app_logo.png')}
+              style={openingStyles.image}
+            />
+          </View>
+          <View style={openingStyles.appTitle}>
+            <Heading style={{ textAlign: 'center' }} level={5} weight="Bold">
+              {t('introTitle')}
+            </Heading>
+            <Text
+              style={[
+                Typography.paragraphMediumRegular,
+                openingStyles.appDescription,
+              ]}>
+              {t('introDescription')}
+            </Text>
+          </View>
+          <View style={openingStyles.bottomSection}>
+            <AppButton
+              variant="primary"
+              style={openingStyles.mb}
+              text={t('getStarted')}
+              onPress={() => navigation.navigate('LoginScreen')}
+            />
+            <AppButton variant="outline" text={t('signUpPrompt')} onPress={() => navigation.navigate('SignupScreen')} />
+          </View>
         </View>
-        <View style={openingStyles.appTitle}>
-          <Heading style={{ textAlign: 'center' }} level={3} weight="Bold">
-            {t('introTitle')}
-          </Heading>
-          <Text
-            style={[
-              Typography.paragraphMediumRegular,
-              openingStyles.appDescription,
-            ]}>
-            {t('introDescription')}
-          </Text>
-        </View>
-        <View style={openingStyles.bottomSection}>
-          <AppButton
-            variant="primary"
-            style={openingStyles.mb}
-            text={t('getStarted')}
-            onPress={() => navigation.navigate('LoginScreen')}
-          />
-          <AppButton variant="outline" text={t('signUpPrompt')} onPress={() => navigation.navigate('SignupScreen')} />
-        </View>
-      </View>
+      </ScrollView>
     </SafeAreaWrapper>
   );
 };

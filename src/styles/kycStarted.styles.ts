@@ -16,7 +16,7 @@ export const kycStartedStyles = ScaledSheet.create({
         marginBottom: '10@vs',
     },
     subtitle: {
-        color: Colors.lightGray,
+        color: Colors.textSecondary,
     },
     stepsContainer: {
         marginTop: '5@vs',
@@ -45,7 +45,7 @@ export const kycStartedStyles = ScaledSheet.create({
     },
     footer: {
         borderTopWidth: 1,
-        borderTopColor: '#EEE',
+        borderTopColor: Colors.border,
         padding: '20@s',
         backgroundColor: Colors.white,
     },
@@ -55,7 +55,7 @@ export const kycStartedStyles = ScaledSheet.create({
         marginBottom: '20@vs',
     },
     securityText: {
-        color: '#666',
+        color: Colors.text,
         marginLeft: '10@s',
         flex: 1,
     },
