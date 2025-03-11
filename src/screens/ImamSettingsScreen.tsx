@@ -88,7 +88,7 @@ const SettingsScreen = () => {
                 />
                 <SettingItem
                   icon="email"
-                  label={t('updateEmailTitle')}
+                  label={t('emailOrPhoneChange')}
                   onPress={() => navigation.navigate('UpdateEmailScreen')}
                 />
               </>

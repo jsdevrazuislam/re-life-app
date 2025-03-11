@@ -213,7 +213,7 @@ const AddPeopleScreen = () => {
             setTotalPeople(totalPeople + 1);
             showToast('success', message);
             reset()
-            navigation.navigate('ImamHomeScreen', { activeTab: t('beggers') });
+            navigation.navigate('ImamHomeScreen', { activeTab: 'beggers' });
           },
         },
       ]

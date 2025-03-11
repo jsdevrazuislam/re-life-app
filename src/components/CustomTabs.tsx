@@ -50,17 +50,6 @@ const CustomTabs: React.FC<CustomTabsProps> = ({ tabs, onTabChange, activeTab })
                     </TouchableOpacity>
                 ))}
             </View>
-
-            <Animated.View
-                style={{
-                    width: width / 10,
-                    height: 3,
-                    backgroundColor: Colors.primary,
-                    position: 'absolute',
-                    bottom: 0,
-                    transform: [{ translateX }],
-                }}
-            />
         </View>
     );
 };

@@ -12,6 +12,7 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { AppStackParamList } from '../../constants/route';
 import { useAuthStore } from '../../store/store';
 import { Colors } from '../../configs/colors';
+import { mvs } from 'react-native-size-matters';
 
 const PeopleTab: React.FC<PeopleTabProps> = ({ data, onAdd, loading }) => {
 
@@ -61,7 +62,7 @@ const PeopleTab: React.FC<PeopleTabProps> = ({ data, onAdd, loading }) => {
           </Paragraph>
         </View>
       ) : (
-        <ScrollView>
+        <ScrollView contentContainerStyle={{ paddingBottom: mvs(30)}}>
           {data?.map((item, index) => (
             <View key={index} style={imamStyles.infoCard}>
               <View style={imamStyles.cardContent}>

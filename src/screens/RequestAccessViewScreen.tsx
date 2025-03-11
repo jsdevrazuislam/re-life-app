@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
         marginTop: mvs(4),
     },
     subtitle: {
-        color: Colors.textSecondary,
+        color: Colors.text,
         marginBottom: mvs(16),
     },
     card: {
@@ -145,10 +145,10 @@ const styles = StyleSheet.create({
         marginBottom: mvs(12),
     },
     requestTitle: {
-        color: Colors.white,
+        color: Colors.text,
     },
     requestDate: {
-        color: Colors.neutral[400],
+        color: Colors.neutral[500],
     },
     detailItem: {
         marginBottom: mvs(8),

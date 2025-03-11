@@ -15,32 +15,22 @@ import { AppStackParamList } from '../constants/route';
 import { showToast } from '../utils/toast';
 import Header from '../components/Header';
 import LoadingOverlay from '../components/LoadingOverlay';
+import { Controller, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { passwordValidationSchema } from '../validations/login';
 
 const ChangePasswordScreen = () => {
     const { request, loading, error } = useApi();
     const { logout } = useAuthStore();
     const navigation = useNavigation<NavigationProp<AppStackParamList>>();
-
-    const { t } = useTranslation();
-    const [formData, setFormData] = useState({
-        currentPassword: '',
-        newPassword: '',
-        confirmPasword: '',
+    const { t } = useTranslation()
+    const { control, handleSubmit, formState: { errors } } = useForm({
+        resolver: yupResolver(passwordValidationSchema),
+        mode: 'onBlur'
     });
 
-    const handleSubmit = async () => {
-        if(formData.newPassword !== formData.confirmPasword) {
-            showToast('error', "New password and confirm password do not match.");
-            return;
-        }
-    
-        if (!formData.currentPassword.trim()) {
-            showToast('error', "Current password is required.");
-            return;
-        }
-
-
-        const { message } = await request('put', ApiStrings.CHANGE_PASSWORD, { oldPassword: formData.currentPassword, newPassword: formData.newPassword});
+    const handleSubmitForm = async (formData: { currentPassword: string, newPassword: string }) => {
+        const { message } = await request('put', ApiStrings.CHANGE_PASSWORD, { oldPassword: formData.currentPassword, newPassword: formData.newPassword });
         await logout();
         showToast('success', message);
         navigation.navigate('LoginScreen');
@@ -53,33 +43,50 @@ const ChangePasswordScreen = () => {
                 <View style={globalStyles.container}>
                     <Header title={t('changePasswordTitle')} />
                     <View style={loginStyles.loginForm}>
-                        <Input
-                            label={t('currentPasswordLabel')}
-                            placeholder={t('currentPasswordPlaceholder')}
-                            value={formData.currentPassword}
-                            onChangeText={text =>
-                                setFormData({ ...formData, currentPassword: text })
-                            }
-                            secureTextEntry
+                        <Controller
+                            name='currentPassword'
+                            control={control}
+                            render={({ field: { value, onChange } }) => (
+                                <Input
+                                    label={t('currentPasswordLabel')}
+                                    placeholder={t('currentPasswordPlaceholder')}
+                                    value={value}
+                                    onChangeText={onChange}
+                                    error={errors?.currentPassword?.message}
+                                    secureTextEntry
+                                />
+                            )}
                         />
-                        <Input
-                            label={t('newPasswordLabel')}
-                            placeholder={t('newPasswordPlaceholder')}
-                            value={formData.newPassword}
-                            onChangeText={text =>
-                                setFormData({ ...formData, newPassword: text })
-                            }
-                            secureTextEntry
+                        <Controller
+                            name='newPassword'
+                            control={control}
+                            render={({ field: { value, onChange } }) => (
+                                <Input
+                                    label={t('newPasswordLabel')}
+                                    placeholder={t('newPasswordPlaceholder')}
+                                    value={value}
+                                    onChangeText={onChange}
+                                    error={errors?.newPassword?.message}
+                                    secureTextEntry
+                                />
+                            )}
                         />
-                        <Input
-                            label={t('confirmPasswordLabel')}
-                            placeholder={t('confirmPasswordPlaceholder')}
-                            value={formData.confirmPasword}
-                            onChangeText={text =>
-                                setFormData({ ...formData, confirmPasword: text })
-                            }
-                            secureTextEntry
+                        <Controller
+                            name='confirmPassword'
+                            control={control}
+                            render={({ field: { value, onChange } }) => (
+                                <Input
+                                    label={t('confirmPasswordLabel')}
+                                    placeholder={t('confirmPasswordPlaceholder')}
+                                    value={value}
+                                    onChangeText={onChange}
+                                    error={errors?.confirmPassword?.message}
+                                    secureTextEntry
+                                />
+                            )}
                         />
+
+
                         {error && (
                             <Paragraph
                                 style={loginStyles.errorMessage}
@@ -90,10 +97,9 @@ const ChangePasswordScreen = () => {
                         )}
                         <AppButton
                             text={t('changePasswordButton')}
-                            onPress={handleSubmit}
+                            onPress={handleSubmit(handleSubmitForm)}
                             variant="primary"
                             style={{ marginTop: '55%' }}
-                            disabled={!formData.confirmPasword || !formData.currentPassword || !formData.newPassword || loading}
                         />
                     </View>
                 </View>

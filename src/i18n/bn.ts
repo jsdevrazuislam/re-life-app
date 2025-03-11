@@ -102,6 +102,7 @@ export default {
   forgotPasswordTitle: 'পাসওয়ার্ড ভুলে গেছেন?',
   forgotPasswordDescription: 'আপনার ইমেইল বা ফোন নম্বর প্রদান করুন, আমরা আপনাকে একটি ৪ সংখ্যার কোড পাঠাব।',
   emailOrPhoneLabel: 'ইমেইল বা ফোন নম্বর',
+  emailOrPhoneChange: 'ইমেইল বা ফোন নম্বর পরিবর্তন',
   emailOrPhonePlaceholder: 'আপনার ইমেইল বা ফোন নম্বর লিখুন',
   messageLoading: 'আমরা আপনার তথ্যটি অনুসন্ধান করছি, দয়া করে কিছু সময় অপেক্ষা করুন।',
   resetPasswordButton: 'পাসওয়ার্ড রিসেট করুন',

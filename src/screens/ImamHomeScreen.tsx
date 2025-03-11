@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity, Modal } from 'react-native';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { imamStyles } from '../styles/imamHomeStyles';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import { Colors } from '../configs/colors';
@@ -20,8 +19,8 @@ import { showToast } from '../utils/toast';
 import { baseURLPhoto } from '../lib/api';
 import { useTranslation } from '../hooks/useTranslation';
 import ImageComponent from '../components/ui/Image';
+import CustomTabs from '../components/CustomTabs';
 
-const Tab = createMaterialTopTabNavigator();
 
 
 
@@ -32,11 +31,15 @@ const DashboardScreen = () => {
   const [isMenuVisible, setMenuVisible] = useState(false);
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
   const route = useRoute<ImamHomeScreenRouteProp>();
-  const [activeTab, setActiveTab] = useState(route.params?.activeTab || t('beggers'));
   const toggleMenu = () => setMenuVisible(!isMenuVisible);
   const { loading } = useApi();
-  const [hasNavigatedFromAddScreen, setHasNavigatedFromAddScreen] = useState(false);
   const { logout, user, people, committees } = useAuthStore()
+  const [activeTab, setActiveTab] = useState('beggers');
+
+  const tabs = [
+    { key: 'beggers', label: t('beggers') },
+    { key: 'committees', label: t('committees') },
+  ];
 
   const handleAddPerson = () => {
     navigation.navigate('AddPoorPeopleScreen')
@@ -49,11 +52,10 @@ const DashboardScreen = () => {
   }
 
   useEffect(() => {
-    if (route.params?.activeTab && !hasNavigatedFromAddScreen) {
-      setActiveTab(route.params.activeTab === t('beggers') ? t('beggers') : t('committees'));
-      setHasNavigatedFromAddScreen(true); 
+    if (route.params?.activeTab) {
+      setActiveTab(route.params.activeTab);
     }
-  }, [route.params?.activeTab, hasNavigatedFromAddScreen]);
+  }, [route.params?.activeTab]);
 
 
   return (
@@ -65,7 +67,7 @@ const DashboardScreen = () => {
             <Paragraph level='Medium' weight='Bold' style={imamStyles.greeting}>{user?.fullName}</Paragraph>
           </View>
           <TouchableOpacity onPress={toggleMenu}>
-            {user?.profileUrl ? <ImageComponent imageStyle={{ borderRadius: 40}} source={baseURLPhoto(user?.profileUrl ?? "")} style={imamStyles.profileAvatar} /> : <EvilIcons name='user' />}
+            {user?.profileUrl ? <ImageComponent imageStyle={{ borderRadius: 40 }} source={baseURLPhoto(user?.profileUrl ?? "")} style={imamStyles.profileAvatar} /> : <EvilIcons name='user' />}
           </TouchableOpacity>
           <Modal
             visible={isMenuVisible}
@@ -111,30 +113,17 @@ const DashboardScreen = () => {
           </View>
           {
             user?.role === 'imam' && <View style={imamStyles.statCard}>
-            <Icon name="groups" size={32} color={Colors.primary} />
-            <Paragraph level='Small' weight='Medium' style={imamStyles.statLabel}>{t("totalCommittees")}</Paragraph>
-            <Heading level={5} weight='Bold' style={imamStyles.statValue}>{committees?.length}</Heading>
-          </View>
+              <Icon name="groups" size={32} color={Colors.primary} />
+              <Paragraph level='Small' weight='Medium' style={imamStyles.statLabel}>{t("totalCommittees")}</Paragraph>
+              <Heading level={5} weight='Bold' style={imamStyles.statValue}>{committees?.length}</Heading>
+            </View>
           }
         </View>
-
-        <Tab.Navigator
-          initialRouteName={activeTab}
-          screenOptions={{
-            tabBarLabelStyle: { fontSize: 14, fontWeight: 'bold' },
-            tabBarIndicatorStyle: { backgroundColor: Colors.black },
-            tabBarStyle: { backgroundColor: "transparent", elevation: 0 },
-            sceneStyle: { backgroundColor: 'transparent'}
-          }}>
-          <Tab.Screen name={t('beggers')}>
-            {() => <PeopleTab loading={loading} data={people} onAdd={handleAddPerson} />}
-          </Tab.Screen>
-          {
-            user?.role === 'imam' && <Tab.Screen name={t('committees')}>
-            {() => <CommitteeTab loading={loading} data={committees} />}
-          </Tab.Screen>
-          }
-        </Tab.Navigator>
+        <View style={{ flex: 1, marginTop: 20 }}>
+          <CustomTabs tabs={tabs} onTabChange={setActiveTab} activeTab={activeTab} />
+          {activeTab === 'beggers' && <PeopleTab loading={loading} data={people} onAdd={handleAddPerson} />}
+          {activeTab === 'committees' && <CommitteeTab loading={loading} data={committees} />}
+        </View>
       </View>
     </SafeAreaWrapper>
   );

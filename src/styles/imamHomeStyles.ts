@@ -119,7 +119,7 @@ export const imamStyles = ScaledSheet.create({
   actionButtons: {
     flexDirection: 'row',
     gap: 10,
-  },  
+  },
   infoCard: {
     backgroundColor: Colors.white,
     borderRadius: '8@ms',
@@ -184,7 +184,7 @@ export const imamStyles = ScaledSheet.create({
     marginTop: 8,
     paddingHorizontal: 10,
   },
-  
+
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -207,6 +207,64 @@ export const imamStyles = ScaledSheet.create({
     color: Colors.danger,
     textAlign: 'center',
     marginBottom: 10,
+  },
+  card: {
+    backgroundColor: Colors.white,
+    borderRadius: '8@ms',
+    marginRight: '20@ms',
+    width: '200@ms',
+    shadowColor: Colors.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: '4@ms',
+    elevation: 2,
+    marginTop: '15@ms',
+  },
+  detailsProfilePicture: { width: '100%', height: '125@ms', alignSelf: 'center', borderTopLeftRadius: '10@ms', borderTopRightRadius: '10@ms', objectFit: 'cover' },
+  flexLayout: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: '5@ms',
+    gap: '10@ms'
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  modalContent: {
+    width: '90%',
+    backgroundColor: Colors.white,
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
+  },
+  modalImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 15,
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    padding: 5,
+  },
+  closeText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: Colors.black,
+  },
+  label: {
+    width: 100,
+    color: Colors.black,
+  },
+  value: {
+    flex: 1,
+    color: Colors.black,
   },
 
 });

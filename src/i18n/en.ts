@@ -106,6 +106,7 @@ export default {
   forgotPasswordDescription:
     'Enter your email or phone number, and we will send 4 digit code.',
   emailOrPhoneLabel: 'Email or Phone Number',
+  emailOrPhoneChange: 'Change Email or Phone Number',
   emailOrPhonePlaceholder: 'Enter your email or phone number',
   resetPasswordButton: 'Reset Password',
   backToSignIn: 'Back to Sign In',

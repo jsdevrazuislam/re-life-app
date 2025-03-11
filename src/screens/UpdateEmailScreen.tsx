@@ -14,18 +14,25 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { AppStackParamList } from '../constants/route';
 import { showToast } from '../utils/toast';
 import Header from '../components/Header';
+import { Controller, useForm } from 'react-hook-form';
+import { emailValidationSchema } from '../validations/login';
+import { yupResolver } from '@hookform/resolvers/yup';
+import LoadingOverlay from '../components/LoadingOverlay';
 
 const UpdateEmailScreen = () => {
 
     const { request, loading, error } = useApi();
+    const { control, handleSubmit, formState: { errors } } = useForm({
+        resolver: yupResolver(emailValidationSchema),
+        mode: 'onBlur'
+    });
     const { logout } = useAuthStore();
     const navigation = useNavigation<NavigationProp<AppStackParamList>>();
-    const [email, setEmail] = useState<string>('');
     const { t } = useTranslation();
 
 
-    const handleSubmit = async () => {
-        const { message } = await request('put', ApiStrings.UPDATE_EMAIL, { email });
+    const handleSubmitForm = async (form: { emailOrPhone: string }) => {
+        const { message } = await request('put', ApiStrings.UPDATE_EMAIL, { emailOrPhone: form.emailOrPhone });
         await logout();
         showToast('success', message);
         navigation.navigate('LoginScreen');
@@ -34,17 +41,24 @@ const UpdateEmailScreen = () => {
     return (
         <SafeAreaWrapper>
             <ScrollView>
+                <LoadingOverlay visible={loading} />
                 <View style={globalStyles.container}>
                     <Header title={t('updateEmailTitle')} />
                     <View style={loginStyles.loginForm}>
-                        <Input
-                            label={t('emailOrPhoneLabel')}
-                            placeholder={t('emailOrPhonePlaceholder')}
-                            value={email}
-                            onChangeText={setEmail}
-                            keyboardType="email-address"
+                        <Controller
+                            name='emailOrPhone'
+                            control={control}
+                            render={({ field: { value, onChange } }) => (
+                                <Input
+                                    label={t('emailOrPhoneLabel')}
+                                    placeholder={t('emailOrPhonePlaceholder')}
+                                    value={value}
+                                    onChangeText={onChange}
+                                    error={errors?.emailOrPhone?.message}
+                                    keyboardType="email-address"
+                                />
+                            )}
                         />
-
                         {error && (
                             <Paragraph
                                 style={loginStyles.errorMessage}
@@ -55,11 +69,10 @@ const UpdateEmailScreen = () => {
                         )}
                         <AppButton
                             text={t('updateEmailButton')}
-                            onPress={handleSubmit}
+                            onPress={handleSubmit(handleSubmitForm)}
                             variant="primary"
                             loading={loading}
                             style={{ marginTop: '110%' }}
-                            disabled={!email || loading}
                         />
                     </View>
                 </View>

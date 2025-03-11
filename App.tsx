@@ -1,13 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect } from 'react';
 import AppEntryPoint from './src/AppEntryPoint';
 import 'react-native-gesture-handler';
 import { useAuthStore } from './src/store/store';
 import SplashScreen from 'react-native-splash-screen';
 import SplashScreenComponent from './src/screens/SplashScreen';
-import io from "socket.io-client";
-import { SERVER_URL } from './src/lib/api';
-import notifee, { AndroidImportance, AuthorizationStatus, EventType } from '@notifee/react-native';
+import notifee, { AndroidImportance, AndroidStyle, AuthorizationStatus, EventType } from '@notifee/react-native';
 import messaging from '@react-native-firebase/messaging';
+import { useSocketStore } from './src/hooks/useSocketStore';
 
 async function setupNotificationChannel() {
   await notifee.createChannel({
@@ -26,13 +25,26 @@ const showForegroundNotification = async (title: string, message: string) => {
       pressAction: {
         id: 'default',
       },
+      style: {
+        type: AndroidStyle.BIGTEXT, 
+        text: message,
+      },
     },
   });
 };
 
 const App = () => {
-  const { loadUserFromStorage, accessToken, isFirstTime, isLoading, role, userTempId, user, status } = useAuthStore();
-  const socketRef = useRef<any>(null);
+  const { loadUserFromStorage, logout, isFirstTime, isLoading, role, userTempId, user, status } = useAuthStore();
+  const { initializeSocket, disconnectSocket, socket } = useSocketStore();
+
+  useEffect(() => {
+    initializeSocket();
+    return () => {
+      disconnectSocket();
+    };
+  }, [user]);;
+
+
 
   async function requestPermissions() {
     const settings = await notifee.requestPermission();
@@ -89,28 +101,31 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    if (!accessToken || !user?._id) return;
+    socket?.on("kycStatusUpdated", (notification: Notification) => {
+      if (user) {
+        loadUserFromStorage();
+        showForegroundNotification(notification.title, notification.message);
+      }
+    })
+  }, [socket]);
 
-    if (!socketRef.current) {
-      socketRef.current = io(SERVER_URL, {
-        transports: ['websocket'],
-        auth: { token: accessToken },
-      });
+  useEffect(() => {
+    socket?.on("USER_BLOCKED", (notification: { message:string, title:string }) => {
+      if (user) {
+        logout()
+        loadUserFromStorage();
+        showForegroundNotification(notification.title, notification.message);
+      }
+    })
+  }, [socket]);
 
-      socketRef.current.on("kycStatusUpdated", (notification: Notification) => {
-        if (user) {
-          loadUserFromStorage();
-          showForegroundNotification(notification.title, notification.message);
-        }
-        console.log("kycStatusUpdated", notification);
-      });
-    }
-
-    return () => {
-      socketRef.current?.disconnect();
-      socketRef.current = null;
-    };
-  }, [accessToken, user]);
+  useEffect(() => {
+    socket?.on("USER_DELETE", (notification: { message:string, title:string }) => {
+        logout()
+        loadUserFromStorage();
+        showForegroundNotification(notification.title, notification.message);
+    })
+  }, [socket]);
 
   useEffect(() => {
     if (!isLoading) {

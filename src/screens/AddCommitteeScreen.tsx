@@ -102,7 +102,7 @@ const AddCommitteeScreen = () => {
     setCommittees(newCommittees);
     setTotalCommittees(totalCommittees + 1);
     showToast('success', message)
-    navigation.navigate('ImamHomeScreen', { activeTab: t('committees') })
+    navigation.navigate('ImamHomeScreen', { activeTab: 'committees' })
   };
 
   return (

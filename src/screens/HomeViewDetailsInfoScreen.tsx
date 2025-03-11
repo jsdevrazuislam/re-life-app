@@ -12,7 +12,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { Colors } from '../configs/colors';
 import Paragraph from '../components/ui/Paragraph';
 import Heading from '../components/ui/Heading';
-import { NavigationProp, useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
+import { NavigationProp, useNavigation, useRoute } from '@react-navigation/native';
 import { AppStackParamList } from '../constants/route';
 import ImageView from 'react-native-image-zoom-viewer';
 import ImageComponent from '../components/ui/Image';
