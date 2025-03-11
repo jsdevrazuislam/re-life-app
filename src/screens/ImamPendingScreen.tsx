@@ -44,7 +44,7 @@ const ImamPendingScreen = () => {
 
 
     return (
-        <SafeAreaWrapper bg={'#DDEBFE'}>
+        <SafeAreaWrapper bg={Colors.secondaryLight}>
             <View style={imamStyles.kycContainer}>
                 <Animated.View style={{ transform: [{ rotate: rotation }] }}>
                     <Icon

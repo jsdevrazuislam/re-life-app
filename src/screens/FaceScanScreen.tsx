@@ -126,7 +126,7 @@ const FaceScanScreen = () => {
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-            <Ionicons name="arrow-back" size={28} color="#fff" />
+            <Ionicons name="arrow-back" size={28} color={Colors.white} />
         </TouchableOpacity>
 
             {selectedImage ? (
@@ -163,7 +163,7 @@ const FaceScanScreen = () => {
 
             {isScanning && (
                 <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color="#fff" />
+                    <ActivityIndicator size="large" color={Colors.white} />
                     <Paragraph level='Small' style={styles.loadingText}>Scanning...</Paragraph>
                 </View>
             )}
@@ -177,7 +177,7 @@ const FaceScanScreen = () => {
                     <Paragraph weight='Bold' level='Small' style={styles.resultText}>
                         {person.message}
                     </Paragraph>
-                    <TouchableOpacity style={{ backgroundColor: Colors.secondary, padding: 10, marginTop: 10}} onPress={() => navigation.navigate('PoorPeopleView', { item: person.data?.poorPeople })}>
+                    <TouchableOpacity style={{ backgroundColor: Colors.secondary, padding: 10, marginTop: 10}} onPress={() => navigation.navigate('HomeViewDetailsInfo', { item: person.data?.poorPeople })}>
                         <Paragraph weight='Bold' level='Small' style={styles.resultText}>
                             {t('details')}
                         </Paragraph>
@@ -191,7 +191,7 @@ const FaceScanScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#000',
+        backgroundColor: Colors.black,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: '#fff',
+        color: Colors.white,
     },
     imageContainer: {
         width: '100%',
@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     loadingText: {
-        color: '#fff',
+        color: Colors.white,
         marginTop: 10,
     },
     resultButton: {
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
     },
     resultText: {
-        color: '#fff',
+        color: Colors.white,
         textAlign: 'center',
         marginTop: 2
     },

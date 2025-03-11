@@ -13,10 +13,9 @@ import Heading from './ui/Heading';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 
 
-const HousingScreen = () => {
+const HousingScreen = ({ data }: { data: HomeSearchResultDatas}) => {
 
   const route = useRoute<ImamHomeScreenRouteProp>();
-  const data = route.params?.data as HomeSearchResultDatas;
   const housingInfo = data.poorPeopleInformations.homeDetails;
   const [visible, setVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');

@@ -14,6 +14,7 @@ const ApiStrings = {
     KYC_VERIFY:'/users/kyc-verify',
     REQUEST_TO_ADMIN:'/masjids/request-access',
     GET_MASJIDS_NAME:'/masjids/masjid-name',
+    GET_MASJIDS_MODERATOR:'/masjids/moderator/info',
     GET_MASJID_DETAILS: (id:string) => `/masjids/${id}/details`,
     GET_MASJID_DETAILS_FOR_MODERATOR:`/masjids/moderator/stats`,
     CREATE_PEOPLE: (ID:string) => `poor-people/${ID}/poor-person`,

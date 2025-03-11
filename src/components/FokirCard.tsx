@@ -13,7 +13,7 @@ const FokirCard: FC<FokirCardProps> = ({ data }) => {
   const { t } = useTranslation()
 
   return (
-    <View style={cardStyles.flexLayout}>
+    <View style={[cardStyles.flexLayout, cardStyles.cardContainer]}>
       <ImageComponent imageStyle={{ borderRadius: 5 }} source={baseURLPhoto(data?.poorPeopleInformations?.photoUrl)} style={cardStyles.image} />
       <View style={cardStyles.textContainer}>
         <View style={{ maxWidth: '90%', width: '100%' }}>

@@ -51,10 +51,7 @@ export type AppStackParamList = {
     }; 
     SignupScreen: undefined; 
     HomeViewDetailsInfo: {
-        item:HomeSearchResultDatas
-    }; 
-    PoorPeopleView: {
-        item:PoorPeople
+        item:any
     }; 
     KycSuccessScreen: undefined; 
     KycScreen: undefined; 

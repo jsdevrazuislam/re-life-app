@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, StyleSheet, TouchableOpacity, FlatList, RefreshControl, Image } from 'react-native';
+import { View, StyleSheet, FlatList, RefreshControl, Image } from 'react-native';
 import { ms, mvs } from 'react-native-size-matters';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
@@ -13,6 +13,7 @@ import { AppStackParamList } from '../constants/route';
 import { useApi } from '../hooks/useApi';
 import ApiStrings from '../lib/apis_string';
 import globalStyles from '../styles/global.style';
+import { formatValue } from '../utils/formatValue';
 
 const RequestHistoryScreen = () => {
     const navigation = useNavigation<NavigationProp<AppStackParamList>>();
@@ -28,9 +29,9 @@ const RequestHistoryScreen = () => {
         setRefreshing(false);
     };
 
-    // useEffect(() => {
-    //     fetchRequests();
-    // }, []);
+    useEffect(() => {
+        fetchRequests();
+    }, []);
 
     const onRefresh = useCallback(() => {
         fetchRequests();
@@ -66,7 +67,7 @@ const RequestHistoryScreen = () => {
                         {t('previousValue')}: {change.previousValue}
                     </Paragraph>
                     <Paragraph level='Small' weight='Medium' style={styles.detailValue}>
-                        {t('modifiedValue')}: {change.modifiedValue}
+                        {t('modifiedValue')}: {formatValue(change.modifiedValue)}
                     </Paragraph>
                 </View>
             ))}
@@ -81,12 +82,6 @@ const RequestHistoryScreen = () => {
                     {item.status}
                 </Paragraph>
             </View>
-
-            <TouchableOpacity onPress={() => console.log('View')} style={styles.viewDetailsButton}>
-                <Paragraph level='Small' style={styles.viewDetailsText}>
-                    {t('viewDetails')}
-                </Paragraph>
-            </TouchableOpacity>
         </View>
     );
 
@@ -126,20 +121,20 @@ const RequestHistoryScreen = () => {
 const styles = StyleSheet.create({
     
     headerTitle: {
-        color: '#1A1A1A',
+        color: Colors.text,
         marginTop: mvs(4),
     },
     subtitle: {
-        color: '#666666',
+        color: Colors.textSecondary,
         marginBottom: mvs(16),
     },
     card: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: Colors.white,
         borderRadius: ms(8),
         padding: ms(16),
         marginBottom: mvs(16),
         borderWidth: 1,
-        borderColor: '#E0E0E0',
+        borderColor: Colors.border,
     },
     emptyStateImage:{
         width: '100%',
@@ -150,21 +145,20 @@ const styles = StyleSheet.create({
         marginBottom: mvs(12),
     },
     requestTitle: {
-        color: '#1A1A1A',
+        color: Colors.white,
     },
     requestDate: {
-        color: '#666666',
+        color: Colors.neutral[400],
     },
     detailItem: {
         marginBottom: mvs(8),
     },
     detailLabel: {
-        color: '#666666',
+        color: Colors.neutral[600],
         width: ms(64),
     },
     detailValue: {
-        color: '#1A1A1A',
-        flex: 1,
+        color: Colors.text,
     },
     statusContainer: {
         alignSelf: 'flex-start',
@@ -174,10 +168,10 @@ const styles = StyleSheet.create({
         marginTop: mvs(12),
     },
     approvedStatus: {
-        backgroundColor: '#E8F5E9',
+        backgroundColor: Colors.success,
     },
     pendingStatus: {
-        backgroundColor: '#FFF3E0',
+        backgroundColor: Colors.warning,
     },
     statusText: {
         fontSize: ms(12),
@@ -196,42 +190,42 @@ const styles = StyleSheet.create({
         marginTop: mvs(100),
     },
     emptyStateText: {
-        color: '#1A1A1A',
+        color: Colors.text,
         textAlign: 'center',
         marginBottom: mvs(4),
     },
     emptyStateSubText: {
-        color: '#666666',
+        color: Colors.textSecondary,
         textAlign: 'center',
     },
     skeletonTitle: {
         width: '60%',
         height: 20,
-        backgroundColor: '#E0E0E0',
+        backgroundColor: Colors.border,
         marginBottom: mvs(8),
     },
     skeletonSubtitle: {
         width: '40%',
         height: 15,
-        backgroundColor: '#E0E0E0',
+        backgroundColor: Colors.border,
         marginBottom: mvs(12),
     },
     skeletonLine: {
         width: '80%',
         height: 15,
-        backgroundColor: '#E0E0E0',
+        backgroundColor: Colors.border,
         marginBottom: mvs(8),
     },
     skeletonStatus: {
         width: '30%',
         height: 20,
-        backgroundColor: '#E0E0E0',
+        backgroundColor: Colors.border,
         marginTop: mvs(12),
     },
     skeletonButton: {
         width: '50%',
         height: 20,
-        backgroundColor: '#E0E0E0',
+        backgroundColor: Colors.border,
         marginTop: mvs(8),
     },
 });

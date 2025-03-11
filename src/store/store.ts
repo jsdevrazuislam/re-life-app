@@ -71,13 +71,14 @@ export const useAuthStore = create<AuthState>(set => ({
 
       if (accessToken) {
         const { data } = await api.get(ApiStrings.ME);
-        if (!data?.data?.fcmToken || data?.data?.fcmToken !== token) {
-          await api.post(ApiStrings.SAVE_FCM_TOKEN, { userId: data?.data?._id, fcmToken: token })
+        const user = data?.data;
+        if (!user.fcmToken || user.fcmToken !== token) {
+          await api.post(ApiStrings.SAVE_FCM_TOKEN, { userId: user._id, fcmToken: token })
           console.log("FCM Token:", token);
         }
-        if (data?.data?.kycStatus === 'verified') {
-          const { data: imamData } = await api.get(ApiStrings.GET_MASJID_DETAILS(data?.data?.masjid?._id || ''));
-          const { data: notifications } = await api.get(ApiStrings.GET_NOTIFICATIONS(data?.data?._id || ''));
+        if (user.kycStatus === 'verified') {
+          const { data: imamData } = user.role === 'moderator' ? await api.post(ApiStrings.GET_MASJID_DETAILS_FOR_MODERATOR, { masjids : user.masjids}) :  await api.get(ApiStrings.GET_MASJID_DETAILS(user.masjid?._id || ''));
+          const { data: notifications } = await api.get(ApiStrings.GET_NOTIFICATIONS(user._id || ''));
           set({ committees: imamData?.data?.committees, people: imamData?.data?.poorPeople, totalPeople: imamData?.data?.totalPoorPeople, totalCommittees: imamData?.data?.totalCommittees, notifications: notifications?.data });
         }
 

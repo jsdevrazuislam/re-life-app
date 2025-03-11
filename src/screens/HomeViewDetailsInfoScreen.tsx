@@ -12,27 +12,36 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { Colors } from '../configs/colors';
 import Paragraph from '../components/ui/Paragraph';
 import Heading from '../components/ui/Heading';
-import { NavigationProp, useNavigation, useRoute } from '@react-navigation/native';
+import { NavigationProp, useIsFocused, useNavigation, useRoute } from '@react-navigation/native';
 import { AppStackParamList } from '../constants/route';
 import ImageView from 'react-native-image-zoom-viewer';
 import ImageComponent from '../components/ui/Image';
 import { mvs } from 'react-native-size-matters';
 import PersonalScreen from '../components/PersonalScreen';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import HousingScreen from '../components/HousingScreen';
 import NeedsScreen from '../components/NeedsScreen';
 import DocumentsScreen from '../components/DocumentsScreen';
+import { useAuthStore } from '../store/store';
+import CustomTabs from '../components/CustomTabs';
 
-const Tab = createMaterialTopTabNavigator();
 
 
 const HomeViewDetailsInfoScreen = () => {
   const { t } = useTranslation();
+  const { accessToken } = useAuthStore()
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
   const route = useRoute<HomeViewDetailsInfoRouteProp>();
   const singleData = route?.params?.item as HomeSearchResultDatas;
   const [visible, setVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
+  const [activeTab, setActiveTab] = useState('personal');
+
+  const tabs = [
+    { key: 'personal', label: t('personal') },
+    { key: 'housing', label: t('housing') },
+    { key: 'needs', label: t('needs') },
+    { key: 'documents', label: t('documents') },
+  ];
 
   const openImage = (imageUrl: string) => {
     if (imageUrl) {
@@ -53,7 +62,6 @@ const HomeViewDetailsInfoScreen = () => {
     Linking.openURL(phoneNumber);
   }
 
-
   return (
     <SafeAreaWrapper>
       <View style={globalStyles.container}>
@@ -62,9 +70,9 @@ const HomeViewDetailsInfoScreen = () => {
           <Paragraph level="Medium" weight="Bold" style={homeViewDetailsStyles.headerTitle}>
             {t('details')}
           </Paragraph>
-          <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
+          {!accessToken ? <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
             <Icon name="user-circle" size={24} />
-          </TouchableOpacity>
+          </TouchableOpacity> : <View></View>}
         </View>
         <View style={homeViewDetailsStyles.mainContent}>
           <Heading level={5} weight='Bold'>{singleData.name}</Heading>
@@ -141,24 +149,15 @@ const HomeViewDetailsInfoScreen = () => {
             </TouchableOpacity>
           )} imageUrls={[{ url: selectedImage }]} onCancel={() => setVisible(false)} enableSwipeDown />
         </Modal>
-        <View style={{ flex: 1 }}>
-          <Tab.Navigator
-            screenOptions={{
-              tabBarStyle: { backgroundColor: '#fff', paddingHorizontal: 5, height: 45, elevation: 0 },
-              tabBarLabelStyle: { fontSize: 12, fontWeight: 'bold', padding: 0, margin: 0 },
-              tabBarIndicatorStyle: {
-                backgroundColor: Colors.primary,
-                height: 3,
-              },
-              tabBarActiveTintColor: Colors.primary,
-              tabBarInactiveTintColor: Colors.text,
-            }}
-          >
-            <Tab.Screen initialParams={{ data: singleData }} name={t('personal')} component={PersonalScreen} />
-            <Tab.Screen initialParams={{ data: singleData }} name={t('housing')} component={HousingScreen} />
-            <Tab.Screen initialParams={{ data: singleData }} name={t('needs')} component={NeedsScreen} />
-            <Tab.Screen initialParams={{ data: singleData }} name={t('documents')} component={DocumentsScreen} />
-          </Tab.Navigator>
+        <View style={{ flex: 1, marginTop: 20 }}>
+          <CustomTabs tabs={tabs} onTabChange={setActiveTab} activeTab={activeTab} />
+
+          <View style={{ flex: 1, padding: 10 }}>
+            {activeTab === 'personal' && <PersonalScreen data={singleData} />}
+            {activeTab === 'housing' && <HousingScreen data={singleData} />}
+            {activeTab === 'needs' && <NeedsScreen data={singleData} />}
+            {activeTab === 'documents' && <DocumentsScreen data={singleData} />}
+          </View>
         </View>
 
       </View>

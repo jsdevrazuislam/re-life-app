@@ -234,6 +234,9 @@ export default {
   phoneNumberPlaceholder: 'ফোন নম্বর লিখুন',
   profession: 'পেশা',
   professionPlaceholder: 'পেশা লিখুন',
+  vikhukEditRequesttitle: "ভিক্ষুক তথ্য সম্পাদনা করার জন্য অনুরোধ",
+  vikhukEditRequestdescription: "আপনি এখানে ভিক্ষুকের তথ্য আপডেট করার জন্য অনুরোধ করতে পারবেন। মনে রাখবেন, কোনো ভুল তথ্য আপডেটের জন্য দিলে সেটি গ্রহণ করা হবে না, আমাদের কাছে প্রতিবেদন করে ব্যাখ্যা করতে হবে কেন আপনি তথ্য সম্পাদনা করতে চান।",
+
 
   // Monthly Needs
   monthlyNeedsTitle: 'মাসিক চাহিদা',
@@ -302,6 +305,8 @@ export default {
   searchButton: 'অনুসন্ধান',
   noResultsFound: 'কোনো ফলাফল পাওয়া যায়নি। অনুগ্রহ করে সঠিক তথ্য দিয়ে আবার চেষ্টা করুন।',
   searchAgainSuggestion: 'আপনার অনুসন্ধানের সাথে মিলে এমন কোনো তথ্য পাওয়া যায়নি। অন্য কীওয়ার্ড দিয়ে আবার চেষ্টা করুন।',
+  selectMasjidForInfo: "আপনি কোন মসজিদের অধীনে এই তথ্যটি যোগ করতে চান সেটি নির্বাচন করুন।",
+
 
   masjidName: 'মসজিদের নাম',
   masjidNamePlaceholder1: 'মসজিদের নাম নির্বাচন করুন',

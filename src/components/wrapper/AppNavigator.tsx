@@ -10,7 +10,6 @@ import { AppRoutes } from '../../constants/route';
 import SignupScreen from '../../screens/SignupScreen';
 import ForgotPasswordScreen from '../../screens/ForgotPasswordScreen';
 import HomeViewDetailsInfoScreen from '../../screens/HomeViewDetailsInfoScreen';
-import PoorPeopleViewScreen from '../../screens/PoorPeopleViewScreen';
 import OtpScreen from '../../screens/OtpScreen';
 import ImamHomeScreen from '../../screens/ImamHomeScreen';
 import AddCommitteeScreen from '../../screens/AddCommitteeScreen';
@@ -82,7 +81,6 @@ const AppNavigator = ({ role, status, userTempId, user, isFirstTime }: { role: s
         <Stack.Screen name={AppRoutes.SIGNUP_SCREEN} component={SignupScreen} />
         <Stack.Screen name={AppRoutes.FORGOT_PASSWORD} component={ForgotPasswordScreen} />
         <Stack.Screen name={AppRoutes.HOME_VIEW_DETAILS_INFO} component={HomeViewDetailsInfoScreen} />
-        <Stack.Screen name={AppRoutes.POOR_PEOPLE_VIEW} component={PoorPeopleViewScreen} />
         <Stack.Screen name={AppRoutes.OTP_SCREEN} component={OtpScreen} />
         <Stack.Screen name={AppRoutes.KYC_VERIFY_SCREEN} component={KYCVerifyScreen} />
         <Stack.Screen name={AppRoutes.KYC_SCREEN} component={KycScreen} />
@@ -110,7 +108,6 @@ const AppNavigator = ({ role, status, userTempId, user, isFirstTime }: { role: s
         <Stack.Screen name={AppRoutes.KYC_VERIFY_SCREEN} component={KYCVerifyScreen} />
         <Stack.Screen name={AppRoutes.KYC_SCREEN} component={KycScreen} />
         <Stack.Screen name={AppRoutes.HOME_VIEW_DETAILS_INFO} component={HomeViewDetailsInfoScreen} />
-        <Stack.Screen name={AppRoutes.POOR_PEOPLE_VIEW} component={PoorPeopleViewScreen} />
       </Stack.Navigator>
     );
   }

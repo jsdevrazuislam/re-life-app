@@ -234,6 +234,9 @@ export default {
   medicalNeeds: "Medical Needs",
   totalFinancialNeeds: "Total Financial Needs",
   beggarIdCardAndFamilyInfo: "Beggar's ID Card and Family Information Picture",
+  selectMasjidForInfo: "Please select the Masjid under which you want to add this information.",
+  vikhukEditRequesttitle: "Request to Edit Vikhuk Information",
+  vikhukEditRequestdescription: "You can request to update the Vikhuk's information here. Keep in mind that if any incorrect information is updated, it will not be accepted, and you will need to report to us explaining why you want to edit the information.",
 
 
   // Monthly Needs

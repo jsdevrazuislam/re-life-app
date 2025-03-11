@@ -1,7 +1,6 @@
 import React from "react";
-import { View, Text, ActivityIndicator, Modal } from "react-native";
+import { View, ActivityIndicator, Modal } from "react-native";
 import { ScaledSheet } from "react-native-size-matters";
-import Icon from "react-native-vector-icons/Ionicons";
 
 interface LoadingOverlayProps {
   visible: boolean;
@@ -15,9 +14,7 @@ const LoadingOverlay: React.FC<LoadingOverlayProps> = ({ visible, message = "আ
     <Modal transparent animationType="fade" visible={visible}>
       <View style={styles.overlay}>
         <View style={styles.container}>
-          <Icon name="cloud-upload-outline" size={40} color="white" />
           <ActivityIndicator size="large" color="white" style={styles.loader} />
-          <Text style={styles.message}>{message}</Text>
         </View>
       </View>
     </Modal>
@@ -36,7 +33,7 @@ const styles = ScaledSheet.create({
     zIndex: 1000,
   },
   container: {
-    backgroundColor: "#333",
+    // backgroundColor: Colors.black,
     padding: "20@ms",
     borderRadius: "10@ms",
     alignItems: "center",

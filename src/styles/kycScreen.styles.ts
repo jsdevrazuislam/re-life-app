@@ -43,20 +43,20 @@ const styles = ScaledSheet.create({
     width: '48%',
     height: '10@s',
     borderRadius: '3@s',
-    backgroundColor: '#EEE',
+    backgroundColor: Colors.border,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: '20@ms'
   },
   activeStep: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: Colors.primary,
   },
   stepText: {
     fontSize: '14@ms',
-    color: '#666',
+    color: Colors.text,
   },
   activeStepText: {
-    color: '#FFF',
+    color: Colors.white,
   },
   formContainer: {
     marginTop: '30@s',
@@ -66,12 +66,12 @@ const styles = ScaledSheet.create({
   },
   inputLabel: {
     fontSize: '14@ms',
-    color: '#333',
+    color: Colors.text,
     marginBottom: '8@vs',
   },
   input: {
     borderWidth: 1,
-    borderColor: '#DDD',
+    borderColor: Colors.border,
     borderRadius: '8@s',
     padding: '12@s',
     fontSize: '14@ms',
@@ -88,7 +88,7 @@ const styles = ScaledSheet.create({
     marginTop: '5@vs',
   },
   docTypeButton: {
-    backgroundColor: '#BADCF0',
+    backgroundColor: Colors.secondaryLight,
     paddingVertical: '8@vs',
     paddingHorizontal: '15@s',
     borderRadius: '5@ms'
@@ -108,7 +108,7 @@ const styles = ScaledSheet.create({
     marginTop: '20@vs',
   },
   uploadDescription: {
-    color: '#666',
+    color: Colors.text,
     marginBottom: '20@vs',
     lineHeight: '20@vs',
   },

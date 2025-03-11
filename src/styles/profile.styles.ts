@@ -1,4 +1,5 @@
 import { ScaledSheet } from "react-native-size-matters";
+import { Colors } from "../configs/colors";
 
 const profileStyles = ScaledSheet.create({
     headerNavigation: {
@@ -19,7 +20,7 @@ const profileStyles = ScaledSheet.create({
         width: '100%',
         height: '100%',
         borderRadius: '50@ms',
-        backgroundColor: "#ddd",
+        backgroundColor: Colors.placeholder,
         overflow:'hidden'
     },
     relative:{
@@ -34,7 +35,7 @@ const profileStyles = ScaledSheet.create({
     placeholder: {
         width: "100%",
         height: "100%",
-        backgroundColor: "#ccc",
+        backgroundColor: Colors.placeholder,
       },
     image: {
         width: "100%",

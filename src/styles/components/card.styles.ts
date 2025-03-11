@@ -51,4 +51,12 @@ export const cardStyles = ScaledSheet.create({
   showPeople: {
     color: Colors.primary,
   },
+  cardContainer:{
+    elevation: 3,
+    shadowColor: Colors.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    borderRadius: 8,
+  }
 });

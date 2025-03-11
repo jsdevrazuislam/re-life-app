@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, Platform, Alert, Linking, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, Text, ScrollView, Platform, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import SelectDropdown from '../components/ui/Select';
 import Input from '../components/ui/AppInput';
-import { UploadArea } from './KycScreen';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import globalStyles from '../styles/global.style';
 import styles from '../styles/addPeople.styles';
@@ -26,21 +25,19 @@ import { useTranslation } from '../hooks/useTranslation';
 import { NavigationProp, useNavigation, useRoute } from '@react-navigation/native';
 import { AppStackParamList } from '../constants/route';
 import PhoneNumberInput from '../components/ui/PhoneNumberInput';
-import { requestAndroidPermission } from '../utils/permission';
-import * as ImagePicker from 'react-native-image-picker';
 import { showToast } from '../utils/toast';
 import { useApi } from '../hooks/useApi';
 import ApiStrings from '../lib/apis_string';
 import { useAuthStore } from '../store/store';
-import Header from '../components/Header';
 import LoadingOverlay from '../components/LoadingOverlay';
+import BackButton from '../components/BackButton';
 
 const EditPeopleScreen = () => {
     const { t } = useTranslation();
     const route = useRoute<ImamHomeScreenRouteProp>();
     const poorPeople = route.params?.item as PoorPeople;
     const { user } = useAuthStore();
-    const [formData, setFormData] = useState<AddPoorPeopleScreenFormState>({
+    const [formData, setFormData] = useState({
         name: '',
         age: '',
         gender: '',
@@ -68,15 +65,6 @@ const EditPeopleScreen = () => {
         treatments: '',
         financialNeeds: '',
         notes: '',
-        photoUrl: null,
-        idProofFront: null,
-        idProofBack: null,
-        idProofFrontWife: null,
-        idProofBackWife: null,
-        idProofFrontHusband: null,
-        idProofBackHusband: null,
-        idProofBackFather: null,
-        idProofFrontFather: null,
         fieldType: '',
         reason: ''
 
@@ -101,7 +89,7 @@ const EditPeopleScreen = () => {
 
     const handleSubmit = async () => {
 
-        if(!formData?.reason || !formData?.fieldType) return;
+        if (!formData?.reason || !formData?.fieldType) return;
 
         const excludedFields = ['herProfession', 'fieldType', 'reason'];
 
@@ -117,7 +105,10 @@ const EditPeopleScreen = () => {
             fieldType: formData?.fieldType === 'কমিটির বিবরণ' ? 'committeeDetails' : 'poorPeopleInformations',
             reason: formData?.reason,
             recordId: poorPeople._id,
-            updateData
+            updateData:{
+                ...updateData,
+                childrenDetails
+            }
         }
 
         const { message } = await request(
@@ -132,65 +123,6 @@ const EditPeopleScreen = () => {
 
     };
 
-    const handleImagePicker = async (
-        field:
-            | 'idProofFront'
-            | 'idProofBack'
-            | 'idProofFrontWife'
-            | 'idProofBackWife'
-            | 'photoUrl'
-            | 'idProofFrontHusband'
-            | 'idProofBackHusband'
-            | 'idProofFrontFather'
-            | 'idProofBackFather'
-    ) => {
-        if (Platform.OS === 'android') {
-            const hasPermission = await requestAndroidPermission();
-            if (!hasPermission) {
-                Alert.alert(
-                    'Permission Denied',
-                    'Please enable photo access in Settings to continue.',
-                    [
-                        { text: 'Cancel', style: 'cancel' },
-                        {
-                            text: 'Open Settings',
-                            onPress: () => Linking.openSettings(),
-                        },
-                    ],
-                );
-                return;
-            }
-        }
-
-        ImagePicker.launchImageLibrary(
-            { mediaType: 'photo', quality: 0.8 },
-            response => {
-                if (response.didCancel) return;
-                if (response.errorMessage) {
-                    showToast('error', response.errorMessage);
-                    return;
-                }
-                if (response.assets && response.assets.length > 0) {
-                    setFormData({ ...formData, [field]: response.assets[0] });
-                }
-            },
-        );
-    };
-
-    const removeImage = (
-        field:
-            | 'idProofFront'
-            | 'idProofBack'
-            | 'idProofFrontWife'
-            | 'idProofBackWife'
-            | 'photoUrl'
-            | 'idProofFrontHusband'
-            | 'idProofBackHusband'
-            | 'idProofFrontFather'
-            | 'idProofBackFather'
-    ) => {
-        setFormData({ ...formData, [field]: '' });
-    };
 
     return (
         <SafeAreaWrapper>
@@ -206,18 +138,17 @@ const EditPeopleScreen = () => {
                     <LoadingOverlay visible={loading} />
                     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                         <View style={globalStyles.container}>
-                            <Header title={t('addBegger')} />
-                            {/* Photo Upload */}
-                            <View style={{ marginTop: 20 }}>
-                                <UploadArea
-                                    title={t('beggerPhoto')}
-                                    imageUri={formData.photoUrl}
-                                    handlePress={() => handleImagePicker('photoUrl')}
-                                    handleRemove={() => removeImage('photoUrl')}
-                                />
-                            </View>
+                            <BackButton />
+                            <Heading level={6} weight="Bold" style={[styles.sectionTitle, { marginTop: 20 }]}>
+                                {t('vikhukEditRequesttitle')}
+                            </Heading>
+                            <Paragraph
+                                level="Small"
+                                weight="Medium"
+                                style={styles.sectionDescription}>
+                                {t('vikhukEditRequestdescription')}
+                            </Paragraph>
 
-                            {/* Basic Information */}
                             <Input
                                 label={t('beggerName')}
                                 value={formData.name}
@@ -255,167 +186,159 @@ const EditPeopleScreen = () => {
                                 rootStyle={{ marginBottom: 10 }}
                             />
 
-                            {['বিবাহিত', 'বিচ্ছেদপ্রাপ্ত', 'বিধবা/বিপত্নীক'].includes(formData.marriageStatus) && (
-                                <>
-                                    <SelectDropdown
-                                        label={formData.gender === 'পুরুষ' ? t('isWifeDead') : t('isHusbandDead')}
-                                        value={
-                                            formData.gender === 'পুরুষ'
-                                                ? formData.isWifeDead
-                                                : formData.isHusbandDead
-                                        }
-                                        onChange={value =>
-                                            setFormData({
-                                                ...formData,
-                                                ...(formData.gender === 'পুরুষ'
-                                                    ? { isWifeDead: value }
-                                                    : { isHusbandDead: value }),
-                                            })
-                                        }
-                                        data={yesNoOptions}
-                                        placeholder={formData.gender === 'পুরুষ' ? t('isWifeDead') : t('isHusbandDead')}
-                                        rootStyle={{ marginBottom: 10 }}
-                                    />
+                            <SelectDropdown
+                                label={formData.gender === 'পুরুষ' ? t('isWifeDead') : t('isHusbandDead')}
+                                value={
+                                    formData.gender === 'পুরুষ'
+                                        ? formData.isWifeDead
+                                        : formData.isHusbandDead
+                                }
+                                onChange={value =>
+                                    setFormData({
+                                        ...formData,
+                                        ...(formData.gender === 'পুরুষ'
+                                            ? { isWifeDead: value }
+                                            : { isHusbandDead: value }),
+                                    })
+                                }
+                                data={yesNoOptions}
+                                placeholder={formData.gender === 'পুরুষ' ? t('isWifeDead') : t('isHusbandDead')}
+                                rootStyle={{ marginBottom: 10 }}
+                            />
 
-                                    {(formData.isWifeDead || formData.isHusbandDead) === 'না' && (
-                                        <SelectDropdown
-                                            label={formData.gender === 'পুরুষ' ? t('wifeProfession') : t('husbandProfession')}
-                                            value={
-                                                formData.gender === 'পুরুষ'
-                                                    ? formData.wifeProfession
-                                                    : formData.husbandProfession
-                                            }
-                                            onChange={value =>
-                                                setFormData({
-                                                    ...formData,
-                                                    ...(formData.gender === 'পুরুষ'
-                                                        ? { wifeProfession: value }
-                                                        : { husbandProfession: value }),
-                                                })
-                                            }
-                                            data={professions}
-                                            search={true}
-                                            searchPlaceholder="Enter your search"
-                                            placeholder={formData.gender === 'পুরুষ' ? t('wifeProfessionPlaceholder') : t('husbandProfessionPlaceholder')}
-                                            rootStyle={{ marginBottom: 10 }}
-                                        />
-                                    )}
-
-                                    <SelectDropdown
-                                        label={t('hasChildren')}
-                                        value={formData.hasChildren}
-                                        onChange={value => setFormData({ ...formData, hasChildren: value })}
-                                        data={yesNoOptions}
-                                        placeholder={t('selectPlaceholder')}
-                                        rootStyle={{ marginBottom: 10 }}
-                                    />
-                                </>
+                            {(formData.isWifeDead || formData.isHusbandDead) === 'না' && (
+                                <SelectDropdown
+                                    label={formData.gender === 'পুরুষ' ? t('wifeProfession') : t('husbandProfession')}
+                                    value={
+                                        formData.gender === 'পুরুষ'
+                                            ? formData.wifeProfession
+                                            : formData.husbandProfession
+                                    }
+                                    onChange={value =>
+                                        setFormData({
+                                            ...formData,
+                                            ...(formData.gender === 'পুরুষ'
+                                                ? { wifeProfession: value }
+                                                : { husbandProfession: value }),
+                                        })
+                                    }
+                                    data={professions}
+                                    search={true}
+                                    searchPlaceholder="Enter your search"
+                                    placeholder={formData.gender === 'পুরুষ' ? t('wifeProfessionPlaceholder') : t('husbandProfessionPlaceholder')}
+                                    rootStyle={{ marginBottom: 10 }}
+                                />
                             )}
 
-                            {formData.hasChildren === 'হ্যাঁ' && (
-                                <>
+                            <SelectDropdown
+                                label={t('hasChildren')}
+                                value={formData.hasChildren}
+                                onChange={value => setFormData({ ...formData, hasChildren: value })}
+                                data={yesNoOptions}
+                                placeholder={t('selectPlaceholder')}
+                                rootStyle={{ marginBottom: 10 }}
+                            />
+
+                            <Input
+                                label={t('numberOfChildren')}
+                                placeholder={t('numberOfChildren')}
+                                value={formData.numberOfChildren}
+                                keyboardType="numeric"
+                                onChangeText={text => {
+                                    const count = parseInt(text) || 0;
+                                    setFormData({ ...formData, numberOfChildren: text });
+                                    handleAddChildren(count);
+                                }}
+                            />
+
+                            {childrenDetails.map((child, index) => (
+                                <View key={index} style={styles.childSection}>
+                                    <Text style={styles.childHeader}>
+                                        {t('childrenDetails')} {index + 1}
+                                    </Text>
                                     <Input
-                                        label={t('numberOfChildren')}
-                                        placeholder={t('numberOfChildren')}
-                                        value={formData.numberOfChildren}
-                                        keyboardType="numeric"
+                                        placeholder={t('childName')}
+                                        label={t('childName')}
+                                        value={child.name}
                                         onChangeText={text => {
-                                            const count = parseInt(text) || 0;
-                                            setFormData({ ...formData, numberOfChildren: text });
-                                            handleAddChildren(count);
+                                            const updated = [...childrenDetails];
+                                            updated[index].name = text;
+                                            setChildrenDetails(updated);
                                         }}
                                     />
+                                    <Input
+                                        placeholder={t('childAge')}
+                                        label={t('childAge')}
+                                        value={child.age}
+                                        isNumber={true}
+                                        keyboardType="numeric"
+                                        onChangeText={text => {
+                                            const updated = [...childrenDetails];
+                                            updated[index].age = text;
+                                            setChildrenDetails(updated);
+                                        }}
+                                    />
+                                    {
+                                        Number(child.age) >= 15 && (
+                                            <>
+                                                <PhoneNumberInput
+                                                    label={t('childNumber')}
+                                                    placeholder={t('childNumber')}
+                                                    value={child.mobile}
+                                                    onChangeText={text => {
+                                                        const updated = [...childrenDetails];
+                                                        updated[index].mobile = text;
+                                                        setChildrenDetails(updated);
+                                                    }}
+                                                />
+                                                <SelectDropdown
+                                                    label={t('childProfession')}
+                                                    value={child.profession}
+                                                    onChange={value => {
+                                                        const updated = [...childrenDetails];
+                                                        updated[index].profession = value;
+                                                        setChildrenDetails(updated);
+                                                    }}
+                                                    data={professions}
+                                                    rootStyle={[styles.halfInput, { marginTop: -3, marginBottom: 12 }]}
+                                                    search={true}
+                                                    searchPlaceholder="Enter your search"
+                                                    placeholder={t('selectPlaceholder')}
+                                                />
+                                                <View style={styles.income}>
+                                                    <Input
+                                                        label={t('childIncome')}
+                                                        placeholder={t('childIncome')}
+                                                        value={child.income}
+                                                        isNumber={true}
+                                                        keyboardType="numeric"
+                                                        onChangeText={text => {
+                                                            const updated = [...childrenDetails];
+                                                            updated[index].income = text;
+                                                            setChildrenDetails(updated);
+                                                        }}
+                                                        style={{ width: '65%' }}
+                                                    />
+                                                    <SelectDropdown
+                                                        label={t('childrenIncome')}
+                                                        value={child.frequency}
+                                                        placeholder={t('selectPlaceholder')}
+                                                        onChange={value => {
+                                                            const updated = [...childrenDetails];
+                                                            updated[index].frequency = value;
+                                                            setChildrenDetails(updated);
+                                                        }}
+                                                        data={frequencyOptions}
+                                                        rootStyle={{ flex: 1, marginTop: 4 }}
+                                                    />
+                                                </View>
+                                            </>
+                                        )
+                                    }
+                                </View>
+                            ))}
 
-                                    {childrenDetails.map((child, index) => (
-                                        <View key={index} style={styles.childSection}>
-                                            <Text style={styles.childHeader}>
-                                                {t('childrenDetails')} {index + 1}
-                                            </Text>
-                                            <Input
-                                                placeholder={t('childName')}
-                                                label={t('childName')}
-                                                value={child.name}
-                                                onChangeText={text => {
-                                                    const updated = [...childrenDetails];
-                                                    updated[index].name = text;
-                                                    setChildrenDetails(updated);
-                                                }}
-                                            />
-                                            <Input
-                                                placeholder={t('childAge')}
-                                                label={t('childAge')}
-                                                value={child.age}
-                                                isNumber={true}
-                                                keyboardType="numeric"
-                                                onChangeText={text => {
-                                                    const updated = [...childrenDetails];
-                                                    updated[index].age = text;
-                                                    setChildrenDetails(updated);
-                                                }}
-                                            />
-                                            {
-                                                Number(child.age) >= 15 && (
-                                                    <>
-                                                        <PhoneNumberInput
-                                                            label={t('childNumber')}
-                                                            placeholder={t('childNumber')}
-                                                            value={child.mobile}
-                                                            onChangeText={text => {
-                                                                const updated = [...childrenDetails];
-                                                                updated[index].mobile = text;
-                                                                setChildrenDetails(updated);
-                                                            }}
-                                                        />
-                                                        <SelectDropdown
-                                                            label={t('childProfession')}
-                                                            value={child.profession}
-                                                            onChange={value => {
-                                                                const updated = [...childrenDetails];
-                                                                updated[index].profession = value;
-                                                                setChildrenDetails(updated);
-                                                            }}
-                                                            data={professions}
-                                                            rootStyle={[styles.halfInput, { marginTop: -3, marginBottom: 12 }]}
-                                                            search={true}
-                                                            searchPlaceholder="Enter your search"
-                                                            placeholder={t('selectPlaceholder')}
-                                                        />
-                                                        <View style={styles.income}>
-                                                            <Input
-                                                                label={t('childIncome')}
-                                                                placeholder={t('childIncome')}
-                                                                value={child.income}
-                                                                isNumber={true}
-                                                                keyboardType="numeric"
-                                                                onChangeText={text => {
-                                                                    const updated = [...childrenDetails];
-                                                                    updated[index].income = text;
-                                                                    setChildrenDetails(updated);
-                                                                }}
-                                                                style={{ width: '65%' }}
-                                                            />
-                                                            <SelectDropdown
-                                                                label={t('childrenIncome')}
-                                                                value={child.frequency}
-                                                                placeholder={t('selectPlaceholder')}
-                                                                onChange={value => {
-                                                                    const updated = [...childrenDetails];
-                                                                    updated[index].frequency = value;
-                                                                    setChildrenDetails(updated);
-                                                                }}
-                                                                data={frequencyOptions}
-                                                                rootStyle={{ flex: 1, marginTop: -8 }}
-                                                            />
-                                                        </View>
-                                                    </>
-                                                )
-                                            }
-                                        </View>
-                                    ))}
-                                </>
-                            )}
 
-                            {/* Assistance Section */}
                             <SelectDropdown
                                 label={t('receivingAssistance')}
                                 value={formData.receivingAssistance}
@@ -588,74 +511,6 @@ const EditPeopleScreen = () => {
                                 error={!formData.reason ? 'আবশ্যক' : ''}
 
                             />
-
-                            {/* ID Proof Sections */}
-                            <Paragraph level="Medium" weight="Bold" style={styles.sectionTitle}>
-                                {t('idProofFrontBack')}
-                            </Paragraph>
-                            <View style={styles.row}>
-                                <UploadArea
-                                    title={t('idProofFrontLabel')}
-                                    imageUri={formData.idProofFront}
-                                    handlePress={() => handleImagePicker('idProofFront')}
-                                    handleRemove={() => removeImage('idProofFront')}
-                                />
-                                <UploadArea
-                                    title={t('idProofBackLabel')}
-                                    imageUri={formData.idProofBack}
-                                    handlePress={() => handleImagePicker('idProofBack')}
-                                    handleRemove={() => removeImage('idProofBack')}
-                                />
-                            </View>
-
-                            {['পুরুষ', 'মহিলা'].includes(formData.gender) &&
-                                ['বিবাহিত', 'বিচ্ছেদপ্রাপ্ত', 'বিধবা/তালাক'].includes(formData.marriageStatus) ? (
-                                <>
-                                    <Paragraph
-                                        level="Medium"
-                                        weight="Bold"
-                                        style={[styles.sectionTitle, { marginTop: 15 }]}>
-                                        {formData.gender === 'মহিলা' ? t('husbandIdProofFrontBack') : t('wifeIdProofFrontBack')}
-                                    </Paragraph>
-                                    <View style={styles.row}>
-                                        <UploadArea
-                                            title={t('idProofFrontLabel')}
-                                            imageUri={formData.gender === 'মহিলা' ? formData.idProofFrontHusband : formData.idProofFrontWife}
-                                            handlePress={() => handleImagePicker(formData.gender === 'মহিলা' ? 'idProofFrontHusband' : 'idProofFrontWife')}
-                                            handleRemove={() => removeImage(formData.gender === 'মহিলা' ? 'idProofFrontHusband' : 'idProofFrontWife')}
-                                        />
-                                        <UploadArea
-                                            title={t('idProofBackLabel')}
-                                            imageUri={formData.gender === 'মহিলা' ? formData.idProofBackHusband : formData.idProofBackWife}
-                                            handlePress={() => handleImagePicker(formData.gender === 'মহিলা' ? 'idProofBackHusband' : 'idProofBackWife')}
-                                            handleRemove={() => removeImage(formData.gender === 'মহিলা' ? 'idProofBackHusband' : 'idProofBackWife')}
-                                        />
-                                    </View>
-                                </>
-                            ) : formData.marriageStatus === 'অবিবাহিত' ? (
-                                <>
-                                    <Paragraph
-                                        level="Medium"
-                                        weight="Bold"
-                                        style={[styles.sectionTitle, { marginTop: 15 }]}>
-                                        {t('fatherIdProofFrontBack')}
-                                    </Paragraph>
-                                    <View style={styles.row}>
-                                        <UploadArea
-                                            title={t('fatherIdFront')}
-                                            imageUri={formData.idProofFrontFather}
-                                            handlePress={() => handleImagePicker('idProofFrontFather')}
-                                            handleRemove={() => removeImage('idProofFrontFather')}
-                                        />
-                                        <UploadArea
-                                            title={t('fatherIdBack')}
-                                            imageUri={formData.idProofBackFather}
-                                            handlePress={() => handleImagePicker('idProofBackFather')}
-                                            handleRemove={() => removeImage('idProofBackFather')}
-                                        />
-                                    </View>
-                                </>
-                            ) : null}
 
                             <AppButton
                                 onPress={handleSubmit}

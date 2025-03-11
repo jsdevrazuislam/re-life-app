@@ -10,6 +10,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Paragraph from '../components/ui/Paragraph';
 import Heading from '../components/ui/Heading';
 import { useTranslation } from '../hooks/useTranslation';
+import { Colors } from '../configs/colors';
 
 const NoInternetScreen = () => {
     const [isConnected, setIsConnected] = useState(true);
@@ -73,7 +74,7 @@ const NoInternetScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: Colors.white,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -82,23 +83,23 @@ const styles = StyleSheet.create({
     },
     title: {
         fontWeight: 'bold',
-        color: '#333',
+        color: Colors.text,
         marginBottom: 10,
     },
     subtitle: {
-        color: '#666',
+        color: Colors.textSecondary,
         textAlign: 'center',
         marginHorizontal: 30,
         marginBottom: 20,
     },
     retryButton: {
-        backgroundColor: '#ff4d4d',
+        backgroundColor: Colors.danger,
         paddingVertical: 12,
         paddingHorizontal: 30,
         borderRadius: 25,
     },
     retryText: {
-        color: '#fff',
+        color: Colors.white,
     },
 });
 

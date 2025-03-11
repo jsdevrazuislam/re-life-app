@@ -162,7 +162,7 @@ const ProfileScreen = () => {
   }, [user]);
 
   return (
-    <SafeAreaWrapper bg={Colors.light}>
+    <SafeAreaWrapper>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
@@ -252,6 +252,7 @@ const ProfileScreen = () => {
                       search={true}
                       searchPlaceholder="Search union"
                       disabled
+                      rootStyle={{ marginTop: -10}}
                     />
                   </View>
 
@@ -264,6 +265,7 @@ const ProfileScreen = () => {
                       search={true}
                       searchPlaceholder="Search village"
                       disabled
+                      rootStyle={{ marginTop: -10}}
                     />
                   </View>
                 </View>
@@ -274,6 +276,7 @@ const ProfileScreen = () => {
                   placeholder={t('imamNamePlaceholder')}
                   value={formData.fullName}
                   onChangeText={text => handleInputChange('fullName', text)}
+                  style={{ marginTop: -10}}
                 />
                 <Input
                   label={t('currentAddressLabel')}

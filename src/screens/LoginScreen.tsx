@@ -6,7 +6,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import { AppStackParamList } from '../constants/route';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
@@ -34,7 +34,8 @@ const LoginScreen = () => {
     mode: 'onBlur'
   });
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
-  const { request, loading, error } = useApi();
+  const { request, error } = useApi();
+  const [loading, setLoading] = useState(false)
   const {
     setUser,
     setRole,
@@ -46,6 +47,7 @@ const LoginScreen = () => {
   } = useAuthStore();
 
   const handleFormSubmit = async (formData: any) => {
+    setLoading(true)
     const { data, message } = await request('post', ApiStrings.LOGIN, {
       password: formData?.password,
       emailOrPhone: formData?.emailOrPhone,
@@ -77,6 +79,7 @@ const LoginScreen = () => {
     }
     setRole(user?.role);
     showToast('success', message);
+    setLoading(false)
     if (user?.signupStep === 'otp_pending') {
       setTempEmail(formData?.emailOrPhone)
       navigation.navigate('OtpScreen', { email: formData?.emailOrPhone })
@@ -100,7 +103,7 @@ const LoginScreen = () => {
               globalStyles.container,
               { justifyContent: 'center', alignItems: 'center' },
             ]}>
-            <LoadingOverlay visible={loading} />
+            <LoadingOverlay visible={!error && loading} />
 
             <View style={{ width: '100%', alignItems: 'center' }}>
               <AppLogo />

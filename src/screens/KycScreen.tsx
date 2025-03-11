@@ -125,7 +125,7 @@ const KycScreen = () => {
   }, [error])
 
   return (
-    <SafeAreaWrapper bg={Colors.light}>
+    <SafeAreaWrapper>
       <LoadingOverlay visible={loading} />
       <ScrollView
         contentContainerStyle={{

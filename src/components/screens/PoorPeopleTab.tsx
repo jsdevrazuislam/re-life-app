@@ -82,7 +82,17 @@ const PeopleTab: React.FC<PeopleTabProps> = ({ data, onAdd, loading }) => {
                 </View>
               </View>
               <View style={imamStyles.actionButtons}>
-                <TouchableOpacity onPress={() => navigation.navigate("PoorPeopleView", { item })}>
+                <TouchableOpacity onPress={() => navigation.navigate('HomeViewDetailsInfo', {
+                  item: {
+                    _id: user?.masjid._id,
+                    name: user?.masjid.name,
+                    fullAddress: user?.masjid.fullAddress,
+                    location: user?.masjid.location,
+                    masjidProfile: user?.masjid.masjidProfile,
+                    imamDetails: user?.masjid.imamDetails,
+                    poorPeopleInformations: item
+                  }
+                })}>
                   <Icon name="remove-red-eye" size={20} color={Colors.primary} />
                 </TouchableOpacity>
                 {user?.role === 'imam' && <TouchableOpacity onPress={() => navigation.navigate('EditPoorPeopleScreen', { item })}>

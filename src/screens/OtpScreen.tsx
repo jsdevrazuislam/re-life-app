@@ -67,6 +67,7 @@ const OtpScreen = () => {
             );
             setTempUser(data);
             setStatus(data?.status);
+            setOtp([''])
             showToast('success', message);
             navigation.navigate('KycStartedScreen');
         } else {

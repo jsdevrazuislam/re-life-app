@@ -8,12 +8,15 @@ import { useRoute } from '@react-navigation/native';
 import ImageComponent from './ui/Image';
 import ImageView from 'react-native-image-zoom-viewer';
 import { useTranslation } from '../hooks/useTranslation';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import Heading from './ui/Heading';
+import ChildrenList from './ChildrenDetails';
 
 
-const PersonalTabScreen = () => {
+
+const PersonalTabScreen = ({ data }: { data: HomeSearchResultDatas}) => {
 
   const route = useRoute<ImamHomeScreenRouteProp>();
-  const data = route.params?.data as HomeSearchResultDatas;
   const personalInfo = data.poorPeopleInformations;
   const [visible, setVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
@@ -31,6 +34,15 @@ const PersonalTabScreen = () => {
     { icon: 'calendar', label: t('age'), value: `${personalInfo.age} ${t('years')}` },
     { icon: 'account', label: t('beggerGender1'), value: personalInfo.gender },
     { icon: 'heart', label: t('beggerMarriageStatus1'), value: personalInfo.marriageStatus },
+    ...(personalInfo.gender === 'পুরুষ'
+      ? [{ icon: 'account', label: t('isWifeDead'), value: personalInfo.isWifeDead }]
+      : [{ icon: 'account', label: t('isHusbandDead'), value: personalInfo.isHusbandDead }]),
+    ...(personalInfo.gender === 'পুরুষ' && personalInfo.isWifeDead == 'হ্যাঁ'
+      ? [{ icon: 'account', label: t('wifeProfession'), value: personalInfo.wifeProfession }]
+      : [{ icon: 'account', label: t('husbandProfession'), value: personalInfo.husbandProfession }]),
+    { icon: 'account', label: t('fatherDead'), value: personalInfo.isFatherDead },
+    { icon: 'account', label: t('motherDead'), value: personalInfo.isMotherDead },
+    { icon: 'account', label: t('numberOfChildren'), value: String(personalInfo.numberOfChildren) },
     { icon: 'phone', label: t('phoneNumber'), value: personalInfo.contactNumber },
     { icon: 'id-card', label: t('idCardNumberLabel'), value: personalInfo.idCardNumber },
     { icon: 'map-marker', label: t('currentAddress'), value: personalInfo.address },
@@ -42,13 +54,16 @@ const PersonalTabScreen = () => {
   return (
     <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.container}>
       <View style={styles.imageContainer}>
-        <TouchableOpacity onPress={() => openImage(personalInfo.photoUrl)}>
+        <View style={styles.masjidImage}>
           <ImageComponent
             source={personalInfo.photoUrl}
             style={styles.profileImage}
             imageStyle={{ borderRadius: 4 }}
           />
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.expanded} onPress={() => openImage(personalInfo.photoUrl)}>
+            <SimpleLineIcons color={Colors.white} name='size-fullscreen' size={mvs(12)} />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <View style={styles.detailsContainer}>
@@ -68,6 +83,13 @@ const PersonalTabScreen = () => {
             </View>
           )
         ))}
+
+        {personalInfo?.childrenDetails && personalInfo?.childrenDetails?.length > 0 && (
+          <>
+           <Heading level={6} style={{ marginTop: 10}} weight='Bold'>{t('childrenDetails')}</Heading>
+           <ChildrenList openImage={openImage} childrenData={personalInfo.childrenDetails ?? []} />
+          </>
+        )}
       </View>
       <Modal transparent={true} visible={visible} onRequestClose={() => setVisible(false)}>
         <ImageView renderHeader={() => (
@@ -89,18 +111,16 @@ export const styles = StyleSheet.create({
     paddingTop: mvs(20),
     backgroundColor: Colors.white
   },
-  scrollContent:{
-    flexDirection: 'row', height: 120, gap:15, marginTop: 10
+  scrollContent: {
+    flexDirection: 'row', 
+    height: 120, 
+    gap: 15, 
+    marginTop: 10
   },
   imageContainer: {
-    width: '100%',
-    height: mvs(200),
-    backgroundColor: Colors.white,
-    shadowColor: Colors.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 3,
+    width: mvs(100),
+    height: mvs(100),
+    margin: 'auto'
   },
   profileImage: {
     width: '100%',
@@ -124,7 +144,7 @@ export const styles = StyleSheet.create({
   label: {
     color: Colors.text,
     marginBottom: mvs(2),
-    alignItems:'center'
+    alignItems: 'center'
   },
   value: {
     fontSize: ms(14),

@@ -9,6 +9,7 @@ import Heading from '../ui/Heading';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import { useTranslation } from '../../hooks/useTranslation';
 import ImageComponent from '../ui/Image';
+import { Colors } from '../../configs/colors';
 
 const CommitteeTab: React.FC<CommitteeTabProps> = ({ data, loading }) => {
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
@@ -44,7 +45,7 @@ const CommitteeTab: React.FC<CommitteeTabProps> = ({ data, loading }) => {
         </ScrollView>
       ) : data?.length === 0 ? (
         <View style={imamStyles.emptyContainer}>
-          <Icon name="people-outline" size={60} color="#888" />
+          <Icon name="people-outline" size={60} color={Colors.neutral[500]} />
           <Heading level={6} weight="Bold" style={imamStyles.emptyTitle}>
             {t('emptyPeopleTitle')}
           </Heading>
@@ -97,7 +98,7 @@ const CommitteeTab: React.FC<CommitteeTabProps> = ({ data, loading }) => {
                 </View>
 
                 <TouchableOpacity onPress={() => console.log('edit')}>
-                  <Icon name="remove-red-eye" size={20} color="#4CAF50" />
+                  <Icon name="remove-red-eye" size={20} color={Colors.primary} />
                 </TouchableOpacity>
               </View>
             </View>

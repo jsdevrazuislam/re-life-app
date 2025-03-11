@@ -19,7 +19,7 @@ const poorPeopleViewStyles = ScaledSheet.create({
         marginBottom: '10@ms',
     },
     name: {
-        color: '#333',
+        color:  Colors.text,
         marginBottom: '10@ms',
     },
     detailRow: {
@@ -45,7 +45,7 @@ const poorPeopleViewStyles = ScaledSheet.create({
         borderRadius:'10@ms'
       },
     detailText: {
-        color: '#555',
+        color: Colors.text,
         marginLeft: '10@ms',
         flexShrink: 1,
     },
@@ -64,11 +64,11 @@ const poorPeopleViewStyles = ScaledSheet.create({
         alignItems: 'center',
     },
     sectionTitle: {
-        color: '#333',
+        color: Colors.text,
         marginLeft: '10@ms',
     },
     sectionContent: {
-        backgroundColor: '#fff',
+        backgroundColor: Colors.white,
         padding: '15@ms',
         borderRadius: '10@ms',
         marginBottom: '10@ms',

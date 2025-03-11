@@ -49,9 +49,13 @@ const AddPeopleScreen = () => {
   const { user, people, totalPeople, setPeople, setTotalPeople } = useAuthStore();
   const { control, handleSubmit, setValue, watch, getValues, reset, formState: { errors } } = useForm({
     resolver: yupResolver(poorPeopleSchema),
-    mode: 'onBlur'
+    mode: 'onBlur',
+    defaultValues:{
+       role: user?.role
+    }
   });
 
+  const role = watch('role');
   const childrenDetails = watch('childrenDetails');
   const receivingAssistance = watch('receivingAssistance');
   const marriageStatus = watch('marriageStatus')
@@ -65,7 +69,7 @@ const AddPeopleScreen = () => {
   const isWifeDead = watch('isWifeDead')
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'childrenDetails',
+    name: 'childrenDetails'
   });
 
   const { request, loading } = useApi();
@@ -200,7 +204,7 @@ const AddPeopleScreen = () => {
 
             const { message, data } = await request(
               'post',
-              ApiStrings.CREATE_PEOPLE(user?.masjid?._id || ''),
+              ApiStrings.CREATE_PEOPLE(formData?.masjidId ?  formData?.masjidId : user?.masjid?._id || ''),
               formDataPayload
             );
 
@@ -337,7 +341,6 @@ const AddPeopleScreen = () => {
     setValue(`childrenDetails.${index}.childrenProveDocument`, null, { shouldValidate: true });
   };
 
-
   return (
     <SafeAreaWrapper>
       <KeyboardAvoidingView
@@ -354,6 +357,25 @@ const AddPeopleScreen = () => {
             <View style={globalStyles.container}>
               <Header title={t('addBegger')} />
               <View style={{ marginTop: 20 }}>
+                {
+                  role === 'moderator' && <Controller
+                  name='masjidId'
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <SelectDropdown
+                      label={t('selectMasjidForInfo')}
+                      placeholder={t('hasHousePlaceholder')}
+                      value={value ?? ''}
+                      onChange={onChange}
+                      data={genders}
+                      error={errors?.masjidId?.message}
+                      variant='details'
+                      search
+                    />
+                  )}
+                />
+
+                }
                 <Controller
                   name='photoUrl'
                   control={control}
@@ -660,6 +682,7 @@ const AddPeopleScreen = () => {
                                     onChange={onChange}
                                     data={frequencyOptions}
                                     error={errors.childrenDetails?.[index]?.frequency?.message}
+                                    rootStyle={{ flex: 1, marginTop: 4 }}
                                   />
                                 )}
                               />

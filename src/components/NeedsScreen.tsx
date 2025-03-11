@@ -10,18 +10,22 @@ import { styles } from './PersonalScreen'
 import Heading from './ui/Heading';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome';
 
-const DetailItem = ({ label, value }: { label: string, value: string }) => (
-  <View style={styles.detailItem}>
-    <Paragraph level='Small' weight='Bold'>{label}</Paragraph>
-    <Paragraph level='Small' weight='Regular'>{value}</Paragraph>
-  </View>
-);
+const DetailItem = ({ label, value }: { label: string, value: string }) => {
+
+  if(!value) return;
+
+  return (
+    <View style={styles.detailItem}>
+      <Paragraph level='Small' weight='Bold'>{label}</Paragraph>
+      <Paragraph level='Small' weight='Regular'>{value}</Paragraph>
+    </View>
+  )
+};
 
 
-const NeedsScreen = () => {
+const NeedsScreen = ({ data }: { data: HomeSearchResultDatas}) => {
 
   const route = useRoute<ImamHomeScreenRouteProp>();
-  const data = route.params?.data as HomeSearchResultDatas;
   const needsData = data.poorPeopleInformations.essentialsNeedsMonthly;
   const { t } = useTranslation()
 
@@ -51,7 +55,7 @@ const NeedsScreen = () => {
 
       <View style={[styles.card, styles.medicalCard]}>
         <View style={styles.cardHeader}>
-          <MaterialIcons name="medical-bag" size={ms(24)} color="#dc3545" />
+          <MaterialIcons name="medical-bag" size={ms(24)} color={Colors.danger} />
           <Paragraph level='Medium' weight='Bold' style={styles.cardTitle}>{t('medicalNeeds')}</Paragraph>
         </View>
 
@@ -61,7 +65,7 @@ const NeedsScreen = () => {
 
       <View style={[styles.card, styles.financialCard]}>
         <View style={styles.cardHeader}>
-          <FontAwesome5Icon name="money" size={ms(24)} color="#28a745" />
+          <FontAwesome5Icon name="money" size={ms(24)} color={Colors.success} />
           <Paragraph level='Medium' weight='Bold' style={styles.cardTitle}>{t('financialNeeds1')}</Paragraph>
         </View>
 
@@ -73,9 +77,9 @@ const NeedsScreen = () => {
               <MaterialIcons
                 name={data.poorPeopleInformations.receivingAssistance ? "check-circle" : "cancel"}
                 size={ms(20)}
-                color={data.poorPeopleInformations.receivingAssistance ? "#28a745" : "#dc3545"}
+                color={data.poorPeopleInformations.receivingAssistance ? Colors.success : Colors.danger}
               />
-              Yes
+              {t('হ্যাঁ')}
             </Paragraph>
           </View>
         </View>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { Colors } from '../../configs/colors';
 
 interface CheckboxProps {
   label?: string;
@@ -17,8 +18,8 @@ const Checkbox: React.FC<CheckboxProps> = ({
   label,
   value,
   onValueChange,
-  checkedColor = '#000',
-  uncheckedColor = '#ccc',
+  checkedColor = Colors.black,
+  uncheckedColor = Colors.light,
   labelStyle,
   error,
   required = false,
@@ -36,7 +37,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
           { backgroundColor: value ? checkedColor : uncheckedColor },
         ]}
       >
-        {value && <Icon name="checkmark" size={18} color="#fff" />}
+        {value && <Icon name="checkmark" size={18} color={Colors.white} />}
       </TouchableOpacity>
       <View>
         {label && <Text style={[styles.label, labelStyle]}>{label}</Text>}
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
-    color: '#333',
+    color: Colors.text,
   },
   errorText: {
     color: 'red',

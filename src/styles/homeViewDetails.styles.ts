@@ -54,7 +54,7 @@ const homeViewDetailsStyles = ScaledSheet.create({
       gap:15
      },
     label: { color: Colors.text },
-    value: { color: '#666' },
+    value: { color: Colors.textSecondary },
 
     imamDetails: {
         marginTop: '20@ms',
@@ -122,11 +122,11 @@ const homeViewDetailsStyles = ScaledSheet.create({
       },
       detailTitle: {
         fontSize: ms(14),
-        color: '#666',
+        color: Colors.text,
       },
       detailValue: {
         fontSize: ms(16),
-        color: '#1A1A1A',
+        color: Colors.text,
       },
       documentItem: {
         flex: 1,
