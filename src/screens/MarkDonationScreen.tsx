@@ -147,7 +147,7 @@ const MarkDonationScreen = () => {
 
           showToast('success', message);
           reset()
-          navigation.navigate('ImamHomeScreen', { activeTab: 'beggers' });
+          navigation.navigate('DonationHistoryScreen');
     }
 
     return (
