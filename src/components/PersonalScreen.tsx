@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { View, ScrollView, StyleSheet, Modal, TouchableOpacity } from 'react-native';
+import { View, ScrollView, StyleSheet, Modal, TouchableOpacity, Dimensions } from 'react-native';
 import { ms, mvs } from 'react-native-size-matters';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Paragraph from './ui/Paragraph';
 import { Colors } from '../configs/colors';
-import { useRoute } from '@react-navigation/native';
 import ImageComponent from './ui/Image';
 import ImageView from 'react-native-image-zoom-viewer';
 import { useTranslation } from '../hooks/useTranslation';
@@ -14,9 +13,8 @@ import ChildrenList from './ChildrenDetails';
 
 
 
-const PersonalTabScreen = ({ data }: { data: HomeSearchResultDatas}) => {
+const PersonalTabScreen = ({ data }: { data: HomeSearchResultDatas }) => {
 
-  const route = useRoute<ImamHomeScreenRouteProp>();
   const personalInfo = data.poorPeopleInformations;
   const [visible, setVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
@@ -55,6 +53,15 @@ const PersonalTabScreen = ({ data }: { data: HomeSearchResultDatas}) => {
     <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.container}>
       <View style={styles.imageContainer}>
         <View style={styles.masjidImage}>
+          {
+            personalInfo.receivingAssistanceFromMasjid && <View style={{ position: 'absolute', left: 0, bottom: 0, zIndex: 1000}}>
+            <View style={{ backgroundColor: Colors.primary, padding: 10, borderRadius: 5, width: Dimensions.get('window').width / 2 }}>
+              <Paragraph style={{ color: Colors.white, textAlign:'center' }} level='Medium' weight='Bold'>
+                   {t('receivesDonationMonthly')}
+              </Paragraph>
+            </View>
+          </View>
+          }
           <ImageComponent
             source={personalInfo.photoUrl}
             style={styles.profileImage}
@@ -86,8 +93,8 @@ const PersonalTabScreen = ({ data }: { data: HomeSearchResultDatas}) => {
 
         {personalInfo?.childrenDetails && personalInfo?.childrenDetails?.length > 0 && (
           <>
-           <Heading level={6} style={{ marginTop: 10}} weight='Bold'>{t('childrenDetails')}</Heading>
-           <ChildrenList openImage={openImage} childrenData={personalInfo.childrenDetails ?? []} />
+            <Heading level={6} style={{ marginTop: 10 }} weight='Bold'>{t('childrenDetails')}</Heading>
+            <ChildrenList openImage={openImage} childrenData={personalInfo.childrenDetails ?? []} />
           </>
         )}
       </View>
@@ -112,22 +119,21 @@ export const styles = StyleSheet.create({
     backgroundColor: Colors.white
   },
   scrollContent: {
-    flexDirection: 'row', 
-    height: 120, 
-    gap: 15, 
+    flexDirection: 'row',
+    height: 120,
+    gap: 15,
     marginTop: 10
   },
   imageContainer: {
-    width: mvs(100),
-    height: mvs(100),
-    margin: 'auto'
+    width: '100%',
+    height: mvs(200),
+    // margin: 'auto'
   },
   profileImage: {
     width: '100%',
     height: '100%',
   },
   detailsContainer: {
-    padding: ms(16),
     backgroundColor: Colors.white,
   },
   detailItem: {

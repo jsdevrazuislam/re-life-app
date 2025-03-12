@@ -24,13 +24,19 @@ export const AppRoutes = {
     FACE_SCAN_SCREEN:'FaceScanScreen',
     REQUEST_ACCESS_VIEW:'RequestAccessView',
     EDIT_POOR_PERSON:'EditPoorPeopleScreen',
+    MARK_DONATION_SCREEN:'MarkDonationScreen',
+    DONATION_HISTORY_SCREEN:'DonationHistoryScreen',
 }
 
 export type AppStackParamList = {
     FaceScanScreen: undefined; 
+    MarkDonationScreen: {
+        data?: PoorPeople
+    }; 
     OpeningScreen: undefined; 
     RequestAccessView: undefined; 
     LoginScreen: undefined; 
+    DonationHistoryScreen: undefined; 
     ImamSettingsScreen: undefined; 
     ResetPasswordScreen: { otp: string, email:string}; 
     HomeScreen: undefined; 

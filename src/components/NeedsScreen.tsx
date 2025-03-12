@@ -1,10 +1,9 @@
 import React from 'react';
 import { View, ScrollView } from 'react-native';
-import { ms, mvs } from 'react-native-size-matters';
+import { ms } from 'react-native-size-matters';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Paragraph from './ui/Paragraph';
 import { Colors } from '../configs/colors';
-import { useRoute } from '@react-navigation/native';
 import { useTranslation } from '../hooks/useTranslation';
 import { styles } from './PersonalScreen'
 import Heading from './ui/Heading';
@@ -25,7 +24,6 @@ const DetailItem = ({ label, value }: { label: string, value: string }) => {
 
 const NeedsScreen = ({ data }: { data: HomeSearchResultDatas}) => {
 
-  const route = useRoute<ImamHomeScreenRouteProp>();
   const needsData = data.poorPeopleInformations.essentialsNeedsMonthly;
   const { t } = useTranslation()
 

@@ -118,7 +118,7 @@ export const imamStyles = ScaledSheet.create({
   },
   actionButtons: {
     flexDirection: 'row',
-    gap: 10,
+    gap: 5,
   },
   infoCard: {
     backgroundColor: Colors.white,
@@ -128,11 +128,8 @@ export const imamStyles = ScaledSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    elevation: 3,
-    shadowColor: Colors.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
+    borderWidth: 2,
+    borderColor: Colors.neutral[200]
   },
   cardTitle: {
     color: Colors.text,

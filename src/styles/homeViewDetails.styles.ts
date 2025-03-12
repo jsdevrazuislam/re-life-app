@@ -73,7 +73,7 @@ const homeViewDetailsStyles = ScaledSheet.create({
         flexDirection: 'row',
     },
     content: {
-        marginTop: '5@ms'
+        // marginTop: '5@ms'
     },
     subTitle: {
         color: Colors.white,

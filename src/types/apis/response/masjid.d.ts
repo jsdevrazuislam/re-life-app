@@ -57,6 +57,7 @@ interface PoorPeople {
   marriageStatus: string;
   photoUrl: string;
   isWifeDead: string;
+  amountOfAssistance: string;
   isFatherDead: string;
   isMotherDead: string;
   isHusbandDead: string;
@@ -115,6 +116,14 @@ interface ScanResponse {
     donations: boolean;
     registered: boolean;
     poorPeople: PoorPeople;
+    masjidDetails: {
+      _id: string;
+      name: string;
+      fullAddress: string;
+      location: Location;
+      masjidProfile?: (MasjidProfileEntityOrHouseImagesEntity)[] | null;
+      imamDetails?: (MasjidImamDetailsEntity)[] | null;
+    }
   }
   statusCode: number;
   success: boolean;

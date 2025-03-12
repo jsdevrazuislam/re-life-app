@@ -3,6 +3,7 @@ import { imamStyles } from '../../styles/imamHomeStyles';
 import { View, ScrollView, Text, TouchableOpacity } from 'react-native';
 import Paragraph from '../ui/Paragraph';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import Entypo from 'react-native-vector-icons/Entypo';
 import Heading from '../ui/Heading';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import { baseURLPhoto } from '../../lib/api';
@@ -96,6 +97,9 @@ const PeopleTab: React.FC<PeopleTabProps> = ({ data, onAdd, loading }) => {
                 })}>
                   <Icon name="remove-red-eye" size={20} color={Colors.primary} />
                 </TouchableOpacity>
+                {user?.role === 'imam' && <TouchableOpacity onPress={() => navigation.navigate('MarkDonationScreen', { data: item })}>
+                  <Entypo name="check" size={20} color={Colors.primary} />
+                </TouchableOpacity>}
                 {user?.role === 'imam' && <TouchableOpacity onPress={() => navigation.navigate('EditPoorPeopleScreen', { item })}>
                   <Icon name="edit" size={20} color={Colors.secondary} />
                 </TouchableOpacity>}

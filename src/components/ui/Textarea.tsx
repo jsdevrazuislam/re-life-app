@@ -30,7 +30,7 @@ const Textarea: React.FC<TextareaProps> = ({
 }) => {
   return (
     <View style={[styles.container, style]}>
-      {label && <Paragraph level='Small' weight='Regular' style={styles.label}>{label}</Paragraph>}
+      {label && <Paragraph level='Small' weight='Medium' style={styles.label}>{label}</Paragraph>}
       <TextInput
         value={value}
         onChangeText={onChangeText}
@@ -46,6 +46,7 @@ const Textarea: React.FC<TextareaProps> = ({
           inputStyle,
         ]}
       />
+      {error && <Paragraph level='Small' weight='Medium' style={{ color: Colors.danger}}>{error}</Paragraph>}
       <Paragraph level='XSmall' weight='Medium' style={styles.charCount}>{`${value?.length}/${maxLength}`}</Paragraph>
     </View>
   );

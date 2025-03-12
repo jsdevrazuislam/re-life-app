@@ -1,4 +1,4 @@
-import { View, TouchableOpacity, Modal, ScrollView, Dimensions, Platform, Linking } from 'react-native';
+import { View, TouchableOpacity, Modal, ScrollView, Dimensions, Platform, Linking, Image } from 'react-native';
 import React, { useState } from 'react';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import globalStyles from '../styles/global.style';
@@ -75,7 +75,7 @@ const HomeViewDetailsInfoScreen = () => {
           </TouchableOpacity> : <View></View>}
         </View>
         <View style={homeViewDetailsStyles.mainContent}>
-          <Heading level={5} weight='Bold'>{singleData.name}</Heading>
+          <Paragraph level='Medium' weight='Bold'>{singleData.name}</Paragraph>
           <View style={homeViewDetailsStyles.content}>
             <View style={homeViewDetailsStyles.flexLayout}>
               <Entypo name='location-pin' size={mvs(24)} />
@@ -107,7 +107,7 @@ const HomeViewDetailsInfoScreen = () => {
 
           {/* Imam Details */}
           <View style={homeViewDetailsStyles.imamDetails}>
-            <Heading level={6} weight='Bold'>{t('imamDetails')}</Heading>
+            <Paragraph level='Medium' weight='Bold'>{t('imamDetails')}</Paragraph>
             {
               singleData.imamDetails && singleData.imamDetails.filter(imam => imam.isPresentImam).map((item) => (
                 <View style={[homeViewDetailsStyles.imamCard]} key={item._id}>
@@ -136,9 +136,10 @@ const HomeViewDetailsInfoScreen = () => {
 
           </View>
 
-          <Heading level={6} weight='Bold'>{t('biggerDetails')}</Heading>
 
+        <Paragraph level='Medium' weight='Bold'>{t('biggerDetails')}</Paragraph>
         </View>
+        
         <Modal transparent={true} visible={visible} onRequestClose={() => setVisible(false)}>
           <ImageView renderHeader={() => (
             <TouchableOpacity
@@ -149,10 +150,10 @@ const HomeViewDetailsInfoScreen = () => {
             </TouchableOpacity>
           )} imageUrls={[{ url: selectedImage }]} onCancel={() => setVisible(false)} enableSwipeDown />
         </Modal>
-        <View style={{ flex: 1, marginTop: 20 }}>
+        <View style={{ flex: 1, marginTop: 10 }}>
           <CustomTabs tabs={tabs} onTabChange={setActiveTab} activeTab={activeTab} />
 
-          <View style={{ flex: 1, padding: 10 }}>
+          <View style={{ flex: 1,  }}>
             {activeTab === 'personal' && <PersonalScreen data={singleData} />}
             {activeTab === 'housing' && <HousingScreen data={singleData} />}
             {activeTab === 'needs' && <NeedsScreen data={singleData} />}

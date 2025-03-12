@@ -18,6 +18,10 @@ export const fileSchema = yup
     
     const multipleFilesSchema = yup.array().of(fileSchema).min(1, 'অন্তত একটি ছবি আপলোড করতে হবে').nullable();
 
+export const markDonationValidationSchema = yup.object().shape({
+    provePictures: yup.array().of(fileSchema).min(1, 'অন্তত একটি ছবি আপলোড করতে হবে').required('আবশ্যক'),
+    remarks: yup.string().min(8, 'বিস্তারিত অন্তত ৮ অক্ষরের হতে হবে').required('আবশ্যক')
+})
 
 export const validationSchema = yup.object().shape({
     profileUrl: fileSchema,

@@ -26,7 +26,9 @@ const ApiStrings = {
     READ_NOTIFICATION: (notificationId:string) => `/notifications/read/${notificationId}`,
     SAVE_FCM_TOKEN: `/users/save-token`,
     DELETE_NOTIFICATION:(id:string) => `/notifications/${id}`,
-    GET_REQUEST_HISTORY: `/users/requests-history`
+    GET_REQUEST_HISTORY: `/users/requests-history`,
+    DONATION_PEOPLE:`/donation/create`,
+    GET_DONATIONS: (id:string) => `/donation/${id}`,
 }
 
 export default ApiStrings

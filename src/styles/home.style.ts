@@ -9,8 +9,8 @@ const homeStyles = ScaledSheet.create({
     marginBottom: '10@ms'
   },
   button: {
-    marginTop: '5@ms',
-    width: '100%',
+    marginRight: '5@ms',
+    width: '50%',
     paddingVertical: 12,
     backgroundColor: Colors.black,
     flexDirection:'row',

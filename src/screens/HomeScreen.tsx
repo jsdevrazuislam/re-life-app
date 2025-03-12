@@ -6,7 +6,8 @@ import {
   NativeScrollEvent,
   ScrollView,
   RefreshControl,
-  TextInput
+  TextInput,
+  Dimensions
 } from 'react-native';
 import React, { useState, useCallback } from 'react';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
@@ -26,6 +27,7 @@ import { AppStackParamList } from '../constants/route';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { ms } from 'react-native-size-matters';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+import { EmptyState } from './RequestAccessViewScreen';
 
 
 
@@ -135,14 +137,15 @@ const HomeScreen = () => {
             />
 
           </View>
-          <TouchableOpacity onPress={() => navigation.navigate('FaceScanScreen')} style={homeStyles.button}>
-            <Ionicons name="scan-outline" size={ms(16)} color={Colors.white} />
-            <Paragraph style={homeStyles.buttonText} level='Small' weight='Medium'>
-              {t('findBigger')}
-            </Paragraph>
-          </TouchableOpacity>
-
-          <AppButton style={{ marginTop: 20 }} text={t('searchPlaceholder')} onPress={getSearchResult} />
+          <View style={{ flexDirection: 'row' }}>
+            <TouchableOpacity onPress={() => navigation.navigate('FaceScanScreen')} style={homeStyles.button}>
+              <Ionicons name="scan-outline" size={ms(16)} color={Colors.white} />
+              <Paragraph style={homeStyles.buttonText} level='Small' weight='Medium'>
+                {t('findBigger')}
+              </Paragraph>
+            </TouchableOpacity>
+            <AppButton style={{ width: '48%' }} text={t('searchPlaceholder')} onPress={getSearchResult} />
+          </View>
 
           {masjids.length > 0 ? (
             <Animated.View style={[homeStyles.viewArea, { opacity: fadeAnim }]}>
@@ -151,13 +154,14 @@ const HomeScreen = () => {
               ))}
             </Animated.View>
           ) : (
-            !isLoading && isSearch || errorMessage && <Paragraph level="Small" style={{ textAlign: 'center', marginTop: 20 }}>{errorMessage || t('noResultsFound')}</Paragraph>
+            !isLoading && isSearch || errorMessage && <EmptyState style={{ width: Dimensions.get('window').width / 1.8 }} title='' image={require('../assets/no-search.png')} description={errorMessage || t('noResultsFound')} />
           )}
 
-          {isLoading && 
+
+          {isLoading &&
             Array.from({ length: 6 }).map((_, index) => (
               <SkeletonPlaceholder key={index}>
-                <View style={[homeStyles.flexLayout, { width: '100%', padding: 0, marginTop: 20}]}>
+                <View style={[homeStyles.flexLayout, { width: '100%', padding: 0, marginTop: 20 }]}>
                   <View style={[homeStyles.image, { borderRadius: 5 }]} />
                   <View style={homeStyles.textContainer}>
                     <View style={{ maxWidth: '90%', width: '100%' }}>

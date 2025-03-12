@@ -9,16 +9,25 @@ export const cardStyles = ScaledSheet.create({
     width: '100%',
   },
   image: {
-    width: '98@ms',
-    height: '95@ms',
+    width: '100%',
+    height: '130@ms',
     borderRadius: '5@ms',
   },
   flexLayout: {
-    flexDirection: 'row',
     gap: '10@ms',
     backgroundColor: Colors.white,
     padding: '10@ms',
     marginBottom: '10@ms',
+  },
+  expanded:{
+    width: 30,
+    height: 30,
+    backgroundColor: Colors.black,
+    position:'absolute',
+    justifyContent:'center',
+    alignItems:'center',
+    bottom: 0,
+    right:0
   },
   textContainer: {
     flex: 1, 
@@ -52,11 +61,8 @@ export const cardStyles = ScaledSheet.create({
     color: Colors.primary,
   },
   cardContainer:{
-    elevation: 3,
-    shadowColor: Colors.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
     borderRadius: 8,
+    borderWidth:2,
+    borderColor: Colors.neutral[200]
   }
 });

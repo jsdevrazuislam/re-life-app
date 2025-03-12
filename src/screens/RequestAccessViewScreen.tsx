@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, StyleSheet, FlatList, RefreshControl, Image } from 'react-native';
+import { View, StyleSheet, FlatList, RefreshControl, Image, ImageSourcePropType, StyleProp, ImageStyle } from 'react-native';
 import { ms, mvs } from 'react-native-size-matters';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
@@ -14,6 +14,27 @@ import { useApi } from '../hooks/useApi';
 import ApiStrings from '../lib/apis_string';
 import globalStyles from '../styles/global.style';
 import { formatValue } from '../utils/formatValue';
+
+export const EmptyState = ({ image = require('../assets/no-request.png'), title = 'noRequests', description = 'noRequestsDescription', style }: {
+    image?: ImageSourcePropType, title?: string, description?: string, style?: StyleProp<ImageStyle>
+}) => {
+
+    const { t } = useTranslation();
+
+    return (
+        <View style={styles.emptyStateContainer}>
+            <Image source={image} style={[styles.emptyStateImage, style]} />
+            {
+                title && <Paragraph level="Large" weight="Bold" style={styles.emptyStateText}>
+                    {t(title)}
+                </Paragraph>
+            }
+            <Paragraph level="Small" weight="Medium" style={styles.emptyStateSubText}>
+                {t(description)}
+            </Paragraph>
+        </View>
+    )
+}
 
 const RequestHistoryScreen = () => {
     const navigation = useNavigation<NavigationProp<AppStackParamList>>();
@@ -88,38 +109,30 @@ const RequestHistoryScreen = () => {
     return (
         <SafeAreaWrapper>
             <View style={globalStyles.container}>
-            <BackButton />
-            <Heading level={5} weight='Bold' style={styles.headerTitle}>
-                {t('requestHistory')}
-            </Heading>
-            <Paragraph level='Medium' weight='Medium' style={styles.subtitle}>
-                {t('viewRequestStatus')}
-            </Paragraph>
+                <BackButton />
+                <Heading level={5} weight='Bold' style={styles.headerTitle}>
+                    {t('requestHistory')}
+                </Heading>
+                <Paragraph level='Medium' weight='Medium' style={styles.subtitle}>
+                    {t('viewRequestStatus')}
+                </Paragraph>
 
-            <FlatList
-                data={loading ? new Array(5).fill({}) : requests}
-                keyExtractor={(item, index) => (item?._id || index.toString())}
-                renderItem={loading ? renderSkeleton : renderItem}
-                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-                ListEmptyComponent={!loading && requests.length === 0 ? (
-                    <View style={styles.emptyStateContainer}>
-                        <Image source={require('../assets/no-request.png')} style={styles.emptyStateImage} />
-                        <Paragraph level="Large" weight="Bold" style={styles.emptyStateText}>
-                            {t('noRequests')}
-                        </Paragraph>
-                        <Paragraph level="Small" weight="Medium" style={styles.emptyStateSubText}>
-                            {t('noRequestsDescription')}
-                        </Paragraph>
-                    </View>
-                ) : null}
-            />
+                <FlatList
+                    data={loading ? new Array(5).fill({}) : requests}
+                    keyExtractor={(item, index) => (item?._id || index.toString())}
+                    renderItem={loading ? renderSkeleton : renderItem}
+                    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+                    ListEmptyComponent={!loading && requests.length === 0 ? (
+                        <EmptyState />
+                    ) : null}
+                />
             </View>
         </SafeAreaWrapper>
     );
 };
 
 const styles = StyleSheet.create({
-    
+
     headerTitle: {
         color: Colors.text,
         marginTop: mvs(4),
@@ -136,10 +149,10 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: Colors.border,
     },
-    emptyStateImage:{
+    emptyStateImage: {
         width: '100%',
         height: 200,
-        objectFit:'cover'
+        objectFit: 'cover'
     },
     cardHeader: {
         marginBottom: mvs(12),

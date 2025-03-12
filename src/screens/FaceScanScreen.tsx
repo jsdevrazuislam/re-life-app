@@ -15,9 +15,9 @@ export const options: ImageLibraryOptions = {
     mediaType: 'photo',
     quality: 1,
     includeBase64: false,
-    maxWidth: 1080, 
+    maxWidth: 1080,
     maxHeight: 1920,
-  };
+};
 
 const { height } = Dimensions.get('window');
 
@@ -29,6 +29,7 @@ const FaceScanScreen = () => {
     const [person, setPerson] = useState<ScanResponse | null>(null)
     const navigation = useNavigation<NavigationProp<AppStackParamList>>();
     const { t } = useTranslation()
+    const personData = person?.data;
 
     const startFaceScan = async () => {
         if (!selectedImage) {
@@ -54,7 +55,6 @@ const FaceScanScreen = () => {
             const response = await api.post<ScanResponse>('/users/verify-face', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
-
             setPerson(response.data);
         } catch (error) {
             console.error('Error scanning face:', error);
@@ -126,8 +126,8 @@ const FaceScanScreen = () => {
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-            <Ionicons name="arrow-back" size={28} color={Colors.white} />
-        </TouchableOpacity>
+                <Ionicons name="arrow-back" size={28} color={Colors.white} />
+            </TouchableOpacity>
 
             {selectedImage ? (
                 <View style={styles.imageContainer}>
@@ -177,7 +177,17 @@ const FaceScanScreen = () => {
                     <Paragraph weight='Bold' level='Small' style={styles.resultText}>
                         {person.message}
                     </Paragraph>
-                    <TouchableOpacity style={{ backgroundColor: Colors.secondary, padding: 10, marginTop: 10}} onPress={() => navigation.navigate('HomeViewDetailsInfo', { item: person.data?.poorPeople })}>
+                    <TouchableOpacity style={{ backgroundColor: Colors.secondary, padding: 10, marginTop: 10 }} onPress={() => navigation.navigate('HomeViewDetailsInfo', {
+                        item: {
+                            _id: personData?.masjidDetails._id,
+                            name: personData?.masjidDetails?.name,
+                            fullAddress: personData?.masjidDetails?.fullAddress,
+                            location: personData?.masjidDetails?.location,
+                            masjidProfile: personData?.masjidDetails?.masjidProfile,
+                            imamDetails: personData?.masjidDetails?.imamDetails,
+                            poorPeopleInformations: personData?.poorPeople
+                        }
+                    })}>
                         <Paragraph weight='Bold' level='Small' style={styles.resultText}>
                             {t('details')}
                         </Paragraph>
@@ -203,7 +213,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.secondary,
         padding: 10,
         borderRadius: 30,
-      },
+    },
     title: {
         fontSize: 24,
         fontWeight: 'bold',

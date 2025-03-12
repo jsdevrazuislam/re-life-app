@@ -30,6 +30,16 @@ const timeAgo = (timestamp: string | Date): string => {
     const diffInYears: number = Math.floor(diffInMonths / 12);
     return `${diffInYears} years ago`;
   };
+
+  export const bengaliToEnglishNumber = (str: string): string => {
+    const bengaliNumbers = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+    const englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    
+    return str.split('').map(char => {
+        const index = bengaliNumbers.indexOf(char);
+        return index !== -1 ? englishNumbers[index] : char;
+    }).join('');
+};
   
   export default timeAgo;
   

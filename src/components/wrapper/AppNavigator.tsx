@@ -27,6 +27,8 @@ import NetInfo from '@react-native-community/netinfo';
 import NoInternetScreen from '../../screens/InternetConnectionScreen';
 import RequestAccessViewScreen from '../../screens/RequestAccessViewScreen';
 import EditPeopleScreen from '../../screens/EditPoorPeopleScreen';
+import MarkDonationScreen from '../../screens/MarkDonationScreen';
+import DonationHistoryScreen from '../../screens/DonationHistoryScreen';
 
 
 
@@ -108,6 +110,8 @@ const AppNavigator = ({ role, status, userTempId, user, isFirstTime }: { role: s
         <Stack.Screen name={AppRoutes.KYC_VERIFY_SCREEN} component={KYCVerifyScreen} />
         <Stack.Screen name={AppRoutes.KYC_SCREEN} component={KycScreen} />
         <Stack.Screen name={AppRoutes.HOME_VIEW_DETAILS_INFO} component={HomeViewDetailsInfoScreen} />
+        <Stack.Screen name={AppRoutes.MARK_DONATION_SCREEN} component={MarkDonationScreen} />
+        <Stack.Screen name={AppRoutes.DONATION_HISTORY_SCREEN} component={DonationHistoryScreen} />
       </Stack.Navigator>
     );
   }

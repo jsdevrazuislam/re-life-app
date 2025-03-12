@@ -77,6 +77,11 @@ const SettingsScreen = () => {
               user?.role === 'imam' &&
               <>
                 <SettingItem
+                  icon="supervisor-account"
+                  label={t('donatedPeopleListTitle')}
+                  onPress={() => navigation.navigate('DonationHistoryScreen')}
+                />
+                <SettingItem
                   icon="remove-red-eye"
                   label={t('requestView')}
                   onPress={() => navigation.navigate('RequestAccessView')}
