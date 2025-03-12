@@ -40,6 +40,21 @@ const timeAgo = (timestamp: string | Date): string => {
         return index !== -1 ? englishNumbers[index] : char;
     }).join('');
 };
+
+export const convertNumber = (num: string | number, toBangla: boolean = true): string => {
+  const engNums = '0123456789';
+  const bngNums = '০১২৩৪৫৬৭৮৯';
+
+  const from = toBangla ? engNums : bngNums;
+  const to = toBangla ? bngNums : engNums;
+
+  return num
+    .toString()
+    .split('')
+    .map((char) => (from.includes(char) ? to[from.indexOf(char)] : char))
+    .join('');
+};
+
   
   export default timeAgo;
   

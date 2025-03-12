@@ -14,6 +14,7 @@ import { AppStackParamList } from '../constants/route';
 import Header from '../components/Header';
 import { useTranslation } from '../hooks/useTranslation';
 import ImageComponent from '../components/ui/Image';
+import { convertNumber } from '../utils/helper';
 
 type SettingItemProps = {
   icon: string;
@@ -63,7 +64,7 @@ const SettingsScreen = () => {
               {user?.fullName}
             </Heading>
             <Paragraph level="Small" weight="Medium" style={styles.userEmail}>
-              {user?.emailOrPhone}
+              {user?.emailOrPhone.includes('@') ? user?.emailOrPhone : convertNumber(user?.emailOrPhone ?? '')}
             </Paragraph>
           </View>
 

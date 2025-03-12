@@ -105,10 +105,9 @@ const EditPeopleScreen = () => {
             fieldType: formData?.fieldType === 'কমিটির বিবরণ' ? 'committeeDetails' : 'poorPeopleInformations',
             reason: formData?.reason,
             recordId: poorPeople._id,
-            updateData:{
-                ...updateData,
-                childrenDetails
-            }
+            updateData: childrenDetails.length > 0 
+            ? { ...updateData, childrenDetails } 
+            : updateData
         }
 
         const { message } = await request(

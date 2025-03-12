@@ -221,7 +221,7 @@ export default React.memo(SelectDropdown);
 
 const styles = ScaledSheet.create({
   label: {
-    marginBottom: 2,
+    marginBottom: 10,
     fontFamily: 'Quicksand-Regular',
     fontSize: '14@ms',
     lineHeight: '18@ms',

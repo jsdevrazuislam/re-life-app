@@ -6,8 +6,8 @@ export const styles = ScaledSheet.create({
     header: {
         paddingHorizontal: ms(20),
         paddingVertical: '15@vs',
-        borderBottomWidth: 1,
-        borderBottomColor: Colors.border,
+        // borderBottomWidth: 1,
+        // borderBottomColor: Colors.border,
     },
     headerTitle: {
         fontSize: ms(24),
@@ -53,13 +53,13 @@ export const styles = ScaledSheet.create({
         borderRadius: ms(12),
     },
     unreadNotification: {
-        backgroundColor: Colors.light,
+        backgroundColor: Colors.secondaryLight,
     },
     iconContainer: {
         width: ms(40),
         height: ms(40),
         borderRadius: ms(20),
-        backgroundColor: Colors.border,
+        backgroundColor: Colors.primary,
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: ms(15),

@@ -137,6 +137,7 @@ interface UpdateRequest {
   recordId: string;
   reason: string;
   changes: UpdateChange[];
+  adminComment: string;
   createdAt: string;
   status: 'pending' | 'approved' | 'rejected';
 };

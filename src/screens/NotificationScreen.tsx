@@ -40,7 +40,7 @@ const NotificationsScreen = () => {
       ? notifications
       : notifications.filter(notification => !notification.read);
 
-  const renderRightActions = (progress: Animated.AnimatedInterpolation<number>, dragX: Animated.AnimatedInterpolation<number>, id: string) => {
+  const renderRightActions = (id: string) => {
     return (
       <TouchableOpacity
         onPress={() => notificationDeleteHandler(id)}
@@ -51,7 +51,7 @@ const NotificationsScreen = () => {
     );
   };
 
-  const renderLeftActions = (progress: Animated.AnimatedInterpolation<number>, dragX: Animated.AnimatedInterpolation<number>, id: string) => {
+  const renderLeftActions = (id: string) => {
     return (
       <TouchableOpacity
         onPress={() => notificationDeleteHandler(id)}
@@ -64,8 +64,8 @@ const NotificationsScreen = () => {
 
   const renderNotificationItem = ({ item }: { item: NotificationResponseData }) => (
     <Swipeable
-      renderLeftActions={(progress, dragX) => renderLeftActions(progress, dragX, item._id)}
-      renderRightActions={(progress, dragX) => renderRightActions(progress, dragX, item._id)}
+      renderLeftActions={(progress, dragX) => renderLeftActions(item._id)}
+      renderRightActions={(progress, dragX) => renderRightActions( item._id)}
     >
       <TouchableOpacity
         onPress={() => {
@@ -89,7 +89,7 @@ const NotificationsScreen = () => {
                   : 'megaphone-outline'
             }
             size={ms(24)}
-            color={Colors.primary}
+            color={Colors.white}
           />
         </View>
         <View style={styles.contentContainer}>

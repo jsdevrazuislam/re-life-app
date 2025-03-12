@@ -8,6 +8,7 @@ import { useTranslation } from '../hooks/useTranslation';
 import { styles } from './PersonalScreen'
 import Heading from './ui/Heading';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome';
+import { convertNumber } from '../utils/helper';
 
 const DetailItem = ({ label, value }: { label: string, value: string }) => {
 
@@ -40,9 +41,9 @@ const NeedsScreen = ({ data }: { data: HomeSearchResultDatas}) => {
   return (
     <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.container}>
 
-      <Heading level={6} weight="Bold">
+      <Paragraph level='Large' style={{ maxWidth: 200}} weight="Bold">
         {t('monthlyNeedsTitle')}
-      </Heading>
+      </Paragraph>
       <Paragraph
         level="Small"
         weight="Medium"
@@ -57,7 +58,7 @@ const NeedsScreen = ({ data }: { data: HomeSearchResultDatas}) => {
           <Paragraph level='Medium' weight='Bold' style={styles.cardTitle}>{t('medicalNeeds')}</Paragraph>
         </View>
 
-        <DetailItem label={t('monthlyMedicineCost1')} value={`৳${needsData.monthlyMedicineCost}`} />
+        <DetailItem label={t('monthlyMedicineCost1')} value={`৳${convertNumber(needsData.monthlyMedicineCost)}`} />
         <DetailItem label={t('ongoingTreatmentDetails1')} value={needsData.ongoingTreatmentsDetails} />
       </View>
 
@@ -67,7 +68,7 @@ const NeedsScreen = ({ data }: { data: HomeSearchResultDatas}) => {
           <Paragraph level='Medium' weight='Bold' style={styles.cardTitle}>{t('financialNeeds1')}</Paragraph>
         </View>
 
-        <DetailItem label={t('totalFinancialNeeds')} value={`৳${needsData.financialNeeds}`} />
+        <DetailItem label={t('totalFinancialNeeds')} value={`৳${convertNumber(needsData.financialNeeds)}`} />
         <View >
           <Paragraph level='Medium' weight='Bold' style={styles.label}>{t('receivingAssistance')}</Paragraph>
           <View>

@@ -10,6 +10,7 @@ import { useTranslation } from '../hooks/useTranslation';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import Heading from './ui/Heading';
 import ChildrenList from './ChildrenDetails';
+import { convertNumber } from '../utils/helper';
 
 
 
@@ -29,7 +30,7 @@ const PersonalTabScreen = ({ data }: { data: HomeSearchResultDatas }) => {
 
   const details = [
     { icon: 'account', label: t('name'), value: personalInfo.name },
-    { icon: 'calendar', label: t('age'), value: `${personalInfo.age} ${t('years')}` },
+    { icon: 'calendar', label: t('age'), value: `${convertNumber(personalInfo.age)} ${t('years')}` },
     { icon: 'account', label: t('beggerGender1'), value: personalInfo.gender },
     { icon: 'heart', label: t('beggerMarriageStatus1'), value: personalInfo.marriageStatus },
     ...(personalInfo.gender === 'পুরুষ'
@@ -40,9 +41,9 @@ const PersonalTabScreen = ({ data }: { data: HomeSearchResultDatas }) => {
       : [{ icon: 'account', label: t('husbandProfession'), value: personalInfo.husbandProfession }]),
     { icon: 'account', label: t('fatherDead'), value: personalInfo.isFatherDead },
     { icon: 'account', label: t('motherDead'), value: personalInfo.isMotherDead },
-    { icon: 'account', label: t('numberOfChildren'), value: String(personalInfo.numberOfChildren) },
-    { icon: 'phone', label: t('phoneNumber'), value: personalInfo.contactNumber },
-    { icon: 'id-card', label: t('idCardNumberLabel'), value: personalInfo.idCardNumber },
+    { icon: 'account', label: t('numberOfChildren'), value: convertNumber(personalInfo.numberOfChildren, true) },
+    { icon: 'phone', label: t('phoneNumber'), value: convertNumber(personalInfo.contactNumber) },
+    { icon: 'id-card', label: t('idCardNumberLabel'), value: convertNumber(personalInfo.idCardNumber) },
     { icon: 'map-marker', label: t('currentAddress'), value: personalInfo.address },
     { icon: 'map-marker', label: t('permanentAddress'), value: personalInfo.permanentAddress },
     { icon: 'alert-circle-outline', label: t('overview1'), value: personalInfo.overview },

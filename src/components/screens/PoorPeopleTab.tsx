@@ -14,6 +14,7 @@ import { AppStackParamList } from '../../constants/route';
 import { useAuthStore } from '../../store/store';
 import { Colors } from '../../configs/colors';
 import { mvs } from 'react-native-size-matters';
+import { convertNumber } from '../../utils/helper';
 
 const PeopleTab: React.FC<PeopleTabProps> = ({ data, onAdd, loading }) => {
 
@@ -79,7 +80,7 @@ const PeopleTab: React.FC<PeopleTabProps> = ({ data, onAdd, loading }) => {
                     style={imamStyles.cardTitle}>
                     {item.name}
                   </Paragraph>
-                  <Paragraph level="Small" weight="Bold">{item?.age} {t('years')}</Paragraph>
+                  <Paragraph level="Small" weight="Bold">{convertNumber(item?.age, true)} {t('years')}</Paragraph>
                   <Paragraph level="Small" weight="Bold">{item.presentAddress ?? item.permanentAddress}</Paragraph>
                 </View>
               </View>

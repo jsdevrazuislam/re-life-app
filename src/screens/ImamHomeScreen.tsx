@@ -20,6 +20,7 @@ import { baseURLPhoto } from '../lib/api';
 import { useTranslation } from '../hooks/useTranslation';
 import ImageComponent from '../components/ui/Image';
 import CustomTabs from '../components/CustomTabs';
+import { convertNumber } from '../utils/helper';
 
 
 
@@ -109,13 +110,13 @@ const DashboardScreen = () => {
           <View style={imamStyles.statCard}>
             <Icon name="people" size={32} color={Colors.primary} />
             <Paragraph level='Small' weight='Medium' style={imamStyles.statLabel}>{t("totalBeggers")}</Paragraph>
-            <Heading level={5} weight='Bold' style={imamStyles.statValue}>{people?.length}</Heading>
+            <Heading level={5} weight='Bold' style={imamStyles.statValue}>{convertNumber(people?.length)}</Heading>
           </View>
           {
             user?.role === 'imam' && <View style={imamStyles.statCard}>
               <Icon name="groups" size={32} color={Colors.primary} />
               <Paragraph level='Small' weight='Medium' style={imamStyles.statLabel}>{t("totalCommittees")}</Paragraph>
-              <Heading level={5} weight='Bold' style={imamStyles.statValue}>{committees?.length}</Heading>
+              <Heading level={5} weight='Bold' style={imamStyles.statValue}>{convertNumber(committees?.length)}</Heading>
             </View>
           }
         </View>

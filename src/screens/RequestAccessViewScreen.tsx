@@ -93,10 +93,16 @@ const RequestHistoryScreen = () => {
                 </View>
             ))}
 
+            {
+              item.adminComment &&  <Paragraph level='Small' weight='Medium' style={styles.detailValue}>
+                {t('rejectedReasons')}: {item.adminComment}
+                </Paragraph>
+            }
+
             <View
                 style={[
                     styles.statusContainer,
-                    item.status === 'approved' ? styles.approvedStatus : styles.pendingStatus,
+                    item.status === 'approved' ? styles.approvedStatus : item.status === 'rejected' ? styles.rejected : styles.pendingStatus,
                 ]}
             >
                 <Paragraph level='Small' weight='Bold' style={styles.statusText}>
@@ -186,9 +192,13 @@ const styles = StyleSheet.create({
     pendingStatus: {
         backgroundColor: Colors.warning,
     },
+    rejected: {
+        backgroundColor: Colors.danger,
+    },
     statusText: {
         fontSize: ms(12),
         fontWeight: '500',
+        color: Colors.white
     },
     viewDetailsButton: {
         marginTop: mvs(8),

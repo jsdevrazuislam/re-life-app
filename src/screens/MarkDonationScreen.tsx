@@ -31,7 +31,7 @@ import { useApi } from '../hooks/useApi'
 import ApiStrings from '../lib/apis_string'
 import { AppStackParamList } from '../constants/route'
 import ErrorMessage from '../components/ErrorMessage'
-import { bengaliToEnglishNumber } from '../utils/helper'
+import { bengaliToEnglishNumber, convertNumber } from '../utils/helper'
 
 
 
@@ -68,10 +68,10 @@ const MarkDonationScreen = () => {
 
     const details = [
         { icon: 'account', label: t('name'), value: peopleInformation.name },
-        { icon: 'calendar', label: t('age'), value: `${peopleInformation.age} ${t('years')}` },
+        { icon: 'calendar', label: t('age'), value: `${convertNumber(peopleInformation.age, true)} ${t('years')}` },
         { icon: 'account', label: t('beggerGender1'), value: peopleInformation.gender },
         { icon: 'heart', label: t('beggerMarriageStatus1'), value: peopleInformation.marriageStatus },
-        { icon: 'phone', label: t('phoneNumber'), value: peopleInformation.contactNumber },
+        { icon: 'phone', label: t('phoneNumber'), value: convertNumber(peopleInformation.contactNumber, true) },
         { icon: 'map-marker', label: t('currentAddress'), value: peopleInformation.address },
         { icon: 'map-marker', label: t('permanentAddress'), value: peopleInformation.permanentAddress },
     ];
@@ -202,9 +202,9 @@ const MarkDonationScreen = () => {
                         {
                             peopleInformation.receivingAssistance !== 'না' && <View style={styles.financialNeedsContainer}>
                                 <Heading level={6} weight='Bold'>{t('totalFinancialNeeds')}</Heading>
-                                <Paragraph level='Small' weight='Medium'>{t('totalAmount')}: {String(peopleInformation.essentialsNeedsMonthly.financialNeeds)} টাকা</Paragraph>
+                                <Paragraph level='Small' weight='Medium'>{t('totalAmount')}: {convertNumber(peopleInformation.essentialsNeedsMonthly.financialNeeds, true)} টাকা</Paragraph>
                                 <Paragraph level='Small' weight='Medium'>{t('assistanceAlreadyGiven')} {peopleInformation.frequency}</Paragraph>
-                                <Paragraph level='Small' weight='Medium'>{t('remainingNeeds')} {calculateRemainingNeeds(peopleInformation.essentialsNeedsMonthly.financialNeeds, peopleInformation.frequency)} টাকা</Paragraph>
+                                <Paragraph level='Small' weight='Medium'>{t('remainingNeeds')} {convertNumber(calculateRemainingNeeds(peopleInformation.essentialsNeedsMonthly.financialNeeds, peopleInformation.frequency), true)} টাকা</Paragraph>
                             </View>
                         }
 

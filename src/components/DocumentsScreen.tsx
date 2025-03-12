@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, ScrollView, Dimensions, TouchableOpacity, Modal } from 'react-native';
 import { styles } from './PersonalScreen'
-import { useRoute } from '@react-navigation/native';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import ImageComponent from './ui/Image';
 import { Colors } from '../configs/colors';
@@ -37,7 +36,6 @@ export const IDProofSection = ({ documents, openImage }: { documents: IdProofDoc
 
 const DocumentsScreen = ({ data }: { data: HomeSearchResultDatas}) => {
 
-  const route = useRoute<ImamHomeScreenRouteProp>();
   const singleData = data.poorPeopleInformations;
   const [visible, setVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
@@ -52,7 +50,7 @@ const DocumentsScreen = ({ data }: { data: HomeSearchResultDatas}) => {
 
   return (
     <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.container}>
-      <Heading level={6} weight='Bold'>{t("beggarIdCardAndFamilyInfo")}</Heading>
+      <Paragraph level='Large' style={{ maxWidth: 300}} weight='Bold'>{t("beggarIdCardAndFamilyInfo")}</Paragraph>
       <IDProofSection documents={singleData.idProofDocuments ?? []} openImage={openImage} />
       <IDProofSection documents={singleData.husbandIdProofDocuments ?? []} openImage={openImage} />
       <IDProofSection documents={singleData.wifeIdProofDocuments ?? []} openImage={openImage} />

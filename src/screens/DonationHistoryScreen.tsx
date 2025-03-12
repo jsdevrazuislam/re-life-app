@@ -13,12 +13,15 @@ import ApiStrings from '../lib/apis_string';
 import { useAuthStore } from '../store/store';
 import ImageComponent from '../components/ui/Image';
 import DonationHistorySkeleton from '../components/DonationSkeleton';
+import { useTranslation } from '../hooks/useTranslation';
+import { convertNumber } from '../utils/helper';
 
 const DonationHistoryScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [donations, setDonations] = useState<DonationResponseData[]>([]);
   const { loading, request } = useApi()
   const { user } = useAuthStore()
+  const { t } = useTranslation()
 
   const fetchDonations = async () => {
     setRefreshing(true);
@@ -45,7 +48,7 @@ const DonationHistoryScreen = () => {
     <View style={styles.card}>
       <View style={styles.row}>
         <Paragraph level="Small" weight="Bold" style={styles.donationId}>
-          {item._id}
+          ID: {item._id}
         </Paragraph>
         <Paragraph level="Small" weight="Medium" style={styles.date}>
           {format(parseISO(item.donationDate), 'MMM dd, yyyy')}
@@ -60,7 +63,7 @@ const DonationHistoryScreen = () => {
           </Paragraph>
           <View style={styles.userMeta}>
             <Paragraph level="Small" weight="Medium" style={styles.metaText}>
-              {item.poorPerson.age} years
+              {convertNumber(item.poorPerson.age, true)} {t('years')}
             </Paragraph>
             <Icon
               name={item.poorPerson.gender === 'male' ? 'male' : 'female'}
@@ -80,16 +83,16 @@ const DonationHistoryScreen = () => {
       <View style={[styles.row, styles.amountRow]}>
         <View>
           <Paragraph level="Small" weight="Medium" style={styles.amountLabel}>
-            Total Donation
+            {t('totalDonation')}
           </Paragraph>
           <Paragraph level="Small" weight="Bold" style={styles.amount}>
-            ৳{item.poorPerson.financialNeeds}
+            ৳{convertNumber(item.poorPerson.essentialsNeedsMonthly.financialNeeds, true)}
           </Paragraph>
         </View>
 
         <View style={styles.dateContainer}>
           <Paragraph level="Small" weight="Medium" style={styles.estimatedLabel}>
-            Next Estimated
+            {t('nextEstimated')}
           </Paragraph>
           <Paragraph level="Small" weight="Bold" style={styles.estimatedDate}>
             {getEstimatedDate(item.donationDate)}
@@ -102,7 +105,7 @@ const DonationHistoryScreen = () => {
   return (
     <SafeAreaWrapper>
       <View style={globalStyles.container}>
-        <Header title="Donation History" />
+        <Header title={t('donationHistory')} />
 
         {
           loading ? <DonationHistorySkeleton /> : <FlatList
@@ -126,12 +129,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 12,
     padding: 16,
-    marginBottom: 16,
+    marginTop: 16,
     elevation: 2,
     shadowColor: Colors.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+    borderWidth: 2,
+    borderColor: Colors.neutral[200]
   },
   row: {
     flexDirection: 'row',
@@ -145,7 +150,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   date: {
-    color: '#616161',
+    color: Colors.dark,
     fontSize: 13,
   },
   userInfoContainer: {

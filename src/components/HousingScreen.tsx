@@ -38,7 +38,7 @@ const HousingScreen = ({ data }: { data: HomeSearchResultDatas}) => {
 
   return (
     <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.container}>
-      <Heading level={5} weight='Bold'>{t("homeDetailsTitle1")}</Heading>
+      <Paragraph style={{ maxWidth: 200}} level='Large' weight='Bold'>{t("homeDetailsTitle1")}</Paragraph>
 
       <View style={styles.detailsContainer}>
         {housingDetails.map((item, index) => (
