@@ -2,7 +2,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuthStore } from "../store/store";
 
-export const SERVER_URL = "http://192.168.157.76:3000";
+export const SERVER_URL = "http://192.168.1.103:3000";
 const baseURL = `${SERVER_URL}/api/v1`;
 export const baseURLPhoto = (url:string) : string => {
   return url
@@ -30,7 +30,7 @@ api.interceptors.response.use(
     const originalRequest = error.config;
     if (
       error.response?.status === 401 &&
-      !originalRequest._retry
+      !originalRequest._retry || error?.response?.data?.message === 'jwt expired'
     ) {
       originalRequest._retry = true;
       try {

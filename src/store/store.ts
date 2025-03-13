@@ -94,21 +94,37 @@ export const useAuthStore = create<AuthState>(set => ({
   },
   setStatus: async (status) => {
     set({ status })
-    await AsyncStorage.setItem('status', status);
+    if(status){
+      await AsyncStorage.setItem('status', status);
+    } else {
+      await AsyncStorage.removeItem('status');
+    }
   },
   setTempEmail: async (email) => {
     set({ userTempEmail: email })
-    await AsyncStorage.setItem('userTempEmail', email);
-
+    if(email){
+      await AsyncStorage.setItem('userTempEmail', email);
+    } else {
+      await AsyncStorage.removeItem('userTempEmail');
+    }
   },
   setRole: (role) => set({ role }),
   setTempUser: async (tempUser) => {
     set({ tempUser })
-    await AsyncStorage.setItem('tempUser', JSON.stringify(tempUser));
+    if(tempUser){
+      await AsyncStorage.setItem('tempUser', JSON.stringify(tempUser));
+    } else {
+      await AsyncStorage.removeItem('tempUser');
+    }
   },
   setUserId: async (userTempId) => {
     set({ userTempId })
-    await AsyncStorage.setItem('userTempId', userTempId);
+    if(userTempId){
+      await AsyncStorage.setItem('userTempId', userTempId);
+    } else {
+      await AsyncStorage.removeItem('userTempId');
+    }
+   
   },
   setUserInfo: user => set({ user }),
   setUser: async (user, accessToken, refreshToken) => {

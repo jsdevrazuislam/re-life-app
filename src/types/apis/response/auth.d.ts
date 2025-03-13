@@ -23,9 +23,9 @@ interface IUser {
 
 interface TempUser {
   name: string;
-  phoneNumber: string;
-  email: string,
-  status: string
+  phoneNumber?: string;
+  email?: string,
+  status?: string
   emailOrPhone: string
 }
 

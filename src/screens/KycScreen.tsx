@@ -40,7 +40,7 @@ import ErrorMessage from '../components/ErrorMessage';
 const KycScreen = () => {
   const [photoLoading, setPhotoLoading] = useState(false);
   const { setUserId, userTempId, setUser, setRole, setStatus, tempUser, setTempUser } = useAuthStore();
-  const { control, handleSubmit, setValue, watch, formState: { errors } } = useForm({
+  const { control, handleSubmit, setValue, watch, reset, formState: { errors } } = useForm({
     resolver: yupResolver(validationSchemaKyc),
     mode: 'onBlur',
     defaultValues: {
@@ -69,6 +69,7 @@ const KycScreen = () => {
     formDataPayload.append("imamDocument", formatFileData(formData?.imamDocument));
     const { data, message } = await request('post', ApiStrings.KYC_VERIFY, formDataPayload);
     await setUser(data?.user, data?.accessToken, data?.refreshToken)
+    reset()
     showToast('success', message)
     setTempUser(null)
     setUserId('');

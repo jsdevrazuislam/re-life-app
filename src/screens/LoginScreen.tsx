@@ -43,7 +43,9 @@ const LoginScreen = () => {
     setTotalCommittees,
     setCommittees,
     setPeople,
-    setTempEmail
+    setTempEmail,
+    setUserId,
+    setTempUser
   } = useAuthStore();
 
   const handleFormSubmit = async (formData: any) => {
@@ -82,10 +84,15 @@ const LoginScreen = () => {
     setLoading(false)
     if (user?.signupStep === 'otp_pending') {
       setTempEmail(formData?.emailOrPhone)
+      setUserId(user._id)
       navigation.navigate('OtpScreen', { email: formData?.emailOrPhone })
+    } else if (user?.signupStep === 'kyc_pending' || user?.kycStatus === 'none') {
+      setUserId(user._id)
+      setTempUser({ name: user?.fullName, emailOrPhone: user?.emailOrPhone})
+      navigation.navigate('KycStartedScreen');
     } else if (user?.kycStatus === 'pending' || 'rejected') {
       navigation.navigate('ImamPendingScreen');
-    } else if (user?.isBlocked) {
+    }  else if (user?.isBlocked) {
       navigation.navigate('BlockScreen');
     } else {
       navigation.navigate('ImamHomeScreen', {});
