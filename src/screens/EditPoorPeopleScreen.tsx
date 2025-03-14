@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Platform, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import SelectDropdown from '../components/ui/Select';
 import Input from '../components/ui/AppInput';
@@ -9,6 +9,7 @@ import Heading from '../components/ui/Heading';
 import Paragraph from '../components/ui/Paragraph';
 import AppButton from '../components/ui/AppButton';
 import {
+    amountOfAssistance,
     assistanceTypes,
     clothNeeds,
     fieldType,
@@ -16,6 +17,7 @@ import {
     genders,
     marriages,
     oliNeeds,
+    othersFoods,
     othersFoodsOptions,
     professions,
     riceNeeds,
@@ -32,6 +34,11 @@ import ApiStrings from '../lib/apis_string';
 import { useAuthStore } from '../store/store';
 import LoadingOverlay from '../components/LoadingOverlay';
 import BackButton from '../components/BackButton';
+import rice from '../data/rice.json'
+import oil from '../data/oil.json'
+import cloth from '../data/cloth.json'
+import { convertBengaliToEnglishNumber, getNameAndUnit } from '../utils/helper';
+import RequestAlreadyMade from '../components/RequestAlreadyMade';
 
 const EditPeopleScreen = () => {
     const { t } = useTranslation();
@@ -59,9 +66,9 @@ const EditPeopleScreen = () => {
         rice: '',
         lentils: '',
         oil: '',
-        otherFood: '',
-        clothingSelf: '',
-        clothingFamily: '',
+        otherFoodItems: '',
+        clothingForSelf: '',
+        clothingForFamily: '',
         medicineCost: '',
         treatments: '',
         financialNeeds: '',
@@ -72,7 +79,8 @@ const EditPeopleScreen = () => {
     });
 
     const [childrenDetails, setChildrenDetails] = useState<ChildDetail[]>([]);
-    const { request, loading } = useApi();
+    const { request, loading, error } = useApi();
+    const [isError, setIsError] = useState(false)
     const navigation = useNavigation<NavigationProp<AppStackParamList>>();
 
     const handleAddChildren = (count: number) => {
@@ -89,40 +97,62 @@ const EditPeopleScreen = () => {
     };
 
     const handleSubmit = async () => {
-
         if (!formData?.reason || !formData?.fieldType) return;
-
+    
         const excludedFields = ['herProfession', 'fieldType', 'reason'];
+
+    
+        const formattedData = {
+            rice: formData.rice ? getNameAndUnit(formData.rice, rice) : "",
+            lentils: formData.lentils ? getNameAndUnit(formData.lentils, rice) : "",
+            oil: formData.oil ? getNameAndUnit(formData.oil, oil) : "",
+            otherFoodItems: othersFoods.find((item) => item.label === formData?.otherFoodItems)?.value ?? [],
+            clothingForSelf: formData.clothingForSelf ? getNameAndUnit(formData.clothingForSelf, cloth) : "",
+            clothingForFamily: formData.clothingForFamily ? getNameAndUnit(formData.clothingForFamily, cloth) : "",
+            monthlyMedicineCost: formData.medicineCost || '',
+            ongoingTreatmentsDetails: formData.treatments || '',
+            financialNeeds: formData.financialNeeds ? convertBengaliToEnglishNumber(formData.financialNeeds) : "",
+        };
+
+        const cleanedFormattedData = Object.fromEntries(
+            Object.entries(formattedData).filter(([_, value]) => {
+                if (Array.isArray(value)) return value.length > 0;
+                return value !== null && value !== "";
+            })
+        );
 
         const updateData = Object.fromEntries(
             Object.entries(formData)
                 .filter(([key, value]) => value !== undefined && value !== null && value !== "" && !excludedFields.includes(key))
         );
 
-
+    
+        const finalUpdateData = {
+            ...updateData,
+            ...cleanedFormattedData,
+            childrenDetails: childrenDetails.length > 0 ? childrenDetails : undefined
+        };
+    
         const payload = {
             userId: user?._id,
             masjidId: user?.masjid._id,
             fieldType: formData?.fieldType === 'কমিটির বিবরণ' ? 'committeeDetails' : 'poorPeopleInformations',
             reason: formData?.reason,
             recordId: poorPeople._id,
-            updateData: childrenDetails.length > 0
-                ? { ...updateData, childrenDetails }
-                : updateData
-        }
-
-        const { message } = await request(
-            'post',
-            ApiStrings.REQUEST_TO_ADMIN,
-            payload
-        );
-
+            updateData: finalUpdateData
+        };
+    
+        const { message } = await request('post', ApiStrings.REQUEST_TO_ADMIN, payload);
+    
         showToast('success', message);
-        navigation.navigate('ImamHomeScreen', { activeTab: t('beggers') });
-
-
+        navigation.navigate('ImamHomeScreen', { activeTab: 'beggers' });
     };
 
+    useEffect(() => {
+        if(error){
+            setIsError(true)
+        }
+    }, [error])
 
     return (
         <SafeAreaWrapper>
@@ -130,7 +160,8 @@ const EditPeopleScreen = () => {
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={{ flex: 1 }}
             >
-                <ScrollView
+                {
+                    isError ? <RequestAlreadyMade tryAgain={() => setIsError(false)}  /> : <ScrollView
                     contentContainerStyle={{
                         paddingBottom: 40
                     }}
@@ -405,7 +436,7 @@ const EditPeopleScreen = () => {
                                 {t('monthlyNeedsDescription')}
                             </Paragraph>
 
-                            <View style={styles.row}>
+                            <View style={[styles.row]}>
                                 <SelectDropdown
                                     value={formData.rice}
                                     onChange={text => setFormData({ ...formData, rice: text })}
@@ -423,7 +454,7 @@ const EditPeopleScreen = () => {
                                     placeholder={t('selectPlaceholder')}
                                 />
                             </View>
-                            <View style={styles.row}>
+                            <View style={[styles.row, { marginTop: 0}]}>
                                 <SelectDropdown
                                     value={formData.oil}
                                     onChange={text => setFormData({ ...formData, oil: text })}
@@ -433,9 +464,9 @@ const EditPeopleScreen = () => {
                                     rootStyle={styles.halfInput}
                                 />
                                 <SelectDropdown
-                                    value={formData.clothingFamily}
+                                    value={formData.clothingForFamily}
                                     onChange={text =>
-                                        setFormData({ ...formData, clothingFamily: text })
+                                        setFormData({ ...formData, clothingForFamily: text })
                                     }
                                     label={t('familyClothing')}
                                     data={clothNeeds}
@@ -444,16 +475,16 @@ const EditPeopleScreen = () => {
                                 />
                             </View>
                             <SelectDropdown
-                                value={formData.clothingSelf}
-                                onChange={text => setFormData({ ...formData, clothingSelf: text })}
+                                value={formData.clothingForSelf}
+                                onChange={text => setFormData({ ...formData, clothingForSelf: text })}
                                 label={t('selfClothing')}
                                 data={clothNeeds}
                                 rootStyle={[styles.halfInput, { marginBottom: 10 }]}
                                 placeholder={t('selectPlaceholder')}
                             />
                             <SelectDropdown
-                                value={formData.otherFood}
-                                onChange={text => setFormData({ ...formData, otherFood: text })}
+                                value={formData.otherFoodItems}
+                                onChange={text => setFormData({ ...formData, otherFoodItems: text })}
                                 label={t('otherFoodItems')}
                                 data={othersFoodsOptions}
                                 rootStyle={styles.halfInput}
@@ -468,15 +499,16 @@ const EditPeopleScreen = () => {
                                     setFormData({ ...formData, medicineCost: text })
                                 }
                             />
-                            <Input
-                                label={t('financialNeeds')}
-                                value={formData.financialNeeds}
-                                placeholder={t('financialNeedPlaceholder')}
-                                isNumber={true}
-                                onChangeText={text =>
+                            <SelectDropdown
+                               value={formData.financialNeeds}
+                                onChange={text =>
                                     setFormData({ ...formData, financialNeeds: text })
                                 }
+                                label={t('financialNeeds')}
+                                data={amountOfAssistance}
+                                placeholder={t('financialNeedPlaceholder')}
                             />
+                            
                             <Textarea
                                 label={t('ongoingTreatmentDetails')}
                                 value={formData.treatments}
@@ -522,6 +554,7 @@ const EditPeopleScreen = () => {
                         </View>
                     </TouchableWithoutFeedback>
                 </ScrollView>
+                }
             </KeyboardAvoidingView>
         </SafeAreaWrapper>
     );

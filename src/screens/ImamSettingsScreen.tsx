@@ -50,7 +50,7 @@ const SettingsScreen = () => {
     <SafeAreaWrapper>
       <ScrollView>
         <View style={globalStyles.container}>
-          <Header title={t('settingsTitle')} />
+          <Header title={t('settingsTitle')} onPress={() => navigation.navigate('ImamHomeScreen', {})} />
 
           <View style={styles.profileSection}>
             <View style={styles.avatarContainer}>

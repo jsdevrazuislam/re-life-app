@@ -6,14 +6,22 @@ import { useNavigation } from '@react-navigation/native';
 
 const BackButton = ({
   styles,
+  onPress
 }: {
   styles?: StyleProp<ViewStyle>;
+  onPress?: () => void
 }) => {
   const navigate = useNavigation();
 
   return (
     <TouchableOpacity
-      onPress={() => navigate.goBack()}
+      onPress={() =>{
+        if(onPress){
+          onPress()
+        } else {
+          navigate.goBack()
+        }
+      }}
       style={[{
         borderWidth: 1,
         borderColor: Colors.neutral[300],

@@ -15,10 +15,13 @@ import ImageComponent from '../components/ui/Image';
 import DonationHistorySkeleton from '../components/DonationSkeleton';
 import { useTranslation } from '../hooks/useTranslation';
 import { convertNumber } from '../utils/helper';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { AppStackParamList } from '../constants/route';
 
 const DonationHistoryScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [donations, setDonations] = useState<DonationResponseData[]>([]);
+  const navigation = useNavigation<NavigationProp<AppStackParamList>>();
   const { loading, request } = useApi()
   const { user } = useAuthStore()
   const { t } = useTranslation()
@@ -105,8 +108,7 @@ const DonationHistoryScreen = () => {
   return (
     <SafeAreaWrapper>
       <View style={globalStyles.container}>
-        <Header title={t('donationHistory')} />
-
+        <Header title={t('donationHistory')} onPress={() => navigation.navigate('ImamSettingsScreen')} />
         {
           loading ? <DonationHistorySkeleton /> : <FlatList
           data={donations}
@@ -130,7 +132,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     marginTop: 16,
-    elevation: 2,
+    elevation: 0.5,
     shadowColor: Colors.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,

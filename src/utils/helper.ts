@@ -56,14 +56,9 @@ export const convertNumber = (num: string | number, toBangla: boolean = true): s
 };
 
 
-export function getNameAndUnit(value: string, array: any[]): { name: string, quantity: number } | null {
+export function getNameAndUnit(value: string, array: any[]): { name: string, quantity: number } {
   const item = array.filter((item) => item.label === value)[0];
-
-  if (item) {
     return { name: item.name, quantity: parseFloat(item.quantity) };
-  } else {
-    return null;
-  }
 }
 
 export function convertBengaliToEnglishNumber(input: string): number | null {

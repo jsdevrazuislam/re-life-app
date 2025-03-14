@@ -11,14 +11,15 @@ interface HeaderProps {
   showBackButton?: boolean;
   rightIconName?: string;
   onRightIconPress?: () => void;
+  onPress?: () => void
 }
 
-const Header: React.FC<HeaderProps> = ({ title, showBackButton = true, rightIconName, onRightIconPress }) => {
+const Header: React.FC<HeaderProps> = ({ title, showBackButton = true, rightIconName, onRightIconPress, onPress }) => {
 
   return (
     <View style={styles.container}>
       {showBackButton ? (
-        <BackButton />
+        <BackButton onPress={onPress} />
       ) : (
         <View style={styles.leftIcon} />
       )}

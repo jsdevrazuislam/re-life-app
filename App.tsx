@@ -128,6 +128,13 @@ const App = () => {
   }, [socket]);
 
   useEffect(() => {
+    socket?.on("REQUEST_NOTIFICATION", (notification: { message:string, title:string }) => {
+        loadUserFromStorage();
+        showForegroundNotification(notification.title, notification.message);
+    })
+  }, [socket]);
+
+  useEffect(() => {
     if (!isLoading) {
       SplashScreen.hide();
     }

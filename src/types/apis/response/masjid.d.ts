@@ -68,6 +68,8 @@ interface PoorPeople {
   contactNumber: string;
   address: string;
   receivingAssistance: string;
+  receivingAssistanceFromMasjid: string;
+  receivingAssistanceDate: string;
   assistanceType: string;
   presentAddress: string;
   frequency: string;

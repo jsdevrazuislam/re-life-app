@@ -32,6 +32,7 @@ import ApiStrings from '../lib/apis_string'
 import { AppStackParamList } from '../constants/route'
 import ErrorMessage from '../components/ErrorMessage'
 import { bengaliToEnglishNumber, convertNumber } from '../utils/helper'
+import DonationRestrictionModal from '../components/DonationRestrictionModal'
 
 
 
@@ -43,6 +44,7 @@ const MarkDonationScreen = () => {
     });
     const navigation = useNavigation<NavigationProp<AppStackParamList>>();
     const { t } = useTranslation();
+    const [modalVisible, setModalVisible] = useState<boolean>(true);
     const route = useRoute<ImamHomeScreenRouteProp>();
     const peopleInformation = route.params?.data as PoorPeople;
     const essentialsNeedsMonthly = peopleInformation.essentialsNeedsMonthly;
@@ -151,6 +153,17 @@ const MarkDonationScreen = () => {
 
     return (
         <SafeAreaWrapper>
+           {
+            peopleInformation.receivingAssistanceFromMasjid &&  <DonationRestrictionModal
+            lastDonationDate="Fri Mar 14 2025 14:32:11 GMT+0600"
+            visible={modalVisible}
+            onClose={() => {
+                setModalVisible(false)
+                navigation.goBack()
+            }}
+            onViewHistory={() => navigation.navigate("DonationHistoryScreen")}
+          />
+           }
             <LoadingOverlay visible={loading} />
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
