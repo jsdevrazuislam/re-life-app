@@ -19,6 +19,7 @@ import {
   landSizes,
   marriages,
   oliNeeds,
+  othersFoods,
   othersFoodsOptions,
   professions,
   riceNeeds,
@@ -42,6 +43,10 @@ import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import poorPeopleSchema from '../validations/poor.people';
 import { options } from './FaceScanScreen';
+import rice from '../data/rice.json'
+import oil from '../data/oil.json'
+import cloth from '../data/cloth.json'
+import { convertBengaliToEnglishNumber, getNameAndUnit } from '../utils/helper';
 
 const AddPeopleScreen = () => {
   const [photoLoading, setPhotoLoading] = useState(false);
@@ -159,15 +164,15 @@ const AddPeopleScreen = () => {
             appendIfExists(
               'essentialsNeedsMonthly',
               JSON.stringify({
-                rice: formData.rice,
-                lentils: formData.lentils,
-                oil: formData.oil,
-                otherFoodItems: formData.otherFood || '',
-                clothingForSelf: formData.clothingSelf,
-                clothingForFamily: formData.clothingFamily,
+                rice: getNameAndUnit(formData.rice, rice),
+                lentils: getNameAndUnit(formData.lentils, rice) ,
+                oil: getNameAndUnit(formData.oil, oil),
+                otherFoodItems: othersFoods.filter((item) => item.label === formData?.otherFood)[0].value || [],
+                clothingForSelf: getNameAndUnit(formData.clothingSelf, cloth) ,
+                clothingForFamily: getNameAndUnit(formData.clothingFamily, cloth) ,
                 monthlyMedicineCost: formData.medicineCost || '',
                 ongoingTreatmentsDetails: formData.treatments || '',
-                financialNeeds: formData.financialNeeds,
+                financialNeeds: convertBengaliToEnglishNumber(formData.financialNeeds),
               })
             );
 
@@ -340,6 +345,7 @@ const AddPeopleScreen = () => {
   const removeChildrenImage = (index: number) => {
     setValue(`childrenDetails.${index}.childrenProveDocument`, null, { shouldValidate: true });
   };
+
 
   return (
     <SafeAreaWrapper>
@@ -1040,13 +1046,13 @@ const AddPeopleScreen = () => {
                 name={'financialNeeds'}
                 control={control}
                 render={({ field: { value, onChange } }) => (
-                  <Input
-                    label={t('financialNeeds')}
-                    placeholder={t('financialNeedPlaceholder')}
+                    <SelectDropdown
                     value={value}
-                    isNumber={true}
-                    keyboardType='numeric'
-                    onChangeText={onChange}
+                    onChange={onChange}
+                    label={t('financialNeeds')}
+                    data={amountOfAssistance}
+                    rootStyle={styles.halfInput}
+                    placeholder={t('financialNeedPlaceholder')}
                     error={errors?.financialNeeds?.message}
                   />
                 )}

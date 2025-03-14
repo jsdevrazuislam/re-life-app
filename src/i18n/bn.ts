@@ -280,6 +280,7 @@ export default {
   financialNeeds1: 'আর্থিক চাহিদা',
   ongoingTreatmentDetails: 'চলমান চিকিৎসার বিস্তারিত লিখুন',
   notes: 'অতিরিক্ত তথ্য বা মন্তব্য',
+  taka: "টাকা",
 
   // ID Proofs
   idProofFrontBack: 'আইডি (সামনে ও পিছনে আপলোড করুন)',

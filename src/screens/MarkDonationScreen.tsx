@@ -77,12 +77,11 @@ const MarkDonationScreen = () => {
     ];
 
     const essentials = [
-        { icon: 'rice', label: t('rice'), value: essentialsNeedsMonthly.rice },
-        { icon: 'bowl-mix', label: t('lentils'), value: essentialsNeedsMonthly.lentils },
-        { icon: 'water', label: t("oil"), value: essentialsNeedsMonthly.oil },
-        { icon: 'food', label: t('otherFoodItems1'), value: essentialsNeedsMonthly.otherFoodItems },
-        { icon: 'tshirt-crew', label: t('selfClothing'), value: essentialsNeedsMonthly.clothingForSelf },
-        { icon: 'account-group', label: t('familyClothing'), value: essentialsNeedsMonthly.clothingForFamily },
+        { icon: 'rice', label: t('rice'), value: `${essentialsNeedsMonthly.rice.name} ${essentialsNeedsMonthly.rice.quantity}` },
+        { icon: 'bowl-mix', label: t('lentils'), value: `${essentialsNeedsMonthly.lentils.name} ${essentialsNeedsMonthly.lentils.quantity}` },
+        { icon: 'water', label: t("oil"), value: `${essentialsNeedsMonthly.oil.name} ${essentialsNeedsMonthly.oil.quantity}` },
+        { icon: 'tshirt-crew', label: t('selfClothing'), value: `${essentialsNeedsMonthly.clothingForSelf.name} ${essentialsNeedsMonthly.clothingForSelf.quantity}` },
+        { icon: 'account-group', label: t('familyClothing'), value: `${essentialsNeedsMonthly.clothingForFamily.name} ${essentialsNeedsMonthly.clothingForFamily.quantity}` },
     ];
 
     const handleImagePicker = async () => {
@@ -143,11 +142,11 @@ const MarkDonationScreen = () => {
             'post',
             ApiStrings.DONATION_PEOPLE,
             formDataPayload
-          );
+        );
 
-          showToast('success', message);
-          reset()
-          navigation.navigate('DonationHistoryScreen');
+        showToast('success', message);
+        reset()
+        navigation.navigate('DonationHistoryScreen');
     }
 
     return (
@@ -208,7 +207,7 @@ const MarkDonationScreen = () => {
                             </View>
                         }
 
-                        <Heading level={6} weight="Bold">
+                        <Heading style={{ marginTop: 20 }} level={6} weight="Bold">
                             {t('monthlyNeedsTitle')}
                         </Heading>
                         <Paragraph
@@ -235,6 +234,20 @@ const MarkDonationScreen = () => {
                                     </View>
                                 )
                             ))}
+                            <View style={[personalStyles.detailItem, styles.flex]}>
+                                <MaterialIcons
+                                    name='food'
+                                    size={ms(20)}
+                                    color={Colors.primary}
+                                    style={personalStyles.icon}
+                                />
+                                <View style={personalStyles.textContainer}>
+                                    <Paragraph level='Small' weight='Bold' style={personalStyles.label}>{t('otherFoodItems1')}</Paragraph>
+                                    <Paragraph level='Small' weight='Medium' style={personalStyles.value}>
+                                        {essentialsNeedsMonthly.otherFoodItems?.map((item) => `${item.name} ${item.quantity} ${item.unit}\n`)}
+                                    </Paragraph>
+                                </View>
+                            </View>
                         </View>
 
                         <Heading level={6} weight="Bold">

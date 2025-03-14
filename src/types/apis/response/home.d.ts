@@ -81,12 +81,16 @@ interface HomeDetails {
   houseImages?: (MasjidProfileEntityOrHouseImagesEntity)[] | null;
 }
 interface EssentialsNeedsMonthly {
-  rice: string;
-  lentils: string;
-  oil: string;
-  otherFoodItems: string;
-  clothingForSelf: string;
-  clothingForFamily: string;
+  rice: FoodItem;
+  lentils: FoodItem;
+  oil: FoodItem;
+  otherFoodItems: {
+    name:string;
+    quantity:string;
+    unit:string
+  }[];
+  clothingForSelf: FoodItem;
+  clothingForFamily: FoodItem;
   monthlyMedicineCost: number;
   ongoingTreatmentsDetails: string;
   financialNeeds: string;
@@ -96,6 +100,11 @@ interface IdProofDocumentsEntity {
   value: string;
   fileId: string;
   _id: string;
+}
+
+interface FoodItem{
+  name:string,
+  quantity:number
 }
 
 interface ChildrenDetails {

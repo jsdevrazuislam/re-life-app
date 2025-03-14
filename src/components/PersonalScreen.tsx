@@ -141,6 +141,7 @@ export const styles = StyleSheet.create({
     paddingVertical: mvs(12),
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
+    flexDirection:'row'
   },
   icon: {
     width: ms(30),

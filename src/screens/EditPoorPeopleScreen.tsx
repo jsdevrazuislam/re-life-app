@@ -16,6 +16,7 @@ import {
     genders,
     marriages,
     oliNeeds,
+    othersFoodsOptions,
     professions,
     riceNeeds,
     yesNoOptions,
@@ -105,9 +106,9 @@ const EditPeopleScreen = () => {
             fieldType: formData?.fieldType === 'কমিটির বিবরণ' ? 'committeeDetails' : 'poorPeopleInformations',
             reason: formData?.reason,
             recordId: poorPeople._id,
-            updateData: childrenDetails.length > 0 
-            ? { ...updateData, childrenDetails } 
-            : updateData
+            updateData: childrenDetails.length > 0
+                ? { ...updateData, childrenDetails }
+                : updateData
         }
 
         const { message } = await request(
@@ -450,10 +451,12 @@ const EditPeopleScreen = () => {
                                 rootStyle={[styles.halfInput, { marginBottom: 10 }]}
                                 placeholder={t('selectPlaceholder')}
                             />
-                            <Input
-                                label={t('otherFoodItems')}
+                            <SelectDropdown
                                 value={formData.otherFood}
-                                onChangeText={text => setFormData({ ...formData, otherFood: text })}
+                                onChange={text => setFormData({ ...formData, otherFood: text })}
+                                label={t('otherFoodItems')}
+                                data={othersFoodsOptions}
+                                rootStyle={styles.halfInput}
                                 placeholder={t('otherFoodPlaceholder')}
                             />
                             <Input

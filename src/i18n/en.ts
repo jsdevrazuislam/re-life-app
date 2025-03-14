@@ -10,6 +10,7 @@ export default {
   getStarted: 'Get Started',
   skip: 'Skip',
   // Login
+  taka:"BDT",
   signInTitle: 'Sign In to Your Account',
   signInDescription: 'Log in to your account to begin your journey.',
   messageLoading: 'We are processing your data, please wait for a moment.',

@@ -58,7 +58,9 @@ const HousingScreen = ({ data }: { data: HomeSearchResultDatas}) => {
           )
         ))}
       </View>
-      <Paragraph level='Large' weight='Bold' style={styles.label}>{t('beggarHouseImages')}</Paragraph>
+      {
+       housingInfo.houseImages && housingInfo.houseImages?.length > 0 && <>
+        <Paragraph level='Large' weight='Bold' style={[styles.label, { marginTop: 20}]}>{t('beggarHouseImages')}</Paragraph>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -79,6 +81,8 @@ const HousingScreen = ({ data }: { data: HomeSearchResultDatas}) => {
           </View>
         ))}
       </ScrollView>
+        </>
+      }
       <Modal transparent={true} visible={visible} onRequestClose={() => setVisible(false)}>
         <ImageView renderHeader={() => (
           <TouchableOpacity

@@ -55,6 +55,33 @@ export const convertNumber = (num: string | number, toBangla: boolean = true): s
     .join('');
 };
 
+
+export function getNameAndUnit(value: string, array: any[]): { name: string, quantity: number } | null {
+  const item = array.filter((item) => item.label === value)[0];
+
+  if (item) {
+    return { name: item.name, quantity: parseFloat(item.quantity) };
+  } else {
+    return null;
+  }
+}
+
+export function convertBengaliToEnglishNumber(input: string): number | null {
+  const bengaliToEnglishMap: { [key: string]: string } = {
+    "০": "0", "১": "1", "২": "2", "৩": "3", "৪": "4",
+    "৫": "5", "৬": "6", "৭": "7", "৮": "8", "৯": "9"
+  };
+
+  const extractedDigits = input.replace(/[^\u09E6-\u09EF]/g, "");
+  const englishNumber = extractedDigits
+    .split("")
+    .map(char => bengaliToEnglishMap[char] || char)
+    .join("");
+
+  return englishNumber ? parseInt(englishNumber, 10) : null;
+}
+
+
   
   export default timeAgo;
   

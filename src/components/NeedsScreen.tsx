@@ -15,7 +15,7 @@ const DetailItem = ({ label, value }: { label: string, value: string }) => {
   if(!value) return;
 
   return (
-    <View style={styles.detailItem}>
+    <View style={[styles.detailItem, { flexDirection:'column'}]}>
       <Paragraph level='Small' weight='Bold'>{label}</Paragraph>
       <Paragraph level='Small' weight='Regular'>{value}</Paragraph>
     </View>
@@ -33,7 +33,6 @@ const NeedsScreen = ({ data }: { data: HomeSearchResultDatas}) => {
     { icon: 'rice', label: t('rice'), value: needsData.rice },
     { icon: 'bowl-mix', label: t('lentils'), value: needsData.lentils },
     { icon: 'water', label: t("oil"), value: needsData.oil },
-    { icon: 'food', label: t('otherFoodItems1'), value: needsData.otherFoodItems },
     { icon: 'tshirt-crew', label: t('selfClothing'), value: needsData.clothingForSelf },
     { icon: 'account-group', label: t('familyClothing'), value: needsData.clothingForFamily },
   ];
@@ -58,7 +57,7 @@ const NeedsScreen = ({ data }: { data: HomeSearchResultDatas}) => {
           <Paragraph level='Medium' weight='Bold' style={styles.cardTitle}>{t('medicalNeeds')}</Paragraph>
         </View>
 
-        <DetailItem label={t('monthlyMedicineCost1')} value={`৳${convertNumber(needsData.monthlyMedicineCost)}`} />
+        <DetailItem label={t('monthlyMedicineCost1')} value={`৳${convertNumber(needsData.monthlyMedicineCost)} ${t('taka')}`} />
         <DetailItem label={t('ongoingTreatmentDetails1')} value={needsData.ongoingTreatmentsDetails} />
       </View>
 
@@ -68,7 +67,7 @@ const NeedsScreen = ({ data }: { data: HomeSearchResultDatas}) => {
           <Paragraph level='Medium' weight='Bold' style={styles.cardTitle}>{t('financialNeeds1')}</Paragraph>
         </View>
 
-        <DetailItem label={t('totalFinancialNeeds')} value={`৳${convertNumber(needsData.financialNeeds)}`} />
+        <DetailItem label={t('totalFinancialNeeds')} value={`৳${convertNumber(needsData.financialNeeds)} ${t('taka')}`} />
         <View >
           <Paragraph level='Medium' weight='Bold' style={styles.label}>{t('receivingAssistance')}</Paragraph>
           <View>
@@ -96,11 +95,26 @@ const NeedsScreen = ({ data }: { data: HomeSearchResultDatas}) => {
               />
               <View style={styles.textContainer}>
                 <Paragraph level='Small' weight='Bold' style={styles.label}>{item.label}</Paragraph>
-                <Paragraph level='Small' weight='Medium' style={styles.value}>{item.value}</Paragraph>
+                <Paragraph level='Small' weight='Medium' style={styles.value}>{convertNumber(String(item.value.quantity))} {item.value.name}</Paragraph>
               </View>
             </View>
           )
         ))}
+        <View style={styles.detailItem}>
+              <MaterialIcons
+                name='food'
+                size={ms(20)}
+                color={Colors.primary}
+                style={styles.icon}
+              />
+              <View style={styles.textContainer}>
+                <Paragraph level='Small' weight='Bold' style={styles.label}>{t('otherFoodItems1')}</Paragraph>
+                <Paragraph level='Small' weight='Medium' style={styles.value}>
+                  {needsData.otherFoodItems?.map((item) => `${item.name} ${item.quantity} ${item.unit}\n`)}
+                </Paragraph>
+              </View>
+            </View>
+
       </View>
 
     </ScrollView>
