@@ -17,7 +17,7 @@ import ErrorMessage from '../ErrorMessage';
 interface InputProps {
   label?: string;
   placeholder?: string;
-  value: string;
+  value?: string;
   onChangeText: (text: string) => void;
   onBlur?: () => void;
   keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad';
@@ -97,10 +97,10 @@ const Input: React.FC<InputProps> = ({
 
 const styles = ScaledSheet.create({
   container: {
-    marginBottom: 16,
+    marginBottom: 10,
   },
   label: {
-    marginBottom: 8,
+    marginBottom: 6,
     fontFamily: 'Quicksand-Regular',
     fontSize: '14@ms',
     lineHeight: '18@ms',

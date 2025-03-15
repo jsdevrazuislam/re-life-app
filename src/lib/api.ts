@@ -29,8 +29,8 @@ api.interceptors.response.use(
     }
     const originalRequest = error.config;
     if (
-      error.response?.status === 401 &&
-      !originalRequest._retry || error?.response?.data?.message === 'jwt expired'
+      error?.response?.data?.message === 'jwt expired' || error.response?.status === 401 &&
+      !originalRequest._retry
     ) {
       originalRequest._retry = true;
       try {

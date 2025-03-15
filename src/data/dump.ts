@@ -212,6 +212,18 @@ export const othersFoods = [
   }
 ]
 
+export const lentils = [
+  { "label": "১ (কেজি)", "quantity": "1", "name": "কেজি" },
+  { "label": "২ (কেজি)", "quantity": "2", "name": "কেজি" },
+  { "label": "৩ (কেজি)", "quantity": "3", "name": "কেজি" },
+  { "label": "৪ (কেজি)", "quantity": "4", "name": "কেজি" },
+  { "label": "৫ (কেজি)", "quantity": "5", "name": "কেজি" },
+  { "label": "৬ (কেজি)", "quantity": "6", "name": "কেজি" },
+  { "label": "৭ (কেজি)", "quantity": "7", "name": "কেজি" },
+  { "label": "৮ (কেজি)", "quantity": "8", "name": "কেজি" },
+  { "label": "৯ (কেজি)", "quantity": "9", "name": "কেজি" },
+  { "label": "১০ (কেজি)", "quantity": "10", "name": "কেজি" }
+]
 export const amountOfAssistance = [
       { "label": "১০০০ টাকা", "value": "১০০০ টাকা" },
       { "label": "২০০০ টাকা", "value": "২০০০ টাকা" },
@@ -247,3 +259,4 @@ export const amountOfAssistance = [
     export const oliNeeds = makeArrayWithLabelValue(oli);
     export const clothNeeds = makeArrayWithLabelValue(cloth);
     export const othersFoodsOptions = makeArrayWithLabelValue(othersFoods);
+    export const lentilsData = makeArrayWithLabelValue(lentils);

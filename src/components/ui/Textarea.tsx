@@ -54,7 +54,7 @@ const Textarea: React.FC<TextareaProps> = ({
 
 const styles = ScaledSheet.create({
   container: {
-    marginBottom: '1@ms',
+    // marginBottom: '1@ms',
   },
   label: {
     marginBottom: '6@ms',

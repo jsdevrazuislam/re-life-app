@@ -64,10 +64,12 @@ interface Notification {
 }
 
 interface SignupPayload {
+  permanentAddress: string;
   fullAddress: string;
   address: string;
+  sameAsCurrent: boolean;
   committeeDetails?: (CommitteeDetailsEntity)[] | null;
-  email: string;
+  emailOrPhone: string;
   isChecked: boolean;
   location: Location;
   masjidProfile: MasjidProfileOrProfileUrl[];

@@ -93,7 +93,7 @@ const CommitteeTab: React.FC<CommitteeTabProps> = ({ data, loading }) => {
                   </Paragraph>
                   <Paragraph
                     level="Small"
-                    weight="Bold"
+                    weight='Regular'
                     style={imamStyles.cardSubtitle}
                     numberOfLines={1}
                     ellipsizeMode="tail">
@@ -102,7 +102,7 @@ const CommitteeTab: React.FC<CommitteeTabProps> = ({ data, loading }) => {
 
                   <Paragraph
                     level="Small"
-                    weight="Bold"
+                    weight="Regular"
                     style={imamStyles.cardSubtitle}
                     numberOfLines={1}
                     ellipsizeMode="tail">

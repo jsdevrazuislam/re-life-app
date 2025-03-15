@@ -17,6 +17,8 @@ import {
   genders,
   homeTypes,
   landSizes,
+  lentils,
+  lentilsData,
   marriages,
   oliNeeds,
   othersFoods,
@@ -165,14 +167,14 @@ const AddPeopleScreen = () => {
               'essentialsNeedsMonthly',
               JSON.stringify({
                 rice: getNameAndUnit(formData.rice, rice),
-                lentils: getNameAndUnit(formData.lentils, rice) ,
+                lentils: getNameAndUnit(formData.lentils, lentils) ,
                 oil: getNameAndUnit(formData.oil, oil),
                 otherFoodItems: othersFoods.filter((item) => item.label === formData?.otherFood)[0].value || [],
                 clothingForSelf: getNameAndUnit(formData.clothingSelf, cloth) ,
                 clothingForFamily: getNameAndUnit(formData.clothingFamily, cloth) ,
                 monthlyMedicineCost: formData.medicineCost || '',
                 ongoingTreatmentsDetails: formData.treatments || '',
-                financialNeeds: convertBengaliToEnglishNumber(formData.financialNeeds),
+                financialNeeds: Number(formData.financialNeeds),
               })
             );
 
@@ -951,7 +953,7 @@ const AddPeopleScreen = () => {
                       value={value}
                       onChange={onChange}
                       label={t('lentilsPerMonth')}
-                      data={riceNeeds}
+                      data={lentilsData}
                       rootStyle={styles.halfInput}
                       placeholder={t('selectPlaceholder')}
                       error={errors?.lentils?.message}
@@ -984,7 +986,7 @@ const AddPeopleScreen = () => {
                     <SelectDropdown
                       value={value}
                       onChange={onChange}
-                      label={t('familyClothing')}
+                      label={t('selfClothing')}
                       data={clothNeeds}
                       rootStyle={styles.halfInput}
                       placeholder={t('selectPlaceholder')}
@@ -1046,14 +1048,13 @@ const AddPeopleScreen = () => {
                 name={'financialNeeds'}
                 control={control}
                 render={({ field: { value, onChange } }) => (
-                    <SelectDropdown
-                    value={value}
-                    onChange={onChange}
-                    label={t('financialNeeds')}
-                    data={amountOfAssistance}
-                    rootStyle={styles.halfInput}
-                    placeholder={t('financialNeedPlaceholder')}
-                    error={errors?.financialNeeds?.message}
+                    <Input
+                      value={value}
+                      onChangeText={onChange}
+                      label={t('financialNeeds')}
+                      placeholder={t('financialNeedPlaceholder')}
+                      error={errors?.financialNeeds?.message}
+                      isNumber
                   />
                 )}
               />

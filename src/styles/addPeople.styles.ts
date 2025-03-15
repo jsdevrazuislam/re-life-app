@@ -59,6 +59,14 @@ const styles = ScaledSheet.create({
     },
     inputContainer: {
         marginBottom: '15@vs',
+        borderWidth: 1,
+        borderColor: Colors.border,
+        borderRadius: '8@s',
+        paddingVertical: '2@s',
+        paddingHorizontal: '10@s',
+        flexDirection:'row',
+        alignItems:"center",
+        justifyContent:'space-between'
     },
     label: {
         fontSize: '14@ms',
@@ -66,11 +74,8 @@ const styles = ScaledSheet.create({
         marginBottom: '8@vs',
     },
     input: {
-        borderWidth: 1,
-        borderColor: Colors.border,
-        borderRadius: '8@s',
-        padding: '12@s',
-        fontSize: '14@ms',
+    //    flex:1,
+    color: Colors.placeholder
     },
     dropdownContainer: {
         borderWidth: 1,
@@ -105,24 +110,6 @@ const styles = ScaledSheet.create({
         fontWeight: 'bold',
         marginBottom: '15@vs',
         color: Colors.black,
-    },
-    tabContainer: {
-        flexDirection: "row",
-        backgroundColor: Colors.neutral[200],
-        borderRadius: "8@s",
-        marginTop: '15@vs'
-    },
-    tab: {
-        flex: 1,
-        paddingVertical: "10@s",
-        alignItems: "center",
-        borderRadius: "8@s",
-    },
-    activeTab: {
-        backgroundColor: Colors.primary,
-    },
-    activeTabText: {
-        color: "white",
     },
 
 });

@@ -9,6 +9,15 @@ export const imamStyles = ScaledSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  center:{
+    alignItems:'center',
+    justifyContent:'center'
+  },
+  row:{
+    flexDirection:'row',
+    marginTop: 2,
+    marginBottom: 2
+  },
   headerModal: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -110,7 +119,10 @@ export const imamStyles = ScaledSheet.create({
   cardContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 1,
+    // flex: 1,
+    borderBottomWidth: 2,
+    paddingBottom: 20,
+    borderBottomColor: Colors.neutral[200]
   },
   cardText: {
     flex: 1,
@@ -118,16 +130,17 @@ export const imamStyles = ScaledSheet.create({
   },
   actionButtons: {
     flexDirection: 'row',
-    gap: 5,
+    gap: 40,
+    alignItems:'center',
+    justifyContent:'center',
+    paddingVertical: 10
   },
   infoCard: {
     backgroundColor: Colors.white,
     borderRadius: '8@ms',
-    padding: '16@ms',
+    paddingHorizontal: '16@ms',
+    paddingTop: '16@ms',
     marginTop: '16@ms',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     borderWidth: 2,
     borderColor: Colors.neutral[200]
   },

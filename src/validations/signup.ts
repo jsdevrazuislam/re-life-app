@@ -26,7 +26,6 @@ export const markDonationValidationSchema = yup.object().shape({
 export const validationSchema = yup.object().shape({
     profileUrl: fileSchema,
     masjidProfile: multipleFilesSchema,
-    selectedTab: yup.string().optional(),
     name: yup.string().min(8, 'মসজিদের নাম অন্তত ৮ অক্ষরের হতে হবে').required('মসজিদের নাম দেওয়া আবশ্যক'),
     fullAddress: yup.string().min(8, 'মসজিদের বর্তমান ঠিকানা অন্তত ৮ অক্ষরের হতে হবে').required('মসজিদের বর্তমান ঠিকানা দেওয়া আবশ্যক'),
     location: yup.object().shape({
@@ -36,28 +35,23 @@ export const validationSchema = yup.object().shape({
         village: yup.string().required('গ্রামের নাম দেওয়া আবশ্যক'),
     }),
     username: yup.string().required('ইমামের নাম দেওয়া আবশ্যক'),
-    email: yup
-    .string()
-    .email("ভুল ইমেল ফরম্যাট")
-    .when("selectedTab", {
-      is: "email",
-      then: (schema) => schema.required("ইমেল দেওয়া আবশ্যক"),
-      otherwise: (schema) => schema.notRequired(),
-    }),
-    mobile: yup
-    .string()
-    .when("selectedTab", {
-      is: "mobile",
-      then: (schema) =>
-        schema
-          .required("ফোন নম্বর দেওয়া আবশ্যক")
-          .matches(/^\d+$/, "শুধুমাত্র সংখ্যা ব্যবহার করুন")
-          .length(11, "ফোন নম্বরটি ১১ ডিজিট হতে হবে")
-          .matches(bangladeshPrefixes, "বাংলাদেশি ফোন নম্বরের ফরম্যাট ভুল"),
-      otherwise: (schema) => schema.notRequired(),
-    }),
+    emailOrPhone: yup
+        .string()
+        .test("email-or-phone", "ইমেল বা সঠিক ফোন নম্বর দিন", (value) => {
+          if (!value) return false;
+          const isEmail = yup.string().email().isValidSync(value);
+          const isPhone = bangladeshPrefixes.test(value);
+          return isEmail || isPhone;
+        })
+        .required("ইমেল বা ফোন নম্বর দেওয়া আবশ্যক"),
     password: yup.string().min(6, 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে').required('পাসওয়ার্ড দেওয়া আবশ্যক'),
+    sameAsCurrent: yup.boolean(),
     address: yup.string().min(6, 'বর্তমান ঠিকানা কমপক্ষে ৬ অক্ষরের হতে হবে').required('বর্তমান ঠিকানা দেওয়া আবশ্যক'),
+    permanentAddress: yup.string().when('sameAsCurrent', {
+      is: false,
+      then: (schema) => schema.required('স্থায়ী ঠিকানা দেওয়া আবশ্যক').min(6, 'স্থায়ী ঠিকানা কমপক্ষে ৬ অক্ষরের হতে হবে'),
+      otherwise: (schema) => schema.notRequired(),
+    }),
     numberOfCommittee: yup.string().required('কমিটির মোট সদস্য সংখ্যা দেওয়া আবশ্যক'),
     committeeDetails: yup.array().of(
         yup.object().shape({

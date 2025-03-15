@@ -217,7 +217,7 @@ const poorPeopleSchema = yup.object().shape({
     }),
 
     receivingAssistance: yup.string().required('আবশ্যক'),
-    idCardNumber: yup.string().required('আবশ্যক'),
+    idCardNumber: yup.string().required('আবশ্যক').min(10, "আইডি কার্ড কমপক্ষে ১০ অক্ষরের হতে হবে"),
     assistanceType: yup.string().when('receivingAssistance', {
         is: 'হ্যাঁ',
         then: (schema) => schema.required('সহায়তার ধরন আবশ্যক'),

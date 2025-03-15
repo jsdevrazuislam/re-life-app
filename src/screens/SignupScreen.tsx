@@ -17,7 +17,7 @@ import { showToast } from '../utils/toast';
 import { useAuthStore } from '../store/store';
 import ErrorMessage from '../components/ErrorMessage';
 import styles from '../styles/addPeople.styles';
-import { districts, professions, unions, upazilas, villages } from '../data/dump';
+import { districts, unions, upazilas, villages } from '../data/dump';
 import SelectDropdown from '../components/ui/Select';
 import PhoneNumberInput from '../components/ui/PhoneNumberInput';
 import Paragraph from '../components/ui/Paragraph';
@@ -42,8 +42,8 @@ const SignupScreen = () => {
     resolver: yupResolver(validationSchema),
     mode: 'onBlur',
     defaultValues: {
-      selectedTab: 'email',
       committeeDetails: [],
+      sameAsCurrent: false
     }
   });
 
@@ -57,7 +57,17 @@ const SignupScreen = () => {
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
   const { request, loading, error } = useApi();
   const { setUserId, setStatus, setTempEmail } = useAuthStore();
-  const [selectedTab, setSelectedTab] = useState<"email" | "mobile">("email");
+  const sameAsCurrent = watch('sameAsCurrent');
+  const addressValue = watch('address'); 
+
+  const toggleSameAddress = (value: boolean) => {
+    setValue('sameAsCurrent', value);
+    if (value) {
+      setValue('permanentAddress', addressValue); 
+    } else {
+      setValue('permanentAddress', '');
+    }
+  };
 
 
   const handleCommittee = (count: number) => {
@@ -139,7 +149,7 @@ const SignupScreen = () => {
     setPhotoLoading(true)
     ImagePicker.launchImageLibrary(options,
       response => {
-      setPhotoLoading(false)
+        setPhotoLoading(false)
         if (response.didCancel) return;
         if (response.errorMessage) {
           showToast('error', response.errorMessage);
@@ -182,7 +192,7 @@ const SignupScreen = () => {
 
     const formDataPayload = new FormData();
 
-    formDataPayload.append('emailOrPhone', selectedTab === 'email' ? payload.email : payload.mobile);
+    formDataPayload.append('emailOrPhone', payload.emailOrPhone);
     formDataPayload.append('masjidName', payload.name);
     formDataPayload.append('password', payload.password);
     formDataPayload.append('fullAddress', payload.fullAddress);
@@ -193,6 +203,7 @@ const SignupScreen = () => {
     );
     formDataPayload.append('location', JSON.stringify(payload.location));
     formDataPayload.append('address', payload.address);
+    formDataPayload.append('permanentAddress', payload.sameAsCurrent ? payload.address :  payload.permanentAddress);
     formDataPayload.append('profileUrl', formatFileData(payload.profileUrl));
     payload?.committeeDetails?.forEach((member) => {
       if (member.profilePicture) {
@@ -217,13 +228,6 @@ const SignupScreen = () => {
     navigation.navigate('OtpScreen', { email: data?.emailOrPhone });
   }
 
-  const handleTabChange = (tab: "email" | "mobile") => {
-    setSelectedTab(tab);
-    setValue("selectedTab", tab);
-    setValue("email", "");
-    setValue("mobile", "");
-  };
-
   return (
     <SafeAreaWrapper>
       <KeyboardAvoidingView
@@ -245,26 +249,6 @@ const SignupScreen = () => {
               {t('signUpTitle')}
             </Heading>
             <Paragraph level='Small'>{t('signUpDescription')}</Paragraph>
-
-            <View style={styles.tabContainer}>
-              <TouchableOpacity
-                style={[styles.tab, selectedTab === "email" && styles.activeTab]}
-                onPress={() => handleTabChange("email")}
-              >
-                <Paragraph weight='Bold' level='Medium' style={[selectedTab === "email" && styles.activeTabText]}>
-                  {t('emailLabel')}
-                </Paragraph>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[styles.tab, selectedTab === "mobile" && styles.activeTab]}
-                onPress={() => handleTabChange("mobile")}
-              >
-                <Paragraph weight='Bold' level='Medium' style={[selectedTab === "mobile" && styles.activeTabText]}>
-                  {t('mobile')}
-                </Paragraph>
-              </TouchableOpacity>
-            </View>
 
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
               <View style={signupStyles.form}>
@@ -419,34 +403,20 @@ const SignupScreen = () => {
                     />
                   )}
                 />
-                {
-                  selectedTab === 'email' ? <Controller
-                    name="email"
-                    control={control}
-                    render={({ field: { value, onChange } }) => (
-                      <Input
-                        label={t('imamEmailLabel')}
-                        placeholder={t('imamEmailPlaceholder')}
-                        keyboardType="email-address"
-                        value={value ?? ''}
-                        onChangeText={onChange}
-                        error={errors.email?.message}
-                      />
-                    )}
-                  /> : <Controller
-                    name='mobile'
-                    control={control}
-                    render={({ field: { value, onChange } }) => (
-                      <PhoneNumberInput
-                        label={t('imamPhoneLabel')}
-                        placeholder={t('imamPhonePlaceholder')}
-                        value={value ?? ''}
-                        onChangeText={onChange}
-                        error={errors.mobile?.message}
-                      />
-                    )}
-                  />
-                }
+                <Controller
+                  name='emailOrPhone'
+                  control={control}
+                  render={({ field: { value, onChange } }) => (
+                    <Input
+                      label={t('emailOrPhoneLabel')}
+                      placeholder={t('emailOrPhonePlaceholder')}
+                      value={value}
+                      onChangeText={onChange}
+                      error={errors?.emailOrPhone?.message}
+                      keyboardType="email-address"
+                    />
+                  )}
+                />
 
                 <Controller
                   name='password'
@@ -475,6 +445,32 @@ const SignupScreen = () => {
                     />
                   )}
                 />
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Controller
+                  name="sameAsCurrent"
+                  control={control}
+                  render={({ field: { value } }) => (
+                    <Checkbox value={value ?? false} onValueChange={toggleSameAddress} />
+                  )}
+                />
+                <Paragraph style={{ marginTop: -15}} level='Small' weight='Regular'>স্থায়ী ঠিকানা একই</Paragraph>
+              </View>
+              {
+                !sameAsCurrent && <Controller
+                name='permanentAddress'
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <Input
+                    label={t('permanentAddressImam')}
+                    placeholder={t('permanentAddressPlaceholderImam')}
+                    value={value}
+                    onChangeText={onChange}
+                    error={errors?.permanentAddress?.message}
+                  />
+                )}
+              />
+              }
+                
 
                 <Controller
                   name='numberOfCommittee'
@@ -548,14 +544,12 @@ const SignupScreen = () => {
                       control={control}
                       name={`committeeDetails.${index}.profession`}
                       render={({ field }) => (
-                        <SelectDropdown
+                        <Input
                           label={t('committeeProfessionLabel')}
                           placeholder={t('committeeProfessionPlaceholder')}
                           value={field.value}
-                          onChange={field.onChange}
-                          data={professions}
-                          search={true}
-                          rootStyle={{ marginTop: -6 }}
+                          onChangeText={field.onChange}
+                          style={{ marginTop: -6 }}
                           error={errors.committeeDetails?.[index]?.profession?.message}
                         />
                       )}

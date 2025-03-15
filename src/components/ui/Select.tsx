@@ -1,5 +1,5 @@
 import React, { useRef, useState, useMemo, useCallback, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform, StyleProp, ViewStyle, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, KeyboardAvoidingView, Platform, StyleProp, ViewStyle, Modal, ActivityIndicator } from 'react-native';
 import { Modalize } from 'react-native-modalize';
 import { Portal } from 'react-native-portalize';
 import Icon from 'react-native-vector-icons/Feather';
@@ -16,28 +16,7 @@ import ImageComponent from './Image';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import ImageView from 'react-native-image-zoom-viewer';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-
-
-
-interface DropdownItem {
-  label: string;
-  value: string;
-}
-
-interface SelectDropdownProps {
-  label?: string;
-  data: DropdownItem[];
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
-  search?: boolean;
-  searchPlaceholder?: string;
-  style?: StyleProp<ViewStyle>;
-  rootStyle?: StyleProp<ViewStyle>;
-  disabled?: boolean;
-  error?: string,
-  variant?: 'default' | 'details'
-}
+import useDebounce from '../../hooks/useDebounce';
 
 const SelectDropdown: React.FC<SelectDropdownProps> = ({
   data,
@@ -60,6 +39,9 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
   const [masjids, setMasjids] = useState<ModeratorResponse[]>([]);
   const [visible, setVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState('');
+  const debouncedSearchText = useDebounce(searchText, 500);
+  const [isSearching, setIsSearching] = useState(false);
+
 
   const openImage = (imageUrl: string) => {
     if (imageUrl) {
@@ -71,17 +53,19 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
   const filteredData = useMemo(() => {
     if (!search) return data;
     return data.filter((item) =>
-      item.label.toLowerCase().includes(searchText.toLowerCase())
+      item.label.toLowerCase().includes(debouncedSearchText.toLowerCase())
     );
-  }, [data, searchText, search]);
+  }, [data,debouncedSearchText]);
 
   const filteredMasjidsData = useMemo(() => {
+   if(variant === 'details'){
     if (!search) return masjids;
     return masjids.filter((item) =>
-      item.name?.toLowerCase().includes(searchText.toLowerCase()) || 
-      item.fullAddress?.toLowerCase().includes(searchText.toLowerCase())
+      item.name?.toLowerCase().includes(debouncedSearchText.toLowerCase()) || 
+      item.fullAddress?.toLowerCase().includes(debouncedSearchText.toLowerCase())
     );
-  }, [masjids, searchText, search]);
+   }
+  }, [masjids, debouncedSearchText]);
 
   const handleChange = useCallback(
     (value: string) => {
@@ -90,6 +74,14 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
     },
     [onChange]
   );
+
+  useEffect(() => {
+    setIsSearching(true); 
+  }, [searchText]);
+
+  useEffect(() => {
+    setIsSearching(false); 
+  }, [filteredData]);
 
   useEffect(() => {
     (async () => {
@@ -101,7 +93,7 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
   }, [variant, user])
 
   return (
-    <View style={[{ marginBottom: 16 }, rootStyle]}>
+    <View style={[{ marginBottom: 10 }, rootStyle]}>
       {label && <Text style={styles.label}>{label}</Text>}
       <TouchableOpacity
         onPress={() => !disabled && modalRef.current?.open()}
@@ -128,16 +120,23 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
               {search && (
                 <Input
                   placeholder={t('searchPlaceholder')}
-                  value={searchText}
-                  onChangeText={setSearchText}
+                  onChangeText={(text) => {
+                    setSearchText(text); 
+                  }}
                 />
               )}
 
-              {
+            {isSearching ? <ActivityIndicator size='large' color={Colors.primary} /> : <>
+            
+            {
                 variant === 'default' ? <FlatList
                   nestedScrollEnabled={true}
                   scrollEnabled={false}
                   data={filteredData}
+                  removeClippedSubviews={true} 
+                  initialNumToRender={10} 
+                  maxToRenderPerBatch={10} 
+                  windowSize={5} 
                   renderItem={({ item }) => (
                     <TouchableOpacity
                       onPress={() => handleChange(item.value)}
@@ -149,9 +148,6 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
                     </TouchableOpacity>
                   )}
                   keyExtractor={(item) => `${item.value}-${item.label}`}
-                  initialNumToRender={10}
-                  maxToRenderPerBatch={10}
-                  windowSize={5}
                   ListEmptyComponent={
                     <Paragraph level="Small" style={{ textAlign: 'center', marginTop: 20 }}>
                       {t('noResultsFound')}
@@ -197,6 +193,9 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
                 />
               }
 
+            </>}
+
+             
             </View>
           </KeyboardAvoidingView>
         </Modalize>
@@ -221,7 +220,7 @@ export default React.memo(SelectDropdown);
 
 const styles = ScaledSheet.create({
   label: {
-    marginBottom: 10,
+    marginBottom: 6,
     fontFamily: 'Quicksand-Regular',
     fontSize: '14@ms',
     lineHeight: '18@ms',

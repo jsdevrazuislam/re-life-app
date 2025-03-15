@@ -146,7 +146,7 @@ export default {
   title2: 'নিজের একটি সেলফি তুলুন',
   description2: 'আপনার পরিচয়পত্রের ছবির সাথে আপনার মুখের মিল নিশ্চিত করতে একটি পরিষ্কার সেলফি আপলোড করুন। নিশ্চিত করুন যে আলো যথেষ্ট আছে এবং মুখ পরিষ্কার দেখা যাচ্ছে।',
   title3: 'আপনার ইমাম স্বীকৃতি নথির ছবি তুলুন',
-  description3: 'আপনার ইমাম হিসেবে স্বীকৃতি পাওয়ার যে কোনো সরকারি নথি বা অনুমোদিত কাগজপত্রের ছবি আপলোড করুন। এটি নিশ্চিত করবে যে আপনি একজন বৈধ ইমাম।',
+  description3: 'আপনার ইমাম হিসেবে স্বীকৃতি পাওয়ার যে কোনো সরকারি নথি বা কমিটি অনুমোদিত কাগজপত্রের ছবি আপলোড করুন। এটি নিশ্চিত করবে যে আপনি একজন বৈধ ইমাম।',
   kycSecurityMessage: 'আপনার সমস্ত তথ্য সম্পূর্ণ নিরাপদভাবে সংরক্ষণ করা হবে। এটি শুধুমাত্র আপনার পরিচয় যাচাইয়ের জন্য ব্যবহৃত হবে এবং অন্য কোনো উদ্দেশ্যে শেয়ার করা হবে না।',
   keySecurityTitle: 'আপনার ব্যক্তিগত তথ্য নিশ্চিত করার জন্য',
   submitVerificationButton: 'যাচাইয়ের জন্য জমা দিন',
@@ -187,6 +187,13 @@ export default {
 
   // Personal Information
   beggerPhoto: 'ছবি',
+  isVikhukDeadLabel: "ভিক্ষুক কি মারা গেছেন?",
+  isVikhukDeadPlaceholder: "এটি চিহ্নিত করুন যদি ভিক্ষুক মারা গিয়ে থাকে",
+  howDidVikhukDieLabel: "কিভাবে মারা গেছেন?",
+  vikhukErTitle: "মারা যাবার প্রমাণ হিসেবে একটি ছবি আপলোড করুন",
+  vikhukErDescription: "ভিক্ষুক মারা যাওয়ার প্রমাণ হিসেবে দয়া করে তার মৃত্যু সম্পর্কিত একটি ছবি আপলোড করুন",
+  howDidVikhukDiePlaceholder: "ভিক্ষুক মারা যাওয়ার কারণ এখানে লিখুন",
+  deathDateLabel: "মারা যাওয়ার তারিখ",
   beggerName: 'নাম',
   beggerNamePlaceholder: 'পুরো নাম লিখুন',
   beggerAge: 'বয়স',
@@ -235,6 +242,8 @@ export default {
   currentAddressPlaceholder1: 'বর্তমান ঠিকানা লিখুন',
   permanentAddress: 'স্থায়ী ঠিকানা',
   permanentAddressPlaceholder: 'স্থায়ী ঠিকানা লিখুন',
+  permanentAddressImam: 'আপনার স্থায়ী ঠিকানা',
+  permanentAddressPlaceholderImam: 'আপনার স্থায়ী ঠিকানা লিখুন',
   overview: 'কেন ভিক্ষা করছে তার বিবরণ দিন',
   overview1: 'কেন ভিক্ষা করছে তার বিবরণ',
   childrenProveDocument: 'সন্তানের জন্ম সনদ',
@@ -278,7 +287,7 @@ export default {
   notesPlaceholder: 'যেকোনো অতিরিক্ত তথ্য বা মন্তব্য লিখুন',
   financialNeeds: 'আর্থিক চাহিদা লিখুন',
   financialNeeds1: 'আর্থিক চাহিদা',
-  ongoingTreatmentDetails: 'চলমান চিকিৎসার বিস্তারিত লিখুন',
+  ongoingTreatmentDetails: 'চলমান বিশেষ চিকিৎসার বিস্তারিত লিখুন',
   notes: 'অতিরিক্ত তথ্য বা মন্তব্য',
   taka: "টাকা",
 
@@ -290,7 +299,7 @@ export default {
 
   // Submission Confirmation
   confirmBeforeSubmit: 'দয়া করে নিশ্চিত করুন যে সমস্ত তথ্য সঠিকভাবে পূরণ করা হয়েছে।',
-  pincode: 'পিনকোড',
+  pincode: 'পোস্ট কোড',
   markAsDonated: 'অনুদান চিহ্নিত করুন',
   pincodePlaceholder: 'আপনার এলাকার পিনকোড লিখুন',
   nextStepButton: 'পরবর্তী ধাপ',
@@ -315,7 +324,7 @@ export default {
   contractSupportTitle: 'আমাদের সাথে যোগাযোগ করুন',
   searchPlaceholder: 'খুঁজুন...',
   searchButton: 'অনুসন্ধান',
-  noResultsFound: 'কোনো ফলাফল পাওয়া যায়নি। অনুগ্রহ করে সঠিক তথ্য দিয়ে আবার চেষ্টা করুন।',
+  noResultsFound: 'কোনো ফলাফল পাওয়া যায়নি। আমাদের তালিকায় এই আইডি সম্পর্কিত কোনো ভিক্ষুক পাওয়া যায়নি।',
   searchAgainSuggestion: 'আপনার অনুসন্ধানের সাথে মিলে এমন কোনো তথ্য পাওয়া যায়নি। অন্য কীওয়ার্ড দিয়ে আবার চেষ্টা করুন।',
   selectMasjidForInfo: "আপনি কোন মসজিদের অধীনে এই তথ্যটি যোগ করতে চান সেটি নির্বাচন করুন।",
 
@@ -335,6 +344,8 @@ export default {
   poorPeopleInformation: 'দরিদ্র ব্যক্তির তথ্য',
   view: 'দেখুন',
   details: 'বিস্তারিত দেখুন',
+  donation:"অনুদান",
+  edit:"এডিট করুন",
   donationDetailsTitle:"বিস্তারিত লিখুন অনুদানের বিষয়ে",
   donationDetailsDescription:"ভিক্ষুক তার প্রয়োজন অনুযায়ী সমস্ত সহায়তা পেয়েছে কিনা তা বিস্তারিতভাবে লিখুন।",
   donatedPeopleListTitle:"দানপ্রাপ্ত লোকের তালিকা",

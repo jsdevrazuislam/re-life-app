@@ -344,7 +344,7 @@ export const UploadArea = ({
         }
       </View>
     ) : (
-      <TouchableOpacity style={[error ? styles.uploadAreaError : styles.uploadArea]} onPress={handlePress}>
+      <TouchableOpacity style={[error ? styles.uploadAreaError : styles.uploadArea, style]} onPress={handlePress}>
         <Icon name="camera-alt" size={30} color={error ? Colors.danger : Colors.primary} />
         <Paragraph level="Small" weight="SemiBold" style={[error ? styles.uploadAreaTextError : styles.uploadAreaText]}>
           {title}

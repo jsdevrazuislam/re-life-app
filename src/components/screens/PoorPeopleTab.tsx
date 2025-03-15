@@ -13,8 +13,10 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { AppStackParamList } from '../../constants/route';
 import { useAuthStore } from '../../store/store';
 import { Colors } from '../../configs/colors';
-import { mvs } from 'react-native-size-matters';
+import { ms, mvs } from 'react-native-size-matters';
 import { convertNumber } from '../../utils/helper';
+import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
 
 const PeopleTab: React.FC<PeopleTabProps> = ({ data, onAdd, loading }) => {
 
@@ -64,7 +66,7 @@ const PeopleTab: React.FC<PeopleTabProps> = ({ data, onAdd, loading }) => {
           </Paragraph>
         </View>
       ) : (
-        <ScrollView contentContainerStyle={{ paddingBottom: mvs(30)}}>
+        <ScrollView contentContainerStyle={{ paddingBottom: mvs(30) }}>
           {data?.map((item, index) => (
             <View key={index} style={imamStyles.infoCard}>
               <View style={imamStyles.cardContent}>
@@ -77,15 +79,32 @@ const PeopleTab: React.FC<PeopleTabProps> = ({ data, onAdd, loading }) => {
                   <Paragraph
                     level="Small"
                     weight="Bold"
-                    style={imamStyles.cardTitle}>
+                    style={[imamStyles.cardTitle, { marginBottom: 4}]}>
                     {item.name}
                   </Paragraph>
-                  <Paragraph level="Small" weight="Bold">{convertNumber(item?.age, true)} {t('years')}</Paragraph>
-                  <Paragraph level="Small" weight="Bold">{item.presentAddress ?? item.permanentAddress}</Paragraph>
+                  <View style={imamStyles.row}>
+                    <MaterialIcons
+                      name='calendar'
+                      size={ms(20)}
+                      color={Colors.primary}
+                      style={{ width: 25 }}
+                    />
+                    <Paragraph level="Small">{convertNumber(item?.age, true)} {t('years')}</Paragraph>
+                  </View>
+                  <View style={imamStyles.row}>
+                    <MaterialIcons
+                      name='map-marker'
+                      size={ms(20)}
+                      color={Colors.primary}
+                      style={{ width: 25 }}
+                    />
+                    <Paragraph level="Small">{item.presentAddress ?? item.permanentAddress}</Paragraph>
+                  </View>
+                  
                 </View>
               </View>
               <View style={imamStyles.actionButtons}>
-                <TouchableOpacity onPress={() => navigation.navigate('HomeViewDetailsInfo', {
+                <TouchableOpacity style={imamStyles.center} onPress={() => navigation.navigate('HomeViewDetailsInfo', {
                   item: {
                     _id: user?.masjid._id,
                     name: user?.masjid.name,
@@ -97,12 +116,15 @@ const PeopleTab: React.FC<PeopleTabProps> = ({ data, onAdd, loading }) => {
                   }
                 })}>
                   <Icon name="remove-red-eye" size={20} color={Colors.primary} />
+                  <Paragraph level="Small">{t('view')}</Paragraph>
                 </TouchableOpacity>
-                {user?.role === 'imam' && <TouchableOpacity onPress={() => navigation.navigate('MarkDonationScreen', { data: item })}>
-                  <Entypo name="check" size={20} color={Colors.primary} />
+                {user?.role === 'imam' && <TouchableOpacity style={imamStyles.center} onPress={() => navigation.navigate('MarkDonationScreen', { data: item })}>
+                  <Entypo name="heart" size={20} color={Colors.primary} />
+                  <Paragraph level="Small">{t('donation')}</Paragraph>
                 </TouchableOpacity>}
-                {user?.role === 'imam' && <TouchableOpacity onPress={() => navigation.navigate('EditPoorPeopleScreen', { item })}>
-                  <Icon name="edit" size={20} color={Colors.secondary} />
+                {user?.role === 'imam' && <TouchableOpacity style={imamStyles.center} onPress={() => navigation.navigate('EditPoorPeopleScreen', { item })}>
+                  <Icon name="edit" size={20} color={Colors.primary} />
+                  <Paragraph level="Small">{t('edit')}</Paragraph>
                 </TouchableOpacity>}
               </View>
             </View>

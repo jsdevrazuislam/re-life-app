@@ -33,6 +33,7 @@ import { AppStackParamList } from '../constants/route'
 import ErrorMessage from '../components/ErrorMessage'
 import { bengaliToEnglishNumber, convertNumber } from '../utils/helper'
 import DonationRestrictionModal from '../components/DonationRestrictionModal'
+import Checkbox from '../components/ui/Checkout'
 
 
 
@@ -53,7 +54,11 @@ const MarkDonationScreen = () => {
     const [photoLoading, setPhotLoading] = useState(false)
     const { user } = useAuthStore()
     const { loading, request, error } = useApi()
+    const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>({});
 
+    const toggleCheck = (label: string) => {
+        setCheckedItems((prev) => ({ ...prev, [label]: !prev[label] }));
+      };
 
     const openImage = (imageUrl: string) => {
         if (imageUrl) {
@@ -79,11 +84,12 @@ const MarkDonationScreen = () => {
     ];
 
     const essentials = [
-        { icon: 'rice', label: t('rice'), value: `${essentialsNeedsMonthly.rice.name} ${essentialsNeedsMonthly.rice.quantity}` },
-        { icon: 'bowl-mix', label: t('lentils'), value: `${essentialsNeedsMonthly.lentils.name} ${essentialsNeedsMonthly.lentils.quantity}` },
-        { icon: 'water', label: t("oil"), value: `${essentialsNeedsMonthly.oil.name} ${essentialsNeedsMonthly.oil.quantity}` },
-        { icon: 'tshirt-crew', label: t('selfClothing'), value: `${essentialsNeedsMonthly.clothingForSelf.name} ${essentialsNeedsMonthly.clothingForSelf.quantity}` },
-        { icon: 'account-group', label: t('familyClothing'), value: `${essentialsNeedsMonthly.clothingForFamily.name} ${essentialsNeedsMonthly.clothingForFamily.quantity}` },
+        { icon: 'cash', label: t('financialNeeds1'), value: `${essentialsNeedsMonthly.financialNeeds}` },
+        { icon: 'rice', label: t('rice'), value: `${essentialsNeedsMonthly.rice.quantity} ${essentialsNeedsMonthly.rice.name}` },
+        { icon: 'bowl-mix', label: t('lentils'), value: `${essentialsNeedsMonthly.lentils.quantity} ${essentialsNeedsMonthly.lentils.name}` },
+        { icon: 'water', label: t("oil"), value: `${essentialsNeedsMonthly.oil.quantity} ${essentialsNeedsMonthly.oil.name}` },
+        { icon: 'tshirt-crew', label: t('selfClothing'), value: `${essentialsNeedsMonthly.clothingForSelf.quantity} ${essentialsNeedsMonthly.clothingForSelf.name}` },
+        { icon: 'account-group', label: t('familyClothing'), value: `${essentialsNeedsMonthly.clothingForFamily.quantity} ${essentialsNeedsMonthly.clothingForFamily.name}` },
     ];
 
     const handleImagePicker = async () => {
@@ -244,6 +250,12 @@ const MarkDonationScreen = () => {
                                             <Paragraph level='Small' weight='Bold' style={personalStyles.label}>{item.label}</Paragraph>
                                             <Paragraph level='Small' weight='Medium' style={personalStyles.value}>{item.value}</Paragraph>
                                         </View>
+                                        <Checkbox
+                                        value={checkedItems[item.label] || false}
+                                        onValueChange={() => toggleCheck(item.label)}
+                                        checkedColor={Colors.primary}
+                                        uncheckedColor={Colors.lightGray}
+                                        />
                                     </View>
                                 )
                             ))}
@@ -260,6 +272,12 @@ const MarkDonationScreen = () => {
                                         {essentialsNeedsMonthly.otherFoodItems?.map((item) => `${item.name} ${item.quantity} ${item.unit}\n`)}
                                     </Paragraph>
                                 </View>
+                                <Checkbox
+                                value={checkedItems['otherFoodItems'] || false}
+                                onValueChange={() => toggleCheck('otherFoodItems')}
+                                checkedColor={Colors.primary}
+                                uncheckedColor={Colors.lightGray}
+                                />
                             </View>
                         </View>
 

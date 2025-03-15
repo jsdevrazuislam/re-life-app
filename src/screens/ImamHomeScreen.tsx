@@ -39,7 +39,10 @@ const DashboardScreen = () => {
 
   const tabs = [
     { key: 'beggers', label: t('beggers') },
-    { key: 'committees', label: t('committees') },
+    ...(user?.role === 'imam'
+      ? [{ key: 'committees', label: t('committees') },]
+      : []),
+    
   ];
 
   const handleAddPerson = () => {
@@ -123,7 +126,7 @@ const DashboardScreen = () => {
         <View style={{ flex: 1, marginTop: 20 }}>
           <CustomTabs tabs={tabs} onTabChange={setActiveTab} activeTab={activeTab} />
           {activeTab === 'beggers' && <PeopleTab loading={loading} data={people} onAdd={handleAddPerson} />}
-          {activeTab === 'committees' && <CommitteeTab loading={loading} data={committees} />}
+          {user?.role === 'imam' && activeTab === 'committees' && <CommitteeTab loading={loading} data={committees} />}
         </View>
       </View>
     </SafeAreaWrapper>

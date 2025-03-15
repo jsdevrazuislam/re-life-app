@@ -10,6 +10,8 @@ export default {
   getStarted: 'Get Started',
   skip: 'Skip',
   // Login
+  permanentAddressImam: 'Your Permanent Address',
+  permanentAddressPlaceholderImam: 'Write your permanent address',
   taka:"BDT",
   signInTitle: 'Sign In to Your Account',
   signInDescription: 'Log in to your account to begin your journey.',
@@ -307,8 +309,17 @@ export default {
   // Submission Confirmation
   confirmBeforeSubmit:
     'Please ensure all information is correctly filled in before submitting.',
-  pincode: 'Pincode',
-  pincodePlaceholder: 'Enter your area pincode',
+  pincode: 'Postcode',
+  donation:"Donation",
+  edit:"Edit",
+  pincodePlaceholder: 'Enter your area postcode',
+  isVikhukDeadLabel: "Has the beggar passed away?",
+  isVikhukDeadPlaceholder: "Select if the beggar has passed away",
+  howDidVikhukDieLabel: "How did the beggar die?",
+  howDidVikhukDiePlaceholder: "Write the reason for the beggar's death here",
+  deathDateLabel: "Date of death",
+  vikhukErTitle: "Upload a picture as proof of death",
+  vikhukErDescription: "Please upload a picture as proof of the beggar's death.",
   nextStepButton: 'Next Step',
   documentTypeLabel: 'Document Type',
   documentTypePlaceholder: 'Select your identity document type',
@@ -336,7 +347,7 @@ export default {
   contractSupportTitle: 'Contract Support',
   searchPlaceholder: 'Search...',
   searchButton: 'Search',
-  noResultsFound: 'No results found. Please check your input and try again.',
+  noResultsFound: 'No results found. We could not find any beggar related to this ID in our list.',
   searchAgainSuggestion:
     'No matching results found. Try searching with different keywords.',
 
