@@ -83,6 +83,11 @@ const SettingsScreen = () => {
                   onPress={() => navigation.navigate('DonationHistoryScreen')}
                 />
                 <SettingItem
+                  icon="apartment"
+                  label={t('rehabilitation.details.label')}
+                  onPress={() => navigation.navigate('RehabilitationDashboard')}
+                />
+                <SettingItem
                   icon="remove-red-eye"
                   label={t('requestView')}
                   onPress={() => navigation.navigate('RequestAccessView')}

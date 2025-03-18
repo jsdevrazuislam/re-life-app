@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, StyleSheet, FlatList, RefreshControl, Image, ImageSourcePropType, StyleProp, ImageStyle } from 'react-native';
+import { View, StyleSheet, FlatList, RefreshControl, Image, ImageSourcePropType, StyleProp, ImageStyle, ViewStyle } from 'react-native';
 import { ms, mvs } from 'react-native-size-matters';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
@@ -15,14 +15,14 @@ import ApiStrings from '../lib/apis_string';
 import globalStyles from '../styles/global.style';
 import { formatValue } from '../utils/formatValue';
 
-export const EmptyState = ({ image = require('../assets/no-request.png'), title = 'noRequests', description = 'noRequestsDescription', style }: {
-    image?: ImageSourcePropType, title?: string, description?: string, style?: StyleProp<ImageStyle>
+export const EmptyState = ({ image = require('../assets/no-request.png'), title = 'noRequests', description = 'noRequestsDescription', style, viewStyle }: {
+    image?: ImageSourcePropType, title?: string, description?: string, style?: StyleProp<ImageStyle>, viewStyle?: StyleProp<ViewStyle>
 }) => {
 
     const { t } = useTranslation();
 
     return (
-        <View style={styles.emptyStateContainer}>
+        <View style={[styles.emptyStateContainer, viewStyle]}>
             <Image source={image} style={[styles.emptyStateImage, style]} />
             {
                 title && <Paragraph level="Large" weight="Bold" style={styles.emptyStateText}>

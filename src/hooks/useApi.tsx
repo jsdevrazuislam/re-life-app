@@ -30,6 +30,7 @@ export const useApi = () => {
       setData(response.data);
       return response.data;
     } catch (error: any) {
+      console.log("app error", error)
       setError(error?.response?.data?.message || error?.message || 'An error occurred');
       throw error;
     } finally {

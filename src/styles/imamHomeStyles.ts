@@ -130,7 +130,7 @@ export const imamStyles = ScaledSheet.create({
   },
   actionButtons: {
     flexDirection: 'row',
-    gap: 40,
+    gap: 30,
     alignItems:'center',
     justifyContent:'center',
     paddingVertical: 10

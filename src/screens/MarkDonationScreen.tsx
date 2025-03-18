@@ -1,5 +1,5 @@
 import { View, ScrollView, TouchableOpacity, Modal, Platform, Alert, Linking, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import SafeAreaWrapper from '../components/SafeAreaWrapper'
 import globalStyles from '../styles/global.style'
 import Header from '../components/Header'
@@ -32,10 +32,15 @@ import ApiStrings from '../lib/apis_string'
 import { AppStackParamList } from '../constants/route'
 import ErrorMessage from '../components/ErrorMessage'
 import { bengaliToEnglishNumber, convertNumber } from '../utils/helper'
-import DonationRestrictionModal from '../components/DonationRestrictionModal'
 import Checkbox from '../components/ui/Checkout'
+import DonationRestrictionModal from '../components/DonationRestrictionModal'
 
 
+const isDisabled = (receivingAssistanceDate: string) => {
+    const assistanceTime = new Date(receivingAssistanceDate).getTime();
+    const oneWeekLater = assistanceTime + 7 * 24 * 60 * 60 * 1000;
+    return Date.now() < oneWeekLater;
+};
 
 const MarkDonationScreen = () => {
 
@@ -45,20 +50,21 @@ const MarkDonationScreen = () => {
     });
     const navigation = useNavigation<NavigationProp<AppStackParamList>>();
     const { t } = useTranslation();
-    const [modalVisible, setModalVisible] = useState<boolean>(true);
     const route = useRoute<ImamHomeScreenRouteProp>();
     const peopleInformation = route.params?.data as PoorPeople;
     const essentialsNeedsMonthly = peopleInformation.essentialsNeedsMonthly;
     const [visible, setVisible] = useState(false);
     const [selectedImage, setSelectedImage] = useState('');
     const [photoLoading, setPhotLoading] = useState(false)
-    const { user } = useAuthStore()
+    const { user, loadUserFromStorage } = useAuthStore()
     const { loading, request, error } = useApi()
     const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>({});
+    const [disabledItems, setDisabledItems] = useState<{ [key: string]: boolean }>({});
+
 
     const toggleCheck = (label: string) => {
         setCheckedItems((prev) => ({ ...prev, [label]: !prev[label] }));
-      };
+    };
 
     const openImage = (imageUrl: string) => {
         if (imageUrl) {
@@ -68,7 +74,7 @@ const MarkDonationScreen = () => {
     };
 
     const calculateRemainingNeeds = (financialNeeds: string, amountOfAssistance: string): string => {
-        const financialNeedsAmount = parseFloat(bengaliToEnglishNumber(financialNeeds)) || 0;
+        const financialNeedsAmount = parseFloat(bengaliToEnglishNumber(String(financialNeeds))) || 0;
         const amountOfAssistanceAmount = parseFloat(bengaliToEnglishNumber(amountOfAssistance.replace(/[^\d০-৯]/g, ''))) || 0;
         return String(financialNeedsAmount - amountOfAssistanceAmount);
     };
@@ -84,12 +90,12 @@ const MarkDonationScreen = () => {
     ];
 
     const essentials = [
-        { icon: 'cash', label: t('financialNeeds1'), value: `${essentialsNeedsMonthly.financialNeeds}` },
-        { icon: 'rice', label: t('rice'), value: `${essentialsNeedsMonthly.rice.quantity} ${essentialsNeedsMonthly.rice.name}` },
-        { icon: 'bowl-mix', label: t('lentils'), value: `${essentialsNeedsMonthly.lentils.quantity} ${essentialsNeedsMonthly.lentils.name}` },
-        { icon: 'water', label: t("oil"), value: `${essentialsNeedsMonthly.oil.quantity} ${essentialsNeedsMonthly.oil.name}` },
-        { icon: 'tshirt-crew', label: t('selfClothing'), value: `${essentialsNeedsMonthly.clothingForSelf.quantity} ${essentialsNeedsMonthly.clothingForSelf.name}` },
-        { icon: 'account-group', label: t('familyClothing'), value: `${essentialsNeedsMonthly.clothingForFamily.quantity} ${essentialsNeedsMonthly.clothingForFamily.name}` },
+        { icon: 'cash', label: t('financialNeeds1'), name: "financialNeeds", value: `${essentialsNeedsMonthly.financialNeeds}` },
+        { icon: 'rice', label: t('rice'), name: "rice", value: `${essentialsNeedsMonthly.rice.quantity} ${essentialsNeedsMonthly.rice.name}` },
+        { icon: 'bowl-mix', label: t('lentils'), name: "lentils", value: `${essentialsNeedsMonthly.lentils.quantity} ${essentialsNeedsMonthly.lentils.name}` },
+        { icon: 'water', label: t("oil"), name: "oil", value: `${essentialsNeedsMonthly.oil.quantity} ${essentialsNeedsMonthly.oil.name}` },
+        { icon: 'tshirt-crew', name: "clothingForSelf", label: t('selfClothing'), value: `${essentialsNeedsMonthly.clothingForSelf.quantity} ${essentialsNeedsMonthly.clothingForSelf.name}` },
+        { icon: 'account-group', name: "clothingForFamily", label: t('familyClothing'), value: `${essentialsNeedsMonthly.clothingForFamily.quantity} ${essentialsNeedsMonthly.clothingForFamily.name}` },
     ];
 
     const handleImagePicker = async () => {
@@ -135,9 +141,14 @@ const MarkDonationScreen = () => {
     const handleSubmitForm = async (formData: any) => {
         const formDataPayload = new FormData();
 
+        const checkedItemsArray = Object.keys(checkedItems)
+            .filter(key => checkedItems[key])
+            .map(key => ({ name: key }));
+
         formDataPayload.append('remarks', formData?.remarks)
         formDataPayload.append('masjidId', user?.masjid._id)
         formDataPayload.append('poorPersonId', peopleInformation._id)
+        formDataPayload.append('donatedItems', JSON.stringify(checkedItemsArray))
         if (formData?.provePictures?.length > 1) {
             formData?.provePictures?.forEach((img: IFile) => {
                 if (img?.uri) {
@@ -152,24 +163,42 @@ const MarkDonationScreen = () => {
             formDataPayload
         );
 
+        await loadUserFromStorage()
         showToast('success', message);
         reset()
         navigation.navigate('DonationHistoryScreen');
     }
 
+    useEffect(() => {
+        if (peopleInformation.receivedNeeds) {
+            setCheckedItems(
+                Object.keys(peopleInformation.receivedNeeds).reduce((acc, key) => {
+                    if (peopleInformation.receivedNeeds[key as keyof typeof peopleInformation.receivedNeeds]) {
+                        acc[key] = true;
+                    }
+                    return acc;
+                }, {} as { [key: string]: boolean })
+            );
+        }
+    }, [peopleInformation]);
+
+    useEffect(() => {
+        if (peopleInformation.receivingAssistanceDate && peopleInformation.receivedNeeds) {
+            const updatedDisabledItems: { [key: string]: boolean } = {};
+
+            (Object.keys(peopleInformation.receivedNeeds) as Array<keyof typeof peopleInformation.receivedNeeds>).forEach((key) => {
+                if (peopleInformation.receivedNeeds[key]) {
+                    updatedDisabledItems[key] = isDisabled(peopleInformation.receivingAssistanceDate);
+                }
+            });
+
+            setDisabledItems(updatedDisabledItems);
+        }
+    }, [peopleInformation]);
+
+
     return (
         <SafeAreaWrapper>
-           {
-            peopleInformation.receivingAssistanceFromMasjid &&  <DonationRestrictionModal
-            lastDonationDate="Fri Mar 14 2025 14:32:11 GMT+0600"
-            visible={modalVisible}
-            onClose={() => {
-                setModalVisible(false)
-                navigation.goBack()
-            }}
-            onViewHistory={() => navigation.navigate("DonationHistoryScreen")}
-          />
-           }
             <LoadingOverlay visible={loading} />
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -251,10 +280,11 @@ const MarkDonationScreen = () => {
                                             <Paragraph level='Small' weight='Medium' style={personalStyles.value}>{item.value}</Paragraph>
                                         </View>
                                         <Checkbox
-                                        value={checkedItems[item.label] || false}
-                                        onValueChange={() => toggleCheck(item.label)}
-                                        checkedColor={Colors.primary}
-                                        uncheckedColor={Colors.lightGray}
+                                            value={checkedItems[item.name] || false}
+                                            onValueChange={() => toggleCheck(item.name)}
+                                            checkedColor={Colors.primary}
+                                            uncheckedColor={Colors.lightGray}
+                                            disabled={disabledItems[item.name]}
                                         />
                                     </View>
                                 )
@@ -273,65 +303,73 @@ const MarkDonationScreen = () => {
                                     </Paragraph>
                                 </View>
                                 <Checkbox
-                                value={checkedItems['otherFoodItems'] || false}
-                                onValueChange={() => toggleCheck('otherFoodItems')}
-                                checkedColor={Colors.primary}
-                                uncheckedColor={Colors.lightGray}
+                                    value={checkedItems['otherFoodItems'] || false}
+                                    onValueChange={() => toggleCheck('otherFoodItems')}
+                                    checkedColor={Colors.primary}
+                                    uncheckedColor={Colors.lightGray}
+                                    disabled={disabledItems['otherFoodItems']}
                                 />
                             </View>
                         </View>
 
-                        <Heading level={6} weight="Bold">
-                            {t('proofUploadtitle')}
-                        </Heading>
-                        <Paragraph
-                            level="Small"
-                            weight="Medium"
-                            style={{ marginBottom: 20 }}
-                        >
-                            {t('proofUploaddescription')}
-                        </Paragraph>
-                        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 
-                            <>
-                                <Controller
-                                    name={'remarks'}
-                                    control={control}
-                                    render={({ field: { value, onChange } }) => (
-                                        <Textarea
-                                            label={t('donationDetailsTitle')}
-                                            value={value ?? ''}
-                                            onChangeText={onChange}
-                                            placeholder={t('donationDetailsDescription')}
-                                            maxLength={300}
-                                            numberOfLines={5}
-                                            style={{ marginBottom: 10 }}
-                                            error={errors.remarks?.message}
-                                        />
-                                    )}
-                                />
-                                <Controller
-                                    name='provePictures'
-                                    control={control}
-                                    render={() => (
-                                        <UploadArea
-                                            title={t('beggerPhoto')}
-                                            imageUri={watch('provePictures')}
-                                            handlePress={() => handleImagePicker()}
-                                            handleRemove={(uri) => removeImage(uri)}
-                                            error={errors.provePictures?.message}
-                                            loading={photoLoading}
-                                        />
-                                    )}
-                                />
-                            </>
-                        </TouchableWithoutFeedback>
+
+                        {
+                            isDisabled(peopleInformation.receivingAssistanceDate) ? <DonationRestrictionModal lastDonationDate={peopleInformation.receivingAssistanceDate} onViewHistory={() => navigation.navigate("DonationHistoryScreen")} /> : <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+
+                                <>
+
+                                    <Heading level={6} weight="Bold">
+                                        {t('proofUploadtitle')}
+                                    </Heading>
+                                    <Paragraph
+                                        level="Small"
+                                        weight="Medium"
+                                        style={{ marginBottom: 20 }}
+                                    >
+                                        {t('proofUploaddescription')}
+                                    </Paragraph>
+                                    <Controller
+                                        name={'remarks'}
+                                        control={control}
+                                        render={({ field: { value, onChange } }) => (
+                                            <Textarea
+                                                label={t('donationDetailsTitle')}
+                                                value={value ?? ''}
+                                                onChangeText={onChange}
+                                                placeholder={t('donationDetailsDescription')}
+                                                maxLength={300}
+                                                numberOfLines={5}
+                                                style={{ marginBottom: 10 }}
+                                                error={errors.remarks?.message}
+                                            />
+                                        )}
+                                    />
+                                    <Controller
+                                        name='provePictures'
+                                        control={control}
+                                        render={() => (
+                                            <UploadArea
+                                                title={t('beggerPhoto')}
+                                                imageUri={watch('provePictures')}
+                                                handlePress={() => handleImagePicker()}
+                                                handleRemove={(uri) => removeImage(uri)}
+                                                error={errors.provePictures?.message}
+                                                loading={photoLoading}
+                                            />
+                                        )}
+                                    />
+                                </>
+                            </TouchableWithoutFeedback>
+                        }
+
                     </ScrollView>
                     <View style={styles.footer}>
                         {
                             error && <ErrorMessage error={error} />
                         }
-                        <AppButton text={t('markAsDonated')} onPress={handleSubmit(handleSubmitForm)} />
+                        <AppButton variant='primary' disabled={isDisabled(peopleInformation.receivingAssistanceDate)} text={t('rehabilitationButton')} onPress={() => navigation.navigate('RehabilitationScreen', { item: peopleInformation})} />
+                        <AppButton variant='outline' style={{ marginTop: 15}} disabled={isDisabled(peopleInformation.receivingAssistanceDate)} text={t('markAsDonated1')} onPress={handleSubmit(handleSubmitForm)} />
                     </View>
                 </View>
 

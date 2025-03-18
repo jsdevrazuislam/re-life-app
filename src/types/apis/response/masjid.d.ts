@@ -50,6 +50,20 @@ interface ImamDetails {
 
 interface PoorPeople {
   essentialsNeedsMonthly: EssentialsNeedsMonthly;
+  deathInfo:{
+    deathProofImage: [{ url:string}],
+    status: 'Deceased' | 'Alive',
+    dateOfDeath: string,
+    causeOfDeath:string
+  };
+  receivedNeeds:{
+    clothingForFamily: boolean,
+    clothingForSelf: boolean,
+    lentils: boolean,
+    oil: boolean,
+    otherFoodItems: boolean,
+    rice: boolean
+  },
   name: string;
   age: number;
   gender: string;

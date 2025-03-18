@@ -11,7 +11,7 @@ const AppButton: React.FC<AppButtonProps> = ({ loading,  variant = 'primary', te
         ? [buttonStyles.appButtonPrimary, { backgroundColor: 'gray' }] 
         : buttonStyles.appButtonPrimary
       : disabled
-      ? [buttonStyles.appButtonOutline, { backgroundColor: 'gray' }] 
+      ? [buttonStyles.appButtonOutline, { backgroundColor: Colors.neutral[200], borderColor: Colors.neutral[200] }] 
       : buttonStyles.appButtonOutline;
 
   const textStyle =
@@ -20,7 +20,7 @@ const AppButton: React.FC<AppButtonProps> = ({ loading,  variant = 'primary', te
         ? [buttonStyles.buttonTextPrimary, { color: 'lightgray' }] 
         : buttonStyles.buttonTextPrimary
       : disabled
-      ? [buttonStyles.buttonTextOutline, { color: 'lightgray' }] 
+      ? [buttonStyles.buttonTextOutline, { color: 'gray' }] 
       : buttonStyles.buttonTextOutline;
 
   return (
