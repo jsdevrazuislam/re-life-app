@@ -298,6 +298,13 @@ export default {
   "rehabilitation.successful": "Successful",
   "rehabilitation.inProgress": "In Progress",
   "rehabilitation.failed": "Failed",
+  "rehabilitation.successMessage": "Rehabilitation successfully completed!",
+  "rehabilitation.failureMessage": "Rehabilitation has failed!",
+  "rehabilitation.investment": "Investment",
+  "rehabilitation.duration": "Duration",
+  "rehabilitation.successStory": "Success Story",
+  "rehabilitation.failureReason": "Reason for Failure",
+  "goBack":"Back To Back",
   cancel: "Cancel",
   // Monthly Needs
   monthlyNeedsTitle: 'Monthly Needs',

@@ -277,4 +277,16 @@ export const imamStyles = ScaledSheet.create({
     color: Colors.black,
   },
 
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  errorText: {
+    fontSize: 16,
+    color: Colors.danger,
+    marginVertical: 10,
+    textAlign: 'center',
+  },
 });

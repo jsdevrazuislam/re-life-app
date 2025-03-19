@@ -10,11 +10,18 @@ interface Stats {
   failed: number;
 }
 
+interface DashboardStats{
+  totalPoorPeople?: number;
+  totalCommittees?:number
+}
+
 interface PersonItemProps {
   _id: string;
   status: 'in-progress' | 'completed' | 'failed';
   details: string;
+  story: string;
   financialSupport: number;
+  endDate: string;
   rehabilitationType: string;
   startDate: string;
   personId: PoorPeople;

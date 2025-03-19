@@ -19,7 +19,7 @@ const ApiStrings = {
     CREATE_REHEB:'/masjids/create',
     GET_REPORT: (id:string) => `/masjids/rehabilitation-report/${id}`,
     GET_MASJIDS_MODERATOR:'/masjids/moderator/info',
-    GET_MASJID_DETAILS: (id:string) => `/masjids/${id}/details`,
+    GET_MASJID_DETAILS: (id:string) => `/masjids/details/${id}`,
     GET_MASJID_REHEB_PEOPLE: (id:string) => `/masjids/rehabilitation/${id}`,
     GET_MASJID_REHEB_STATS: (id:string) => `/masjids/rehabilitation-stats/${id}`,
     GET_MASJID_DETAILS_FOR_MODERATOR:`/masjids/moderator/stats`,

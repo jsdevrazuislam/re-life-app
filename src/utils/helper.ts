@@ -1,3 +1,5 @@
+import { differenceInYears, differenceInMonths, differenceInDays } from 'date-fns';
+
 const timeAgo = (timestamp: string | Date): string => {
     const now: Date = new Date();
     const past: Date = new Date(timestamp);
@@ -40,6 +42,24 @@ const timeAgo = (timestamp: string | Date): string => {
         return index !== -1 ? englishNumbers[index] : char;
     }).join('');
 };
+
+
+export function getTimeDifference(startDate: string, endDate: string): string {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    const years = differenceInYears(end, start);
+    const months = differenceInMonths(end, start) % 12;
+    const days = differenceInDays(end, start) % 30; 
+
+    const parts: string[] = [];
+    if (years > 0) parts.push(`${years} year${years > 1 ? 's' : ''}`);
+    if (months > 0) parts.push(`${months} month${months > 1 ? 's' : ''}`);
+    if (days > 0 || parts.length === 0) parts.push(`${days} day${days > 1 ? 's' : ''}`);
+
+    return parts.join(', ');
+}
+
 
 export const convertNumber = (num: string | number, toBangla: boolean = true): string => {
   const engNums = '0123456789';

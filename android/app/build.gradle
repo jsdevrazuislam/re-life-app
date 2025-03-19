@@ -127,6 +127,7 @@ dependencies {
     implementation("com.facebook.react:react-android")
     implementation project(':react-native-vector-icons')
     implementation("androidx.activity:activity:1.9.+")
+    implementation project(':react-native-share')
 
 
     if (hermesEnabled.toBoolean()) {

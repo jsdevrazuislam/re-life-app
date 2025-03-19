@@ -96,7 +96,6 @@ const RehabilitationListScreen: React.FC = () => {
         ]);
 
         if (!peopleRes || !statsRes) {
-            console.log('Invalid API response');
             return;
         }
 
@@ -118,8 +117,6 @@ const RehabilitationListScreen: React.FC = () => {
         }
 
         setPage(pageNum);
-    } catch (error) {
-        console.error('Error fetching data:', error);
     } finally {
         setLoadingMore(false);
         setTimeout(() => setIsEndReached(false), 1000); 
@@ -225,7 +222,7 @@ const loadMore = async () => {
   );
 };
 
-const SkeletonItem = () => {
+export const SkeletonItem = () => {
   const animatedValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -267,7 +264,7 @@ const SkeletonItem = () => {
   );
 };
 
-const StatsSkeleton = () => (
+export const StatsSkeleton = () => (
   <>
     <View style={[styles.row, { marginTop: 20 }]}>
       <StatCardSkeleton />
@@ -280,7 +277,7 @@ const StatsSkeleton = () => (
   </>
 );
 
-const StatCardSkeleton = () => (
+export const StatCardSkeleton = () => (
   <View style={styles.statSkeleton}>
     <View style={styles.statSkeletonLine} />
     <View style={styles.statSkeletonLine} />

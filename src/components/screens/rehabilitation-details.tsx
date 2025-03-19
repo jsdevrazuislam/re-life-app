@@ -23,6 +23,7 @@ import { showToast } from '../../utils/toast';
 import FollowUpCard from './follow-up-card';
 import { useTranslation } from '../../hooks/useTranslation';
 import { EmptyState } from '../../screens/RequestAccessViewScreen';
+import RehabilitationStatusScreen from '../../screens/RehabilitationSuccessScreen';
 
 
 
@@ -36,7 +37,7 @@ const RehabilitationDetailsScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
 
 
-  const handleMarkComplete = async (status:string) => {
+  const handleMarkComplete = async (status: string) => {
     if (!status) {
       setModalVisible(true);
       return;
@@ -48,59 +49,58 @@ const RehabilitationDetailsScreen = () => {
 
 
   return (
-    <SafeAreaWrapper>
+    
+      poorPeople.status !== 'in-progress' ? <RehabilitationStatusScreen onPress={() => navigation.goBack()} poorPeople={poorPeople} status={poorPeople.status} /> :  <SafeAreaWrapper>
       <View style={globalStyles.container}>
-        <LoadingOverlay visible={loading} />
-        <BackButton />
-        <View style={styles.card}>
-          <ImageComponent source={person.photoUrl} style={styles.profileImage} />
-          <Paragraph level='Large' weight='Bold'>{person.name}</Paragraph>
-          <Paragraph level='Small' weight='Medium' style={styles.contact}>📞 {person.contactNumber}</Paragraph>
-          <Paragraph level='Small' weight='Medium' style={styles.location}>📍 {person.address}</Paragraph>
-          <Paragraph level='Small' weight='Medium' style={styles.issue}>⚠️ {t('rehabilitation.problem')}: {person.overview}</Paragraph>
-          <Paragraph level='Small' weight='Medium' style={styles.date}>📅 {t('rehabilitation.date')}: {format(poorPeople.startDate, "yyyy-MM-dd")}</Paragraph>
-        </View>
-        <Paragraph style={{ marginBottom: 10 }} level='Large' weight='Bold'>
-          {t("rehabilitation.followUpReports")}
-        </Paragraph>
-        <FlatList
-          data={poorPeople.followUpRecords}
-          keyExtractor={(_, index) => index.toString()}
-          renderItem={({ item }) => (
-            <FollowUpCard
-              date={format(item.date, "yyyy-MM-dd")}
-              comment={item.comments}
-              status={poorPeople.status}
-              mediaFiles={item.mediaFiles ?? []}
-            />
-          )}
-          ListEmptyComponent={<EmptyState title={t('rehabilitation.noFollowUps')} viewStyle={{ marginTop: 10 }} />}
-        />
-        <View style={styles.buttonContainer}>
-          {
-            poorPeople.status === 'in-progress' &&  <>
-              <AppButton text={t('rehabilitation.markAsComplete')} onPress={() => setModalVisible(true)} />
-              <AppButton variant='outline' style={{ marginTop: 10 }} text={t('rehabilitation.createFollowUp')} onPress={() => navigation.navigate('AddFollowUpScreen', { item: poorPeople })} />
-            </>
-          }
-        </View>
-        <Modal visible={modalVisible} transparent animationType="slide">
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Paragraph level="Large" weight="Bold">
-                {t('rehabilitation.selectStatus')}
-              </Paragraph>
-
-              <AppButton style={{ marginBottom: 10, marginTop: 20 }} text={t('rehabilitation.markAsComplete')} onPress={() => handleMarkComplete('completed')} />
-              <AppButton text={t('rehabilitation.status.failed')} variant="outline" onPress={() => handleMarkComplete('failed')} />
-
-              <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
-                <Paragraph level="Medium">{t('cancel')}</Paragraph>
-              </TouchableOpacity>
-            </View>
+          <LoadingOverlay visible={loading} />
+          <BackButton />
+          <View style={styles.card}>
+            <ImageComponent source={person.photoUrl} style={styles.profileImage} />
+            <Paragraph level='Large' weight='Bold'>{person.name}</Paragraph>
+            <Paragraph level='Small' weight='Medium' style={styles.contact}>📞 {person.contactNumber}</Paragraph>
+            <Paragraph level='Small' weight='Medium' style={styles.location}>📍 {person.address}</Paragraph>
+            <Paragraph level='Small' weight='Medium' style={styles.issue}>⚠️ {t('rehabilitation.problem')}: {person.overview}</Paragraph>
+            <Paragraph level='Small' weight='Medium' style={styles.date}>📅 {t('rehabilitation.date')}: {format(poorPeople.startDate, "yyyy-MM-dd")}</Paragraph>
           </View>
-        </Modal>
-      </View>
+          <Paragraph style={{ marginBottom: 10 }} level='Large' weight='Bold'>
+            {t("rehabilitation.followUpReports")}
+          </Paragraph>
+          <FlatList
+            data={poorPeople.followUpRecords}
+            keyExtractor={(_, index) => index.toString()}
+            renderItem={({ item }) => (
+              <FollowUpCard
+                date={format(item.date, "yyyy-MM-dd")}
+                comment={item.comments}
+                status={poorPeople.status}
+                mediaFiles={item.mediaFiles ?? []}
+              />
+            )}
+            ListEmptyComponent={<EmptyState title={t('rehabilitation.noFollowUps')} viewStyle={{ marginTop: 10 }} />}
+          />
+          <View style={styles.buttonContainer}>
+
+            <AppButton text={t('rehabilitation.markAsComplete')} onPress={() => setModalVisible(true)} />
+            <AppButton variant='outline' style={{ marginTop: 10 }} text={t('rehabilitation.createFollowUp')} onPress={() => navigation.navigate('AddFollowUpScreen', { item: poorPeople })} />
+
+          </View>
+          <Modal visible={modalVisible} transparent animationType="slide">
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Paragraph level="Large" weight="Bold">
+                  {t('rehabilitation.selectStatus')}
+                </Paragraph>
+
+                <AppButton style={{ marginBottom: 10, marginTop: 20 }} text={t('rehabilitation.markAsComplete')} onPress={() => handleMarkComplete('completed')} />
+                <AppButton text={t('rehabilitation.status.failed')} variant="outline" onPress={() => handleMarkComplete('failed')} />
+
+                <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
+                  <Paragraph level="Medium">{t('cancel')}</Paragraph>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+        </View>
     </SafeAreaWrapper>
   );
 };

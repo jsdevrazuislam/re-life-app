@@ -4,5 +4,7 @@ extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autoli
 rootProject.name = "Re Life"
 include ':app'
 include ':react-native-vector-icons'
+include ':react-native-share'
 project(':react-native-vector-icons').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-vector-icons/android')
+project(':react-native-share').projectDir = new File(rootProject.projectDir, 	'../node_modules/react-native-share/android')
 includeBuild('../node_modules/@react-native/gradle-plugin')

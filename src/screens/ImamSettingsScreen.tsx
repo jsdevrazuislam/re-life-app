@@ -119,12 +119,10 @@ const SettingsScreen = () => {
             <SettingItem
               icon="privacy-tip"
               label={t('privacyPolicyTitle')}
-              onPress={() => console.log('Navigate to PrivacyPolicy')}
             />
             <SettingItem
               icon="help-center"
               label={t('helpSupportTitle')}
-              onPress={() => console.log('Navigate to HelpScreen')}
             />
           </View>
         </View>

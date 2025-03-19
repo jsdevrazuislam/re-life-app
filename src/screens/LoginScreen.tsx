@@ -20,7 +20,6 @@ import AppButton from '../components/ui/AppButton';
 import Paragraph from '../components/ui/Paragraph';
 import { useApi } from '../hooks/useApi';
 import ApiStrings from '../lib/apis_string';
-import { showToast } from '../utils/toast';
 import { useAuthStore } from '../store/store';
 import LoadingOverlay from '../components/LoadingOverlay';
 import { useForm, Controller } from 'react-hook-form';
@@ -39,13 +38,10 @@ const LoginScreen = () => {
   const {
     setUser,
     setRole,
-    setTotalPeople,
-    setTotalCommittees,
-    setCommittees,
-    setPeople,
     setTempEmail,
     setUserId,
-    setTempUser
+    setTempUser,
+    loadUserFromStorage
   } = useAuthStore();
 
   const handleFormSubmit = async (formData: any) => {
@@ -56,32 +52,9 @@ const LoginScreen = () => {
     });
     const user = data?.user;
     await setUser(user, data?.accessToken, data?.refreshToken);
-    if (user?.role === 'moderator') {
-      const { data: imamData } = await request(
-        'post',
-        ApiStrings.GET_MASJID_DETAILS_FOR_MODERATOR,
-        {
-          "masjids": user?.masjids
-        }
-      );
-      setCommittees(imamData?.committees);
-      setPeople(imamData?.poorPeople);
-      setTotalPeople(imamData?.totalPoorPeople);
-      setTotalCommittees(imamData?.totalCommittees);
-    }
-    else {
-      const { data: imamData } = await request(
-        'get',
-        ApiStrings.GET_MASJID_DETAILS(user?.masjid?._id || ''),
-      );
-      setCommittees(imamData?.committees);
-      setPeople(imamData?.poorPeople);
-      setTotalPeople(imamData?.totalPoorPeople);
-      setTotalCommittees(imamData?.totalCommittees);
-    }
     setRole(user?.role);
-    showToast('success', message);
     setLoading(false)
+    loadUserFromStorage()
     if (user?.signupStep === 'otp_pending') {
       setTempEmail(formData?.emailOrPhone)
       setUserId(user._id)

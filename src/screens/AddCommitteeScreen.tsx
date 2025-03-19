@@ -40,7 +40,7 @@ const AddCommitteeScreen = () => {
   const navigation = useNavigation<NavigationProp<AppStackParamList>>();
   const { request, loading, error } = useApi()
   const { t } = useTranslation()
-  const { user, committees, setCommittees, setTotalCommittees, totalCommittees } = useAuthStore();
+  const { user } = useAuthStore();
   const { control, handleSubmit, watch, setValue, formState: { errors } } = useForm({
     resolver: yupResolver(validationSchemaAddCommittee),
     mode: 'onBlur'
@@ -69,11 +69,7 @@ const AddCommitteeScreen = () => {
 
     ImagePicker.launchImageLibrary(options,
       (response) => {
-        if (response.didCancel) {
-          console.log("User cancelled image picker");
-        } else if (response.errorMessage) {
-          console.log("ImagePicker Error: ", response.errorMessage);
-        } else if (response.assets && response.assets.length > 0) {
+        if (response.assets && response.assets.length > 0) {
           setValue('profilePicture', response.assets[0] as IFile);
         }
       }
@@ -97,10 +93,7 @@ const AddCommitteeScreen = () => {
       apiFormData.append('profilePicture', formatFileData(formData.profilePicture));
   }
 
-    const { message, data } = await request('post', ApiStrings.CREATE_COMMITTEE, apiFormData);
-    const newCommittees = [...committees, data];
-    setCommittees(newCommittees);
-    setTotalCommittees(totalCommittees + 1);
+    const { message } = await request('post', ApiStrings.CREATE_COMMITTEE, apiFormData);
     showToast('success', message)
     navigation.navigate('ImamHomeScreen', { activeTab: 'committees' })
   };

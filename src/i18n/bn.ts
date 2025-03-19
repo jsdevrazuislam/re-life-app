@@ -296,6 +296,13 @@ export default {
   ongoingTreatmentDetails: 'চলমান বিশেষ চিকিৎসার বিস্তারিত লিখুন',
   notes: 'অতিরিক্ত তথ্য বা মন্তব্য',
   taka: "টাকা",
+  "rehabilitation.successMessage": "পুনর্বাসন সফলভাবে সম্পন্ন হয়েছে!",
+  "rehabilitation.failureMessage": "পুনর্বাসন ব্যর্থ হয়েছে!",
+  "rehabilitation.investment": "বিনিয়োগ",
+  "rehabilitation.duration": "সময়কাল",
+  "rehabilitation.successStory": "সাফল্যের গল্প",
+  "rehabilitation.failureReason": "ব্যর্থতার কারণ",
+  "goBack" : "আগের পেইজ এ ফিরে জান",
 
   // ID Proofs
   idProofFrontBack: 'আইডি (সামনে ও পিছনে আপলোড করুন)',
