@@ -29,6 +29,11 @@ import RequestAccessViewScreen from '../../screens/RequestAccessViewScreen';
 import EditPeopleScreen from '../../screens/EditPoorPeopleScreen';
 import MarkDonationScreen from '../../screens/MarkDonationScreen';
 import DonationHistoryScreen from '../../screens/DonationHistoryScreen';
+import RehabilitationScreen from '../../screens/RehabilitationScreen';
+import { RehabilitationTabsNavigator } from '../screens/rehabilitation-tabs-navigator';
+import RehabilitationDetailsScreen from '../screens/rehabilitation-details';
+import AddFollowUpScreen from '../../screens/AddFollowUpScreen';
+import StatusScreen from '../../screens/StatusScreen';
 
 
 
@@ -98,6 +103,9 @@ const AppNavigator = ({ role, status, userTempId, user, isFirstTime }: { role: s
         {["pending", "rejected"].includes(user?.kycStatus ?? '') && <Stack.Screen name={AppRoutes.IMAM_PENDING_SCREEN} component={ImamPendingScreen} />}
         <Stack.Screen name={AppRoutes.IMAM_HOME_SCREEN} component={ImamHomeScreen} />
         <Stack.Screen name={AppRoutes.REQUEST_ACCESS_VIEW} component={RequestAccessViewScreen} />
+        <Stack.Screen name={AppRoutes.REHABILITATION_SCREEN} component={RehabilitationScreen} />
+        <Stack.Screen name={AppRoutes.REHABILITATION_DASHBOARD} component={RehabilitationTabsNavigator} />
+        <Stack.Screen name={AppRoutes.ADD_FOLLOW_UP_SCREEN} component={AddFollowUpScreen} />
         <Stack.Screen name={AppRoutes.EDIT_POOR_PERSON} component={EditPeopleScreen} />
         <Stack.Screen name={AppRoutes.ADD_COMMITTEE_SCREEN} component={AddCommitteeScreen} />
         <Stack.Screen name={AppRoutes.PROFILE_SCREEN} component={ProfileScreen} />
@@ -110,8 +118,13 @@ const AppNavigator = ({ role, status, userTempId, user, isFirstTime }: { role: s
         <Stack.Screen name={AppRoutes.KYC_VERIFY_SCREEN} component={KYCVerifyScreen} />
         <Stack.Screen name={AppRoutes.KYC_SCREEN} component={KycScreen} />
         <Stack.Screen name={AppRoutes.HOME_VIEW_DETAILS_INFO} component={HomeViewDetailsInfoScreen} />
+        <Stack.Screen name={AppRoutes.MARK_AS_COMPLETE} component={StatusScreen} />
         <Stack.Screen name={AppRoutes.MARK_DONATION_SCREEN} component={MarkDonationScreen} />
         <Stack.Screen name={AppRoutes.DONATION_HISTORY_SCREEN} component={DonationHistoryScreen} />
+        <Stack.Screen 
+        name={AppRoutes.REHABILITATION_DETAILS} 
+        component={RehabilitationDetailsScreen} 
+      />
       </Stack.Navigator>
     );
   }

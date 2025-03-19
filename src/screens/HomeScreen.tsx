@@ -9,7 +9,7 @@ import {
   TextInput,
   Dimensions
 } from 'react-native';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import Paragraph from '../components/ui/Paragraph';
 import globalStyles from '../styles/global.style';
@@ -29,8 +29,6 @@ import { ms } from 'react-native-size-matters';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import { EmptyState } from './RequestAccessViewScreen';
 
-
-
 const HomeScreen = () => {
   const { t } = useTranslation();
   const fadeAnim = useState(new Animated.Value(0))[0];
@@ -42,19 +40,10 @@ const HomeScreen = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [searchInput, setSearchInput] = useState('');
+  const [hasMoreData, setHasMoreData] = useState(true); 
 
-
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    setMasjids([]);
-    setCurrentPage(1);
-    setErrorMessage('');
-    fetchMasjids(1, searchInput);
-    setRefreshing(false);
-  }, [searchInput]);
-
-  const fetchMasjids = async (page = 1, idCardNumber = '') => {
-    if (isLoading) return;
+  const fetchMasjids = useCallback(async (page = 1, idCardNumber = '') => {
+    if (isLoading || !hasMoreData) return; 
 
     setIsLoading(true);
     try {
@@ -66,13 +55,15 @@ const HomeScreen = () => {
         },
       });
 
-      if (data.data.data?.length === 0) {
-        setErrorMessage(t('noResultsFound'));
+      const newMasjids = data.data.data || [];
+
+      if (page === 1) {
+        setMasjids(newMasjids);
       } else {
-        setErrorMessage('');
+        setMasjids(prevMasjids => [...prevMasjids, ...newMasjids]);
       }
 
-      setMasjids(page === 1 ? data.data.data : [...masjids, ...data.data.data]);
+      setHasMoreData(newMasjids.length > 0);
       setCurrentPage(data.data.page);
 
       Animated.timing(fadeAnim, {
@@ -81,30 +72,41 @@ const HomeScreen = () => {
         useNativeDriver: true,
       }).start();
     } catch (error) {
-      console.error('Error fetching masjids:', error);
       setErrorMessage(t('errorFetchingData'));
     } finally {
       setIsLoading(false);
       setIsSearch(false);
     }
-  };
+  }, [isLoading, hasMoreData, t, fadeAnim]);
 
+  useEffect(() => {
+    fetchMasjids(1);
+  }, []);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setMasjids([]);
+    setCurrentPage(1);
+    setErrorMessage('');
+    setHasMoreData(true);
+    fetchMasjids(1, searchInput);
+    setRefreshing(false);
+  }, [searchInput, fetchMasjids]);
 
   const getSearchResult = () => {
     setIsSearch(true);
     setMasjids([]);
     setCurrentPage(1);
     setErrorMessage('');
+    setHasMoreData(true);
     fetchMasjids(1, searchInput);
-
   };
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
-
     const isNearBottom = contentOffset.y + layoutMeasurement.height >= contentSize.height - 100;
 
-    if (isNearBottom && !isLoading) {
+    if (isNearBottom && !isLoading && hasMoreData) {
       fetchMasjids(currentPage + 1);
     }
   };
@@ -135,8 +137,8 @@ const HomeScreen = () => {
               value={searchInput}
               onChangeText={setSearchInput}
             />
-
           </View>
+
           <View style={{ flexDirection: 'row' }}>
             <TouchableOpacity onPress={() => navigation.navigate('FaceScanScreen')} style={homeStyles.button}>
               <Ionicons name="scan-outline" size={ms(16)} color={Colors.white} />
@@ -154,9 +156,15 @@ const HomeScreen = () => {
               ))}
             </Animated.View>
           ) : (
-            !isLoading && isSearch || errorMessage && <EmptyState style={{ width: Dimensions.get('window').width / 1.8 }} title='' image={require('../assets/no-search.png')} description={errorMessage || t('noResultsFound')} />
+            !isLoading && isSearch || errorMessage && (
+              <EmptyState
+                style={{ width: Dimensions.get('window').width / 1.8 }}
+                title=''
+                image={require('../assets/no-search.png')}
+                description={errorMessage || t('noResultsFound')}
+              />
+            )
           )}
-
 
           {isLoading &&
             Array.from({ length: 6 }).map((_, index) => (
@@ -164,7 +172,7 @@ const HomeScreen = () => {
                 <View style={[homeStyles.flexLayout, { width: '100%', padding: 0, marginTop: 20 }]}>
                   <View style={[homeStyles.image, { borderRadius: 5 }]} />
                   <View style={homeStyles.textContainer}>
-                    <View style={{ maxWidth: '90%', width: '100%' }}>
+                    <View style={{ maxWidth: '100%', width: '100%' }}>
                       <View style={homeStyles.skeletonText} />
                       <View style={homeStyles.skeletonText} />
                       <View style={homeStyles.skeletonText} />
@@ -175,7 +183,6 @@ const HomeScreen = () => {
               </SkeletonPlaceholder>
             ))
           }
-
         </View>
       </ScrollView>
     </SafeAreaWrapper>

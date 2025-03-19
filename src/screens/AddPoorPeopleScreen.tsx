@@ -53,7 +53,7 @@ import { convertBengaliToEnglishNumber, getNameAndUnit } from '../utils/helper';
 const AddPeopleScreen = () => {
   const [photoLoading, setPhotoLoading] = useState(false);
   const { t } = useTranslation();
-  const { user, people, totalPeople, setPeople, setTotalPeople } = useAuthStore();
+  const { user } = useAuthStore();
   const { control, handleSubmit, setValue, watch, getValues, reset, formState: { errors } } = useForm({
     resolver: yupResolver(poorPeopleSchema),
     mode: 'onBlur',
@@ -209,15 +209,12 @@ const AddPeopleScreen = () => {
               });
             }
 
-            const { message, data } = await request(
+            const { message } = await request(
               'post',
               ApiStrings.CREATE_PEOPLE(formData?.masjidId ?  formData?.masjidId : user?.masjid?._id || ''),
               formDataPayload
             );
 
-            const newPeople = [...people, data];
-            setPeople(newPeople);
-            setTotalPeople(totalPeople + 1);
             showToast('success', message);
             reset()
             navigation.navigate('ImamHomeScreen', { activeTab: 'beggers' });
@@ -336,7 +333,6 @@ const AddPeopleScreen = () => {
           return;
         }
         if (response.assets && response.assets.length > 0) {
-          console.log(response.assets[0])
           setValue(`childrenDetails.${index}.childrenProveDocument`, response.assets[0] as IFile, { shouldValidate: true });
         }
       },

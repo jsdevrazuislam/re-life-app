@@ -10,6 +10,7 @@ import { AppStackParamList } from '../constants/route';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { useTranslation } from '../hooks/useTranslation';
+import { showToast } from '../utils/toast';
 
 export const options: ImageLibraryOptions = {
     mediaType: 'photo',
@@ -33,7 +34,7 @@ const FaceScanScreen = () => {
 
     const startFaceScan = async () => {
         if (!selectedImage) {
-            console.log('Please select a photo first');
+            showToast('error','Please select a photo first');
             return;
         }
 
@@ -81,14 +82,8 @@ const FaceScanScreen = () => {
 
 
         launchImageLibrary(options, (response) => {
-            if (response.didCancel) {
-                console.log('User canceled image picker');
-            } else if (response.errorCode) {
-                console.log('Error picking image:', response.errorMessage);
-            } else {
-                if (response.assets && response.assets.length > 0) {
-                    setSelectedImage(response.assets[0] as IFile);
-                }
+            if (response.assets && response.assets.length > 0) {
+                setSelectedImage(response.assets[0] as IFile);
             }
         });
     };
@@ -111,14 +106,8 @@ const FaceScanScreen = () => {
         }
 
         launchCamera(options, (response) => {
-            if (response.didCancel) {
-                console.log('User canceled camera');
-            } else if (response.errorCode) {
-                console.log('Error taking photo:', response.errorMessage);
-            } else {
-                if (response.assets && response.assets.length > 0) {
-                    setSelectedImage(response.assets[0] as IFile);
-                }
+            if (response.assets && response.assets.length > 0) {
+                setSelectedImage(response.assets[0] as IFile);
             }
         });
     };

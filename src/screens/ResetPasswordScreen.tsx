@@ -35,13 +35,6 @@ const ResetPasswordScreen = () => {
       return;
     }
 
-    console.log({
-      emailOrPhone: userTempEmail,
-      otp: route.params?.otp,
-      newPassword: formData.newPassword,
-      userId: userTempId
-    })
-
     const { message } = await request('post', ApiStrings.RESET_PASSWORD, {
       emailOrPhone: userTempEmail || route?.params?.email,
       otp: route.params?.otp,

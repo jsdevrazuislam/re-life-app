@@ -5,7 +5,6 @@ import ApiStrings from '../lib/apis_string';
 import messaging from '@react-native-firebase/messaging';
 
 
-
 const initialState = {
   user: null,
   accessToken: null,
@@ -17,10 +16,6 @@ const initialState = {
   status: '',
   userTempId: null,
   userTempEmail: "",
-  totalPeople: 0,
-  totalCommittees: 0,
-  committees: [],
-  people: [],
   notifications: [],
   isFirstTime: false
 };
@@ -28,13 +23,7 @@ const initialState = {
 export const useAuthStore = create<AuthState>(set => ({
   ...initialState,
   logout: async () => {
-    await AsyncStorage.removeItem('accessToken');
-    await AsyncStorage.removeItem('refreshToken');
-    await AsyncStorage.removeItem('role');
-    await AsyncStorage.removeItem('status');
-    await AsyncStorage.removeItem('userTempId');
-    await AsyncStorage.removeItem('userTempEmail');
-    await AsyncStorage.removeItem('tempUser');
+    await AsyncStorage.clear()
 
     set({
       user: null,
@@ -44,13 +33,11 @@ export const useAuthStore = create<AuthState>(set => ({
       role: null,
       tempUser: null,
       isAuthenticated: false,
+      notifications: [],
+      status: ''
     });
   },
   setNotifications: (notifications) => set({ notifications }),
-  setTotalPeople: (totalPeople) => set({ totalPeople }),
-  setTotalCommittees: (totalCommittees) => set({ totalCommittees }),
-  setCommittees: (committees) => set({ committees }),
-  setPeople: (people) => set({ people }),
   loadUserFromStorage: async () => {
     try {
       const role = await AsyncStorage.getItem('role');
@@ -63,7 +50,7 @@ export const useAuthStore = create<AuthState>(set => ({
       const isFirstTime = await AsyncStorage.getItem('hasSeenOpening');
       const tempUser = user ? JSON.parse(user) : null;
 
-      set({ status, userTempId, userTempEmail, tempUser,  isFirstTime: isFirstTime ? true : false });
+      set({ status, userTempId, userTempEmail, tempUser, isFirstTime: isFirstTime ? true : false });
 
 
       await messaging().requestPermission();
@@ -74,14 +61,11 @@ export const useAuthStore = create<AuthState>(set => ({
         const user = data?.data;
         if (!user.fcmToken || user.fcmToken !== token) {
           await api.post(ApiStrings.SAVE_FCM_TOKEN, { userId: user._id, fcmToken: token })
-          console.log("FCM Token:", token);
         }
         if (user.kycStatus === 'verified') {
-          const { data: imamData } = user.role === 'moderator' ? await api.post(ApiStrings.GET_MASJID_DETAILS_FOR_MODERATOR, { masjids : user.masjids}) :  await api.get(ApiStrings.GET_MASJID_DETAILS(user.masjid?._id || ''));
           const { data: notifications } = await api.get(ApiStrings.GET_NOTIFICATIONS(user._id || ''));
-          set({ committees: imamData?.data?.committees, people: imamData?.data?.poorPeople, totalPeople: imamData?.data?.totalPoorPeople, totalCommittees: imamData?.data?.totalCommittees, notifications: notifications?.data });
+          set({ notifications: notifications?.data });
         }
-
 
         set({ userTempId, accessToken, refreshToken, isLoading: false, role, user: data?.data, isAuthenticated: true })
       }
@@ -94,7 +78,7 @@ export const useAuthStore = create<AuthState>(set => ({
   },
   setStatus: async (status) => {
     set({ status })
-    if(status){
+    if (status) {
       await AsyncStorage.setItem('status', status);
     } else {
       await AsyncStorage.removeItem('status');
@@ -102,7 +86,7 @@ export const useAuthStore = create<AuthState>(set => ({
   },
   setTempEmail: async (email) => {
     set({ userTempEmail: email })
-    if(email){
+    if (email) {
       await AsyncStorage.setItem('userTempEmail', email);
     } else {
       await AsyncStorage.removeItem('userTempEmail');
@@ -111,7 +95,7 @@ export const useAuthStore = create<AuthState>(set => ({
   setRole: (role) => set({ role }),
   setTempUser: async (tempUser) => {
     set({ tempUser })
-    if(tempUser){
+    if (tempUser) {
       await AsyncStorage.setItem('tempUser', JSON.stringify(tempUser));
     } else {
       await AsyncStorage.removeItem('tempUser');
@@ -119,12 +103,12 @@ export const useAuthStore = create<AuthState>(set => ({
   },
   setUserId: async (userTempId) => {
     set({ userTempId })
-    if(userTempId){
+    if (userTempId) {
       await AsyncStorage.setItem('userTempId', userTempId);
     } else {
       await AsyncStorage.removeItem('userTempId');
     }
-   
+
   },
   setUserInfo: user => set({ user }),
   setUser: async (user, accessToken, refreshToken) => {

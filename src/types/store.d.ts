@@ -28,14 +28,6 @@ interface AuthState {
   loadUserFromStorage: () => Promise<void>;
   isFirstTime: boolean;
   isLoading: boolean;
-  totalPeople: number;
-  totalCommittees: number;
-  setTotalPeople: (totalPeople: number) => void;
-  setTotalCommittees: (totalCommittees: number) => void;
-  committees: CommitteeResponse[];
-  setCommittees: (committees: CommitteeResponse[]) => void;
-  people: PoorPeople[];
-  setPeople: (people: PoorPeople[]) => void;
   notifications: NotificationResponseData[],
   setNotifications: (notifications: NotificationResponseData[]) => void;
 }

@@ -3,7 +3,6 @@ import {
   Platform,
   Alert,
   Linking,
-  Image,
   TouchableOpacity,
   ScrollView,
   KeyboardAvoidingView,
@@ -28,12 +27,12 @@ import { useAuthStore } from '../store/store';
 import { baseURLPhoto } from '../lib/api';
 import { useApi } from '../hooks/useApi';
 import ApiStrings from '../lib/apis_string';
-import PhoneNumberInput from '../components/ui/PhoneNumberInput';
 import { showToast } from '../utils/toast';
 import { formatFileData } from '../utils/file-format';
 import Header from '../components/Header';
 import LoadingOverlay from '../components/LoadingOverlay';
 import ImageComponent from '../components/ui/Image';
+import ErrorMessage from '../components/ErrorMessage';
 
 interface ProfileForm {
   name: string;
@@ -89,11 +88,7 @@ const ProfileScreen = () => {
     ImagePicker.launchImageLibrary(
       { mediaType: 'photo', quality: 0.8 },
       response => {
-        if (response.didCancel) {
-          console.log('User cancelled image picker');
-        } else if (response.errorMessage) {
-          console.log('ImagePicker Error: ', response.errorMessage);
-        } else if (response.assets && response.assets.length > 0) {
+       if (response.assets && response.assets.length > 0) {
           setFormData({ ...formData, image: response.assets[0] as IFile });
         }
       },
@@ -295,6 +290,9 @@ const ProfileScreen = () => {
                 />
               </View>
             </TouchableWithoutFeedback>
+
+             {error && <ErrorMessage error={error} />}
+            
 
             <AppButton
               text={t('updateButton')}

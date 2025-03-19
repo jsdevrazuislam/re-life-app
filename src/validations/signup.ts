@@ -23,6 +23,14 @@ export const markDonationValidationSchema = yup.object().shape({
     remarks: yup.string().min(8, 'বিস্তারিত অন্তত ৮ অক্ষরের হতে হবে').required('আবশ্যক')
 })
 
+export const rehabilitationSchema = yup.object().shape({
+    provePictures: multipleFilesSchema,
+    startDate:yup.date().required('আবশ্যক'),
+    details:yup.string().required('আবশ্যক'),
+    rehabilitationType:yup.string().required('আবশ্যক'),
+    financialSupport:yup.string().required('আবশ্যক')
+})
+
 export const validationSchema = yup.object().shape({
     profileUrl: fileSchema,
     masjidProfile: multipleFilesSchema,

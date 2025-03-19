@@ -20,7 +20,6 @@ import AppButton from '../components/ui/AppButton';
 import Paragraph from '../components/ui/Paragraph';
 import { useApi } from '../hooks/useApi';
 import ApiStrings from '../lib/apis_string';
-import { showToast } from '../utils/toast';
 import { useAuthStore } from '../store/store';
 import LoadingOverlay from '../components/LoadingOverlay';
 import { useForm, Controller } from 'react-hook-form';
@@ -29,7 +28,7 @@ import { loginValidationSchema } from '../validations/login';
 
 const LoginScreen = () => {
   const { t } = useTranslation();
-  const { control, handleSubmit, formState: { errors } } = useForm({
+  const { control, handleSubmit, reset, formState: { errors } } = useForm({
     resolver: yupResolver(loginValidationSchema),
     mode: 'onBlur'
   });
@@ -39,13 +38,11 @@ const LoginScreen = () => {
   const {
     setUser,
     setRole,
-    setTotalPeople,
-    setTotalCommittees,
-    setCommittees,
-    setPeople,
     setTempEmail,
     setUserId,
-    setTempUser
+    setTempUser,
+    loadUserFromStorage,
+    setStatus
   } = useAuthStore();
 
   const handleFormSubmit = async (formData: any) => {
@@ -54,39 +51,19 @@ const LoginScreen = () => {
       password: formData?.password,
       emailOrPhone: formData?.emailOrPhone,
     });
+    reset()
     const user = data?.user;
     await setUser(user, data?.accessToken, data?.refreshToken);
-    if (user?.role === 'moderator') {
-      const { data: imamData } = await request(
-        'post',
-        ApiStrings.GET_MASJID_DETAILS_FOR_MODERATOR,
-        {
-          "masjids": user?.masjids
-        }
-      );
-      setCommittees(imamData?.committees);
-      setPeople(imamData?.poorPeople);
-      setTotalPeople(imamData?.totalPoorPeople);
-      setTotalCommittees(imamData?.totalCommittees);
-    }
-    else {
-      const { data: imamData } = await request(
-        'get',
-        ApiStrings.GET_MASJID_DETAILS(user?.masjid?._id || ''),
-      );
-      setCommittees(imamData?.committees);
-      setPeople(imamData?.poorPeople);
-      setTotalPeople(imamData?.totalPoorPeople);
-      setTotalCommittees(imamData?.totalCommittees);
-    }
     setRole(user?.role);
-    showToast('success', message);
     setLoading(false)
+    loadUserFromStorage()
     if (user?.signupStep === 'otp_pending') {
       setTempEmail(formData?.emailOrPhone)
       setUserId(user._id)
+      setStatus('otp_pending')
       navigation.navigate('OtpScreen', { email: formData?.emailOrPhone })
     } else if (user?.signupStep === 'kyc_pending' || user?.kycStatus === 'none') {
+      setStatus('kyc_pending')
       setUserId(user._id)
       setTempUser({ name: user?.fullName, emailOrPhone: user?.emailOrPhone})
       navigation.navigate('KycStartedScreen');
@@ -159,11 +136,13 @@ const LoginScreen = () => {
                   {error}
                 </Paragraph>
               )}
+              <View style={loginStyles.forgotPassword}>
               <TouchableOpacity
-                onPress={() => navigation.navigate('ForgotPasswordScreen')}
-                style={loginStyles.forgotPassword}>
+                style={{ width: 150}}
+                onPress={() => navigation.navigate('ForgotPasswordScreen')}>
                 <Paragraph level="Small">{t('forgotPassword')}</Paragraph>
               </TouchableOpacity>
+              </View>
               <AppButton
                 text={t('signInButton')}
                 onPress={handleSubmit(handleFormSubmit)}

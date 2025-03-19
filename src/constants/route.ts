@@ -10,8 +10,11 @@ export const AppRoutes = {
     OTP_SCREEN: "OtpScreen",
     IMAM_HOME_SCREEN:'ImamHomeScreen',
     ADD_COMMITTEE_SCREEN:'AddCommitteeScreen',
+    REHABILITATION_SCREEN:'RehabilitationScreen',
+    REHABILITATION_DASHBOARD:'RehabilitationDashboard',
     KYC_SCREEN:'KycScreen',
     KYC_VERIFY_SCREEN:'KycStartedScreen',
+    REHABILITATION_DETAILS: 'RehabilitationDetails',
     ADD_POOR_PEOPLE_SCREEN:'AddPoorPeopleScreen',
     KYC_SUCCESS_SCREEN:'KycSuccessScreen',
     IMAM_SETTING_SCREEN:'ImamSettingsScreen',
@@ -26,14 +29,29 @@ export const AppRoutes = {
     EDIT_POOR_PERSON:'EditPoorPeopleScreen',
     MARK_DONATION_SCREEN:'MarkDonationScreen',
     DONATION_HISTORY_SCREEN:'DonationHistoryScreen',
+    ADD_FOLLOW_UP_SCREEN:'AddFollowUpScreen',
+    MARK_AS_COMPLETE:'MarkAsComplete',
 }
 
 export type AppStackParamList = {
     FaceScanScreen: undefined; 
+    MarkAsComplete: {
+        item?: PersonItemProps
+    }; 
     MarkDonationScreen: {
         data?: PoorPeople
     }; 
+    RehabilitationScreen: {
+        item?: PoorPeople
+    }; 
+    RehabilitationDetails: {
+        item?: PersonItemProps
+    }; 
+    AddFollowUpScreen: {
+        item?: PersonItemProps
+    }; 
     OpeningScreen: undefined; 
+    RehabilitationDashboard: undefined; 
     RequestAccessView: undefined; 
     LoginScreen: undefined; 
     DonationHistoryScreen: undefined; 

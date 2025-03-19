@@ -30,7 +30,7 @@ const styles = ScaledSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     alignItems: "center",
     justifyContent: "center",
-    zIndex: 1000,
+    zIndex: 1000000,
   },
   container: {
     // backgroundColor: Colors.black,

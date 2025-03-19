@@ -1,4 +1,4 @@
-import { View, ScrollView, TouchableOpacity, KeyboardAvoidingView, TouchableWithoutFeedback, Platform } from 'react-native';
+import { View, KeyboardAvoidingView, TouchableWithoutFeedback, Platform } from 'react-native';
 import React, { useState } from 'react';
 import SafeAreaWrapper from '../components/SafeAreaWrapper';
 import { useTranslation } from '../hooks/useTranslation';
@@ -33,10 +33,11 @@ const ForgotPasswordScreen = () => {
       ApiStrings.RESEND_OTP,
       { emailOrPhone: email },
     );
+    setEmail('')
     setUserId(data?.id);
     setStatus('')
     showToast('success', message);
-    navigation.navigate('OtpScreen', { email: data?.email});
+    navigation.navigate('OtpScreen', { email: data?.emailOrPhone || email});
   };
 
   return (
