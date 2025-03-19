@@ -30,10 +30,14 @@ export const AppRoutes = {
     MARK_DONATION_SCREEN:'MarkDonationScreen',
     DONATION_HISTORY_SCREEN:'DonationHistoryScreen',
     ADD_FOLLOW_UP_SCREEN:'AddFollowUpScreen',
+    MARK_AS_COMPLETE:'MarkAsComplete',
 }
 
 export type AppStackParamList = {
     FaceScanScreen: undefined; 
+    MarkAsComplete: {
+        item?: PersonItemProps
+    }; 
     MarkDonationScreen: {
         data?: PoorPeople
     }; 

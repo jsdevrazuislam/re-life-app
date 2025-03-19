@@ -28,7 +28,7 @@ import { loginValidationSchema } from '../validations/login';
 
 const LoginScreen = () => {
   const { t } = useTranslation();
-  const { control, handleSubmit, formState: { errors } } = useForm({
+  const { control, handleSubmit, reset, formState: { errors } } = useForm({
     resolver: yupResolver(loginValidationSchema),
     mode: 'onBlur'
   });
@@ -41,7 +41,8 @@ const LoginScreen = () => {
     setTempEmail,
     setUserId,
     setTempUser,
-    loadUserFromStorage
+    loadUserFromStorage,
+    setStatus
   } = useAuthStore();
 
   const handleFormSubmit = async (formData: any) => {
@@ -50,6 +51,7 @@ const LoginScreen = () => {
       password: formData?.password,
       emailOrPhone: formData?.emailOrPhone,
     });
+    reset()
     const user = data?.user;
     await setUser(user, data?.accessToken, data?.refreshToken);
     setRole(user?.role);
@@ -58,8 +60,10 @@ const LoginScreen = () => {
     if (user?.signupStep === 'otp_pending') {
       setTempEmail(formData?.emailOrPhone)
       setUserId(user._id)
+      setStatus('otp_pending')
       navigation.navigate('OtpScreen', { email: formData?.emailOrPhone })
     } else if (user?.signupStep === 'kyc_pending' || user?.kycStatus === 'none') {
+      setStatus('kyc_pending')
       setUserId(user._id)
       setTempUser({ name: user?.fullName, emailOrPhone: user?.emailOrPhone})
       navigation.navigate('KycStartedScreen');
@@ -132,11 +136,13 @@ const LoginScreen = () => {
                   {error}
                 </Paragraph>
               )}
+              <View style={loginStyles.forgotPassword}>
               <TouchableOpacity
-                onPress={() => navigation.navigate('ForgotPasswordScreen')}
-                style={loginStyles.forgotPassword}>
+                style={{ width: 150}}
+                onPress={() => navigation.navigate('ForgotPasswordScreen')}>
                 <Paragraph level="Small">{t('forgotPassword')}</Paragraph>
               </TouchableOpacity>
+              </View>
               <AppButton
                 text={t('signInButton')}
                 onPress={handleSubmit(handleFormSubmit)}

@@ -65,6 +65,7 @@ const OtpScreen = () => {
                 ApiStrings.OTP_VERIFY,
                 payload,
             );
+            setUserId(userTempId ?? '')
             setTempUser(data);
             setStatus(data?.status);
             setOtp([''])

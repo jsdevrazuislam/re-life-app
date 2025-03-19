@@ -13,7 +13,7 @@ const loginStyles = ScaledSheet.create({
         justifyContent:'flex-end',
         alignItems:'flex-end',
         marginTop: '2@ms',
-        marginBottom: '30@ms'
+        marginBottom: '30@ms',
     },
     bottom:{
         marginTop:'60@ms'

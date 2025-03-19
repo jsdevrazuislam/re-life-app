@@ -302,6 +302,12 @@ export default {
   "rehabilitation.duration": "সময়কাল",
   "rehabilitation.successStory": "সাফল্যের গল্প",
   "rehabilitation.failureReason": "ব্যর্থতার কারণ",
+  "rehabilitation.ensureRehabilitation.title": "এই ব্যক্তির পুনর্বাসন নিশ্চিত করুন",
+  "rehabilitation.ensureRehabilitation.description": "এই ব্যক্তির পুনর্বাসন প্রক্রিয়া সম্পন্ন করতে সহায়তা করুন এবং তাদের একটি ভালো জীবনের পথে এগিয়ে যেতে সাহায্য করুন।",
+  "rehabilitation.currentStatus.label": "বর্তমান অবস্থা",
+  "rehabilitation.currentStatus.placeholder": "বর্তমান অবস্থা নির্বাচন করুন",
+  "rehabilitation.storyDescription.label": "গল্পের বিবরণ",
+  "rehabilitation.storyDescription.placeholder": "গল্পের বিস্তারিত লিখুন",
   "goBack" : "আগের পেইজ এ ফিরে জান",
 
   // ID Proofs

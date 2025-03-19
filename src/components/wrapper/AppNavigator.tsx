@@ -33,6 +33,7 @@ import RehabilitationScreen from '../../screens/RehabilitationScreen';
 import { RehabilitationTabsNavigator } from '../screens/rehabilitation-tabs-navigator';
 import RehabilitationDetailsScreen from '../screens/rehabilitation-details';
 import AddFollowUpScreen from '../../screens/AddFollowUpScreen';
+import StatusScreen from '../../screens/StatusScreen';
 
 
 
@@ -117,6 +118,7 @@ const AppNavigator = ({ role, status, userTempId, user, isFirstTime }: { role: s
         <Stack.Screen name={AppRoutes.KYC_VERIFY_SCREEN} component={KYCVerifyScreen} />
         <Stack.Screen name={AppRoutes.KYC_SCREEN} component={KycScreen} />
         <Stack.Screen name={AppRoutes.HOME_VIEW_DETAILS_INFO} component={HomeViewDetailsInfoScreen} />
+        <Stack.Screen name={AppRoutes.MARK_AS_COMPLETE} component={StatusScreen} />
         <Stack.Screen name={AppRoutes.MARK_DONATION_SCREEN} component={MarkDonationScreen} />
         <Stack.Screen name={AppRoutes.DONATION_HISTORY_SCREEN} component={DonationHistoryScreen} />
         <Stack.Screen 

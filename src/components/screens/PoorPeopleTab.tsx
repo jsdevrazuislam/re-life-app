@@ -13,7 +13,7 @@ import { useAuthStore } from '../../store/store';
 import { Colors } from '../../configs/colors';
 import { convertNumber } from '../../utils/helper';
 import MaterialIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { ms } from 'react-native-size-matters';
+import { ms, mvs } from 'react-native-size-matters';
 import { EmptyState } from '../../screens/RequestAccessViewScreen';
 
 
@@ -138,7 +138,7 @@ const PeopleTab: React.FC<PeopleTabProps> = ({ data, onAdd, loading, refreshing,
           ) : null
         }
         ListEmptyComponent={
-          !loading && data.length === 0 ? <EmptyState /> : null
+          !loading && data.length === 0 ? <EmptyState title={t('emptyPeopleTitle')} description={t('emptyPeopleDescription')} viewStyle={{ marginTop: mvs(30)}} /> : null
         }
       />
     </View>

@@ -304,6 +304,12 @@ export default {
   "rehabilitation.duration": "Duration",
   "rehabilitation.successStory": "Success Story",
   "rehabilitation.failureReason": "Reason for Failure",
+  "rehabilitation.ensureRehabilitation.title": "Ensure This Person’s Rehabilitation",
+  "rehabilitation.ensureRehabilitation.description": "Help complete the rehabilitation process for this individual and support their journey to a better life.",
+  "rehabilitation.currentStatus.label": "Current Status",
+  "rehabilitation.currentStatus.placeholder": "Select current status",
+  "rehabilitation.storyDescription.label": "Story Description",
+  "rehabilitation.storyDescription.placeholder": "Enter story details",
   "goBack":"Back To Back",
   cancel: "Cancel",
   // Monthly Needs

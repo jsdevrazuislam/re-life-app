@@ -32,6 +32,7 @@ import { formatFileData } from '../utils/file-format';
 import Header from '../components/Header';
 import LoadingOverlay from '../components/LoadingOverlay';
 import ImageComponent from '../components/ui/Image';
+import ErrorMessage from '../components/ErrorMessage';
 
 interface ProfileForm {
   name: string;
@@ -289,6 +290,9 @@ const ProfileScreen = () => {
                 />
               </View>
             </TouchableWithoutFeedback>
+
+             {error && <ErrorMessage error={error} />}
+            
 
             <AppButton
               text={t('updateButton')}

@@ -38,7 +38,7 @@ import { options } from './FaceScanScreen';
 const SignupScreen = () => {
   const { t } = useTranslation();
   const [photoLoading, setPhotoLoading] = useState(false);
-  const { control, handleSubmit, setValue, watch, getValues, formState: { errors } } = useForm({
+  const { control, handleSubmit, setValue, reset, watch, getValues, formState: { errors } } = useForm({
     resolver: yupResolver(validationSchema),
     mode: 'onBlur',
     defaultValues: {
@@ -221,6 +221,7 @@ const SignupScreen = () => {
       ApiStrings.SIGNUP,
       formDataPayload,
     );
+    reset()
     setUserId(data?.id);
     setTempEmail(data?.emailOrPhone)
     setStatus('otp_pending')

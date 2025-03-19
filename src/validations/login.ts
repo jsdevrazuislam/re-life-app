@@ -30,6 +30,15 @@ export const emailValidationSchema = yup.object().shape({
     .required("ইমেল বা ফোন নম্বর দেওয়া আবশ্যক")
 });
 
+export const validationSchema = yup.object().shape({
+  status: yup.string()
+    .required('অবস্থা নির্বাচন করা আবশ্যক!'),
+  story: yup.string()
+    .required('গল্পের বিবরণ আবশ্যক!')
+    .min(10, 'গল্প কমপক্ষে ১০ অক্ষরের হতে হবে!')
+    .max(500, 'গল্প সর্বোচ্চ ৫০০ অক্ষরের মধ্যে হতে হবে!')
+});
+
 export const passwordValidationSchema = yup.object().shape({
   currentPassword: yup.string()
     .required('Current password is required'),
