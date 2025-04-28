@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useAuthStore} from '../store/store';
 import {jwtDecode} from 'jwt-decode';
 
-export const SERVER_URL = 'http://192.168.1.103:3000';
+export const SERVER_URL = 'http://192.168.1.104:3000';
 const baseURL = `${SERVER_URL}/api/v1`;
 export const baseURLPhoto = (url: string): string => {
   return url;

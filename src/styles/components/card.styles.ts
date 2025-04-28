@@ -10,7 +10,7 @@ export const cardStyles = ScaledSheet.create({
   },
   image: {
     width: '100%',
-    height: '130@ms',
+    height: '200@ms',
     borderRadius: '5@ms',
   },
   flexLayout: {

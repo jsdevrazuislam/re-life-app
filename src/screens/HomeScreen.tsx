@@ -72,7 +72,7 @@ const HomeScreen = () => {
         useNativeDriver: true,
       }).start();
     } catch (error) {
-      setErrorMessage(t('errorFetchingData'));
+      setErrorMessage(t('searchAgainSuggestion'));
     } finally {
       setIsLoading(false);
       setIsSearch(false);
