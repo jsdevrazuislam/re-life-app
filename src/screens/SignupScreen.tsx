@@ -207,7 +207,7 @@ const SignupScreen = () => {
     formDataPayload.append('profileUrl', formatFileData(payload.profileUrl));
     payload?.committeeDetails?.forEach((member) => {
       if (member.profilePicture) {
-        formDataPayload.append(`committeePictures`, formatFileData(member));
+        formDataPayload.append(`committeePictures`, formatFileData(member.profilePicture));
       }
     });
     payload?.masjidProfile?.forEach((profile) => {
@@ -228,6 +228,8 @@ const SignupScreen = () => {
     showToast('success', message);
     navigation.navigate('OtpScreen', { email: data?.emailOrPhone });
   }
+
+  console.log("error", error)
 
   return (
     <SafeAreaWrapper>

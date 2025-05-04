@@ -156,15 +156,21 @@ const HomeScreen = () => {
               ))}
             </Animated.View>
           ) : (
-            !isLoading && isSearch || errorMessage && (
+            (!isLoading && isSearch) || errorMessage ? (
               <EmptyState
                 style={{ width: Dimensions.get('window').width / 1.8 }}
-                title=''
+                title=""
                 image={require('../assets/no-search.png')}
                 description={errorMessage || t('noResultsFound')}
               />
-            )
+            ) : !isLoading && <EmptyState
+                style={{ width: Dimensions.get('window').width / 1.8 }}
+                title=""
+                image={require('../assets/no-search.png')}
+                description={errorMessage || t('noResultsFound')}
+              />
           )}
+
 
           {isLoading &&
             Array.from({ length: 6 }).map((_, index) => (
