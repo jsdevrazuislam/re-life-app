@@ -229,7 +229,6 @@ const SignupScreen = () => {
     navigation.navigate('OtpScreen', { email: data?.emailOrPhone });
   }
 
-  console.log("error", error)
 
   return (
     <SafeAreaWrapper>

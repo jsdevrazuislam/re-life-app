@@ -1,5 +1,5 @@
 import { View, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, Alert, Linking, ScrollView, Modal } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import SafeAreaWrapper from '../components/SafeAreaWrapper'
 import globalStyles from '../styles/global.style'
 import BackButton from '../components/BackButton'

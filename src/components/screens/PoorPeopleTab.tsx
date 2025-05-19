@@ -30,7 +30,8 @@ const PeopleTab: React.FC<PeopleTabProps> = ({ data, onAdd, loading, refreshing,
     viewAreaCoveragePercentThreshold: 50,
   });
 
-  const renderItem = useCallback(({ item }: { item: PoorPeople }) => {
+  const renderItem = useCallback(({ item, index }: { item: PoorPeople, index:number }) => {
+
     return (
       <View style={imamStyles.infoCard}>
         <View style={imamStyles.cardContent}>
@@ -55,14 +56,24 @@ const PeopleTab: React.FC<PeopleTabProps> = ({ data, onAdd, loading, refreshing,
         </View>
 
         <View style={imamStyles.actionButtons}>
-          <TouchableOpacity style={imamStyles.center} onPress={() => navigation.navigate('HomeViewDetailsInfo', {
+          <TouchableOpacity style={imamStyles.center} onPress={() => navigation.navigate('HomeViewDetailsInfo', user?.role === 'imam' ? {
             item: {
-              _id: user?.masjid._id,
-              name: user?.masjid.name,
-              fullAddress: user?.masjid.fullAddress,
-              location: user?.masjid.location,
-              masjidProfile: user?.masjid.masjidProfile,
-              imamDetails: user?.masjid.imamDetails,
+              _id: user?.masjid?._id,
+              name: user?.masjid?.name,
+              fullAddress: user?.masjid?.fullAddress,
+              location: user?.masjid?.location,
+              masjidProfile: user?.masjid?.masjidProfile,
+              imamDetails: user?.masjid?.imamDetails,
+              poorPeopleInformations: item
+            }
+          } : {
+            item: {
+              _id: user?.masjids[index]?._id,
+              name: user?.masjids[index]?.name,
+              fullAddress: user?.masjids[index]?.fullAddress,
+              location: user?.masjids[index]?.location,
+              masjidProfile: user?.masjids[index]?.masjidProfile,
+              imamDetails: user?.masjids[index]?.imamDetails,
               poorPeopleInformations: item
             }
           })}>

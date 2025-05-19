@@ -85,7 +85,7 @@ const DashboardScreen = () => {
 
       const { data } = await request(
         user?.role === 'imam' ? 'get' : 'post',
-        user?.role === 'imam' ? ApiStrings.GET_MASJID_DETAILS(`${user?.masjid._id ?? ''}?page=${pageNum}`) : `${ApiStrings.GET_MASJID_DETAILS_FOR_MODERATOR}?page=${pageNum}`, { masjids: user?.masjids }
+        user?.role === 'imam' ? ApiStrings.GET_MASJID_DETAILS(`${user?.masjid._id ?? ''}?page=${pageNum}`) : `${ApiStrings.GET_MASJID_DETAILS_FOR_MODERATOR}?page=${pageNum}`, { masjids: user?.masjids?.map((masjid) => masjid._id) }
       );
 
       setCommittee(data?.committees)

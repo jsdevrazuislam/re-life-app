@@ -12,7 +12,7 @@ interface IUser {
   kycDocuments: KycDocuments;
   kycStatus: string;
   masjid: Masjid;
-  masjids: string[];
+  masjids: Masjid[];
   phoneNumber: string;
   profileUrl: string;
   role: string;

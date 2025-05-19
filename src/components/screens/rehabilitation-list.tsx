@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { FlatList, RefreshControl, View, Text, ActivityIndicator, StyleSheet, TouchableOpacity, Animated } from 'react-native';
+import { FlatList, RefreshControl, View, ActivityIndicator, StyleSheet, TouchableOpacity, Animated } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import SafeAreaWrapper from '../SafeAreaWrapper';
 import globalStyles from '../../styles/global.style';
@@ -44,7 +44,7 @@ const PersonItem: React.FC<PersonItemProps> = ({ personId, status, onPress }) =>
       <View style={styles.statusContainer}>
         <View style={[styles.statusIndicator,
         { backgroundColor: statusColors[status] }]} />
-        <Text style={styles.statusText}>{statusLabels[status]}</Text>
+        <Paragraph level='Small' style={styles.statusText}>{statusLabels[status]}</Paragraph>
       </View>
     </View>
     <TouchableOpacity onPress={onPress}>
@@ -153,7 +153,7 @@ const loadMore = async () => {
   const renderError = () => (
     <View style={styles.errorContainer}>
       <MaterialIcons name="error-outline" size={40} color={Colors.danger} />
-      <Text style={styles.errorText}>{error}</Text>
+      <Paragraph level='Small' style={styles.errorText}>{error}</Paragraph>
       <AppButton
         text="পুনরায় চেষ্টা করুন"
         onPress={onRefresh}
@@ -205,12 +205,12 @@ const loadMore = async () => {
               loadingMore ? (
                 <ActivityIndicator color={Colors.primary} />
               ) : page < totalPages ? (
-                <Text style={styles.loadMoreText}>আরো লোড করুন...</Text>
+                <Paragraph level='Small' style={styles.loadMoreText}>আরো লোড করুন...</Paragraph>
               ) : null
             }
             ListEmptyComponent={
               !loading && data.length === 0 ? (
-                <Text style={styles.emptyText}>কোন ডেটা পাওয়া যায়নি</Text>
+                <Paragraph level='Small' style={styles.emptyText}>কোন ডেটা পাওয়া যায়নি</Paragraph>
               ) : null
             }
           />
@@ -340,7 +340,6 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   statusText: {
-    fontSize: 14,
     color: Colors.dark,
   },
   dateText: {
@@ -392,7 +391,6 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   errorText: {
-    fontSize: 16,
     color: Colors.danger,
     marginVertical: 10,
     textAlign: 'center',
@@ -404,7 +402,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     textAlign: 'center',
-    color: Colors.neutral[200],
+    color: Colors.text,
     padding: 20,
   },
 });
